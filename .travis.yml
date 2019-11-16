@@ -1,7 +1,8 @@
-language: cpp
+language: nim
 compiler:
-    - clang
-    - gcc
+    - nim
+    #    - clang
+    #    - gcc
 dist: xenial
 addons:
     apt:

@@ -90,19 +90,19 @@ if [[ $# -eq 1 && ( $1 = -h || $1 = --help || $1 = -? ) ]] ; then
     echo '-   on CI environment (i.e. $CI is defined), only recently modified files are tested (without cache).'
 
 elif [[ $# -eq 0 ]] ; then
-    if [[ $CI ]] ; then
-        # CI
-        for f in $(list-recently-updated) ; do
-            run $f
-        done
-
-    else
+#    if [[ $CI ]] ; then
+#        # CI
+#        for f in $(list-recently-updated) ; do
+#            run $f
+#        done
+#
+#    else
         # local
 #        for f in $(find . -name \*.test.cpp) ; do
         for f in $(find . -name \*_test.nim) ; do
             run $f
         done
-    fi
+#    fi
 else
     # specified
     for f in "$@" ; do
