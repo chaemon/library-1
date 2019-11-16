@@ -44,7 +44,7 @@ proc `[]`[T](self:SegmentTree[T],k:int):T = self.data[k + self.sz]
 
 proc findSubtree[T](self:var SegmentTree[T], a:int, check:(T)->bool, M: var T, t:int):int =
   while a < self.sz:
-    var nxt = if t == 1: self.f(self.data[2 * a + t], M) : self.f(M, self.data[2 * a + t])
+    var nxt = if t == 1: self.f(self.data[2 * a + t], M) else: self.f(M, self.data[2 * a + t])
     if check(nxt): a = 2 * a + t
     else: M = nxt; a = 2 * a + 1 - t
   return a - self.sz
