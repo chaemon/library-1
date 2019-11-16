@@ -52,8 +52,10 @@ run() {
     url="$(get-url "$file")"
 #    dir=test/$(echo -n "$url" | md5sum | sed 's/ .*//')
     dir=test/$(echo -n $(basename "$file"))
-    echo $(pwd)
     mkdir -p ${dir}
+    echo $(pwd)
+	echo $(ls)
+	echo $(ls test)
 
     # ignore if IGNORE is defined
     if list-defined "$file" | grep '^#define IGNORE ' > /dev/null ; then
