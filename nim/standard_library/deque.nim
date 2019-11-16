@@ -84,10 +84,6 @@ proc `[]=`*[T, U](s: var string, x: HSlice[T, U], b: string) =
   ## If ``b.len`` is not exactly the number of elements that are referred to
   ## by `x`, a `splice`:idx: is performed:
   ##
-  runnableExamples:
-    var s = "abcdefgh"
-    s[1 .. ^2] = "xyz"
-    assert s == "axyzh"
 
   var a = s ^^ x.a
   var L = (s ^^ x.b) - a + 1
@@ -140,10 +136,6 @@ proc `[]=`*[T, U, V](s: var seq[T], x: HSlice[U, V], b: openArray[T]) =
   ##
   ## If ``b.len`` is not exactly the number of elements that are referred to
   ## by `x`, a `splice`:idx: is performed.
-  runnableExamples:
-    var s = @"abcdefgh"
-    s[1 .. ^2] = @"xyz"
-    assert s == @"axyzh"
 
   let a = s ^^ x.a
   let L = (s ^^ x.b) - a + 1
