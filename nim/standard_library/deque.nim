@@ -1,3 +1,12 @@
+#{{{ HSlice
+type
+  HSlice*[T, U] = object ## "heterogenous" slice type
+    a*: T        ## the lower bound (inclusive)
+    b*: U        ## the upper bound (inclusive)
+  Slice*[T] = HSlice[T, T] ## an alias for ``HSlice[T, T]``
+#}}}
+
+
 #{{{ BackwardsIndex
 when defined(nimV2):
   template movingCopy(a, b) =
