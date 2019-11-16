@@ -1,4 +1,7 @@
-import deques, sequtils
+when (not (NimMajor <= 0) or NimMinor >= 19):
+  import deques
+else:
+  include "../standard_library/deque.nim"
 
 type 
   flow_edge[flow_t] = object
