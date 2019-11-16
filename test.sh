@@ -61,6 +61,7 @@ run() {
 #    if ! is-verified "$file" ; then
         # compile
 #        $CXX $CXXFLAGS -I . -o ${dir}/a.out "$file"
+        echo "dir: ${dir}"
         nim cpp -d:release -o:${dir}/a.out "$file"
         echo "dir: ${dir}"
         if [[ -n ${url} ]] ; then
