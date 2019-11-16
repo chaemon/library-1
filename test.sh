@@ -39,7 +39,8 @@ mark-verified() {
 }
 
 list-recently-updated() {
-    for file in $(find . -name \*.test.cpp) ; do
+#    for file in $(find . -name \*.test.cpp) ; do
+    for file in $(find . -name \*_test.nim) ; do
         list-dependencies "$file" | xargs -n 1 | while read f ; do
             git log -1 --format="%ci	${file}" "$f"
         done | sort -nr | head -n 1
@@ -49,7 +50,6 @@ list-recently-updated() {
 run() {
     file="$1"
     url="$(get-url "$file")"
-#	url="http://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=GRL_1_A"
     dir=test/$(echo -n "$url" | md5sum | sed 's/ .*//')
     mkdir -p ${dir}
 
