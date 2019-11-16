@@ -1,5 +1,3 @@
-import sugar, sequtils
-
 type DualSegmentTree[OperatorMonoid] = object
   sz, height: int
   lazy: seq[OperatorMonoid]
