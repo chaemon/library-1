@@ -15,7 +15,8 @@ list-dependencies() {
 
 list-defined() {
     file="$1"
-    $CXX $CXXFLAGS -I . -dM -E "$file"
+#    $CXX $CXXFLAGS -I . -dM -E "$file"
+    cat "$file"
 }
 
 get-url() {
@@ -48,6 +49,7 @@ list-recently-updated() {
 run() {
     file="$1"
     url="$(get-url "$file")"
+#	url="http://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=GRL_1_A"
     dir=test/$(echo -n "$url" | md5sum | sed 's/ .*//')
     mkdir -p ${dir}
 
@@ -56,9 +58,10 @@ run() {
         return
     fi
 
-    if ! is-verified "$file" ; then
+#    if ! is-verified "$file" ; then
         # compile
-        $CXX $CXXFLAGS -I . -o ${dir}/a.out "$file"
+#        $CXX $CXXFLAGS -I . -o ${dir}/a.out "$file"
+        nim cpp -d:release -o:${dir}/a.out "$file"
         if [[ -n ${url} ]] ; then
             # download
             if [[ ! -e ${dir}/test ]] ; then
@@ -72,7 +75,7 @@ run() {
             ${dir}/a.out
         fi
         mark-verified "$file"
-    fi
+#    fi
 }
 
 
@@ -95,7 +98,8 @@ elif [[ $# -eq 0 ]] ; then
 
     else
         # local
-        for f in $(find . -name \*.test.cpp) ; do
+#        for f in $(find . -name \*.test.cpp) ; do
+        for f in $(find . -name \*_test.nim) ; do
             run $f
         done
     fi
