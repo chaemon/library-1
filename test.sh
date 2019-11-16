@@ -16,6 +16,7 @@ list-dependencies() {
 list-defined() {
     file="$1"
 #    $CXX $CXXFLAGS -I . -dM -E "$file"
+    echo "list-defined: $file"
     cat "$file"
 }
 
@@ -51,11 +52,8 @@ run() {
     file="$1"
     url="$(get-url "$file")"
 #    dir=test/$(echo -n "$url" | md5sum | sed 's/ .*//')
-    dir=test/$(echo -n $(basename "$file"))
+	dir=$(pwd)/test/$(echo -n $(basename "$file"))
     mkdir -p ${dir}
-    echo $(pwd)
-	echo $(ls)
-	echo $(ls test)
 
     # ignore if IGNORE is defined
     if list-defined "$file" | grep '^#define IGNORE ' > /dev/null ; then
@@ -105,7 +103,7 @@ elif [[ $# -eq 0 ]] ; then
 #    else
         # local
 #        for f in $(find . -name \*.test.cpp) ; do
-        for f in $(find . -name \*_test.nim) ; do
+        for f in $(find . -name \*_test.nim -type f) ; do
             run $f
         done
 #    fi
