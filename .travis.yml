@@ -15,7 +15,7 @@ before_install:
     - pip3 install -U setuptools
     - pip3 install -U online-judge-tools=='6.*'
     - sudo apt install nim
-    - curl https://nim-lang.org/choosenim/init.sh -sSf | sh
+    - echo 'y' | curl https://nim-lang.org/choosenim/init.sh -sSf | sh
     - export PATH=$HOME/.nimble/bin/:$PATH
     - choosenim update stable
 script:
