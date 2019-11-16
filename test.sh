@@ -50,7 +50,9 @@ list-recently-updated() {
 run() {
     file="$1"
     url="$(get-url "$file")"
-    dir=test/$(echo -n "$url" | md5sum | sed 's/ .*//')
+#    dir=test/$(echo -n "$url" | md5sum | sed 's/ .*//')
+    dir=test/$(echo -n $(basename "$file"))
+    echo $(pwd)
     mkdir -p ${dir}
 
     # ignore if IGNORE is defined
