@@ -1,4 +1,4 @@
-import sequtils, heapqueue
+include "../standard_library/heapqueue.nim"
 
 type
   PrimalDual[flow_t, cost_t] = object

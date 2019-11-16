@@ -14,9 +14,7 @@ addons:
 before_install:
     - pip3 install -U setuptools
     - pip3 install -U online-judge-tools=='6.*'
-    - sudo apt install nim
-    - echo 'y' | curl https://nim-lang.org/choosenim/init.sh -sSf | sh
-    - export PATH=$HOME/.nimble/bin/:$PATH
-    - choosenim update stable
+    - wget http://archive.ubuntu.com/ubuntu/pool/universe/n/nim/nim_0.20.2-1_amd64.deb
+    - sudo dpkg -i nim_0.20.2-1_amd64.deb
 script:
     - ./test.sh
