@@ -8,6 +8,6 @@ proc main() =
   let
     M = newMint(nextInt())
     N = nextInt()
-  echo modPow(M, N)
+  echo M.pow(N)
 
 main()
