@@ -64,7 +64,7 @@ run() {
         # compile
 #        $CXX $CXXFLAGS -I . -o ${dir}/a.out "$file"
 #        echo "dir: ${dir}"
-        nim cpp -d:release -o:${dir}/a.out "$file"
+        nim c -d:release -o:${dir}/a.out "$file"
         if [[ -n ${url} ]] ; then
             # download
             if [[ ! -e ${dir}/test ]] ; then
