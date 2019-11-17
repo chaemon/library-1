@@ -6,7 +6,7 @@ type BipartiteMatching = object
   timestamp: int
 
 proc newBipartiteMatching(n:int): BipartiteMatching =
-  return BipartiteMatching(graph:newSeq[seq[int]](n), alive: newSeqWith(n, 1), used:newSeqWith(n, 0), match:newSeqWith(n, -1), timestamp:0)
+  return BipartiteMatching(graph:newSeqWith(n,newSeq[int]()), alive: newSeqWith(n, 1), used:newSeqWith(n, 0), match:newSeqWith(n, -1), timestamp:0)
 
 proc addEdge(self:var BipartiteMatching, u,v:int) =
   self.graph[u].add(v)

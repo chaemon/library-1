@@ -1,4 +1,4 @@
-import heapqueue
+include "../standard_library/heapqueue.nim"
 
 proc prim[T](g:Graph[T], s:int = 0):(T, seq[Edge[T]]) =
   var

@@ -1,6 +1,6 @@
 type
   flow_edge[flow_t] = object
-    src,dst,rev,idx:int
+    dst,rev,idx:int
     cap:flow_t
     isrev:bool
   FordFulkerson[flow_t] = object
@@ -10,20 +10,23 @@ type
     timestamp: int
 
 proc newFordFulkerson[flow_t](n:int): FordFulkerson[flow_t] =
-  return FordFulkerson[flow_t](graph:newSeq[seq[flow_edge[flow_t]]](n), used:newSeqWith(n,-1), inf:flow_t.infty, timestamp:0)
+  return FordFulkerson[flow_t](graph:newSeqWith(n, newSeq[flow_edge[flow_t]]()), used:newSeqWith(n,-1), inf:flow_t.infty, timestamp:0)
 
 proc addEdge[flow_t](self:var FordFulkerson[flow_t], src, dst:int, cap:flow_t, idx = -1) =
-  self.graph[src].add(flow_edge[flow_t](src:src, dst:dst, cap:cap, rev:self.graph[dst].len, isrev:false, idx:idx))
-  self.graph[dst].add(flow_edge[flow_t](src:dst, dst:src, cap:0, rev:self.graph[src].len - 1, isrev:true, idx:idx))
+  self.graph[src].add(flow_edge[flow_t](dst:dst, cap:cap, rev:self.graph[dst].len, isrev:false, idx:idx))
+  self.graph[dst].add(flow_edge[flow_t](dst:src, cap:0, rev:self.graph[src].len - 1, isrev:true, idx:idx))
 
 proc dfs[flow_t](self: var FordFulkerson[flow_t], idx, t:int, flow:flow_t):flow_t =
   if idx == t: return flow
   self.used[idx] = self.timestamp
-  for e in self.graph[idx].mitems:
+#  for e in self.graph[idx].mitems:
+  for i in 0..<self.graph[idx].len:
+    let e = self.graph[idx][i]
     if e.cap > 0 and self.used[e.dst] != self.timestamp:
       let d = self.dfs(e.dst, t, min(flow, e.cap))
       if d > 0:
-        e.cap -= d
+#        e.cap -= d
+        self.graph[idx][i].cap -= d
         self.graph[e.dst][e.rev].cap += d
         return d
   return 0

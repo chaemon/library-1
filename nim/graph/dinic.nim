@@ -35,11 +35,12 @@ proc bfs[flow_t](self:var Dinic[flow_t], s,t:int):bool =
 proc dfs[flow_t](self:var Dinic[flow_t], idx, t:int, flow:flow_t):flow_t =
   if idx == t: return flow
   while self.iter[idx] < self.graph[idx].len:
-    let e = self.graph[idx][self.iter[idx]].unsafeAddr
-    if e[].cap > 0 and self.min_cost[idx] < self.min_cost[e[].dst]:
-      let d = self.dfs(e[].dst, t, min(flow, e[].cap))
+    let e = self.graph[idx][self.iter[idx]]
+    if e.cap > 0 and self.min_cost[idx] < self.min_cost[e.dst]:
+      let d = self.dfs(e.dst, t, min(flow, e.cap))
       if d > 0:
-        e[].cap -= d
+#        e.cap -= d
+        self.graph[idx][self.iter[idx]].cap -= d
         self.graph[e.dst][e.rev].cap += d
         return d
     self.iter[idx] += 1

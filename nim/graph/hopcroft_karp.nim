@@ -8,7 +8,7 @@ type HopcroftKarp = object
   dist, match: seq[int]
   used, vv: seq[bool]
 
-proc newHopcroftKarp(n,m:int):HopcroftKarp = HopcroftKarp(graph:newSeq[seq[int]](n), match:newSeqWith(m, -1), used:newSeq[bool](n))
+proc newHopcroftKarp(n,m:int):HopcroftKarp = HopcroftKarp(graph:newSeqWith(n, newSeq[int]()), match:newSeqWith(m, -1), used:newSeq[bool](n))
 
 proc add_edge(self:var HopcroftKarp, u,v:int) = self.graph[u].add(v)
 

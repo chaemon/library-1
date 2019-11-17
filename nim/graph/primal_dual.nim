@@ -14,7 +14,7 @@ type
     isrev:bool
 
 proc newPrimalDual[flow_t, cost_t](V:int):PrimalDual[flow_t, cost_t] =
-  return PrimalDual[flow_t, cost_t](graph: newSeq[seq[flow_edge[flow_t, cost_t]]](V), Inf: cost_t.infty, potential: newSeqWith(V,0), preve:newSeqWith(V,-1),prevv:newSeqWith(V,-1))
+  return PrimalDual[flow_t, cost_t](graph: newSeqWith(V,newSeq[flow_edge[flow_t, cost_t]]()), Inf: cost_t.infty, potential: newSeqWith(V,0), preve:newSeqWith(V,-1),prevv:newSeqWith(V,-1))
 
 proc addEdge[flow_t, cost_t](self: var PrimalDual[flow_t, cost_t], src, dst:int, cap:flow_t, cost:cost_t) =
   self.graph[src].add(flow_edge[flow_t, cost_t](dst:dst, cap:cap, cost:cost, rev:self.graph[dst].len, isrev:false))
@@ -52,9 +52,10 @@ proc minCostFlow[flow_t, cost_t](self: var PrimalDual[flow_t, cost_t], s,t:int, 
     ret += addflow * self.potential[t]
     v = t
     while v != s:
-      var e = self.graph[self.prevv[v]][self.preve[v]].addr
-      e[].cap -= addflow
-      self.graph[v][e[].rev].cap += addflow
+      let e = self.graph[self.prevv[v]][self.preve[v]]
+#      e[].cap -= addflow
+      self.graph[self.prevv[v]][self.preve[v]].cap -= addflow
+      self.graph[v][e.rev].cap += addflow
       v = self.prevv[v]
   return ret
 
