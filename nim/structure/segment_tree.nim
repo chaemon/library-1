@@ -8,7 +8,7 @@ type SegmentTree[T] = object
 
 proc newSegmentTree[T](n:int,f:(T,T)->T,M1:T):SegmentTree[T] =
   var sz = 1
-  while sz <= n: sz *= 2
+  while sz < n: sz *= 2
   return SegmentTree[T](sz:sz,data:newSeqWith(sz*2,M1),M1:M1,f:f)
 
 proc set[T](self:var SegmentTree[T], k:int, x:T) =

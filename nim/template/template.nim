@@ -31,7 +31,7 @@ proc discardableId[T](x: T): T {.discardable.} =
 macro `:=`(x, y: untyped): untyped =
   if (x.kind == nnkIdent):
     return quote do:
-      when declared(`x`):
+      when declaredInScope(`x`):
         `x` = `y`
       else:
         var `x` = `y`

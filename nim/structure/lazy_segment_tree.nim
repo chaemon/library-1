@@ -14,7 +14,7 @@ proc newLazySegmentTree[Monoid, OperatorMonoid](n: int, f: (Monoid, Monoid)->Mon
   var
     sz = 1
     height = 0
-  while sz <= n: sz *= 2;height += 1
+  while sz < n: sz *= 2;height += 1
   var
     data = newSeqWith(sz * 2, M1)
     lazy = newSeqWith(sz * 2, OM0)

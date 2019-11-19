@@ -8,7 +8,7 @@ proc newDualSegmentTree[OperatorMonoid](n:int, h:(OperatorMonoid,OperatorMonoid)
   var
     sz = 1
     height = 0
-  while sz <= n: sz *= 2;height+=1
+  while sz < n: sz *= 2;height+=1
   return DualSegmentTree[OperatorMonoid](sz:sz, height:height, lazy:newSeqWith(2*sz, OM0), h:h, OM0:OM0)
 
 proc propagate[OperatorMonoid](self: var DualSegmentTree[OperatorMonoid], k:int) =
