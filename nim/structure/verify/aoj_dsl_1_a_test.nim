@@ -6,7 +6,7 @@ include "../union_find.nim"
 
 proc main() =
   let N, Q = nextInt()
-  var uf = newUnionFind(N)
+  var uf = initUnionFind(N)
   for i in 0..<Q:
     let t, x, y = nextInt()
     if t == 0: uf.unionSet(x, y)

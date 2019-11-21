@@ -9,7 +9,7 @@ proc main() =
   let
     V,E = nextInt()
   var
-    g = newGraph[int](V)
+    g = initGraph[int](V)
   for i in 0..<E:
     let
       a,b,c = nextInt()

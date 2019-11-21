@@ -10,7 +10,7 @@ include "../kruskal.nim"
 proc main() =
   var
     V, E = nextInt()
-    g = newGraph[int](V)
+    g = initGraph[int](V)
   for i in 0..<E:
     let a, b, c = nextInt()
     g.addBiEdge(a,b,c)

@@ -8,7 +8,7 @@ proc dijkstra[T](g:Graph[T], s:int): (seq[T],seq[int]) =
     prev = newSeqWith(n,-1)
     Q = initHeapQueue[Edge[T]]()
   dist[s] = 0
-  Q.push(newEdge[int](-2,s,0))
+  Q.push(initEdge[int](-2,s,0))
   while Q.len > 0:
     var e = Q.pop()
     if prev[e.dst] != -1: continue
@@ -17,7 +17,7 @@ proc dijkstra[T](g:Graph[T], s:int): (seq[T],seq[int]) =
       var w = e.weight + f.weight;
       if dist[f.dst] > w:
         dist[f.dst] = w;
-        Q.push(newEdge[T](f.src, f.dst, w))
+        Q.push(initEdge[T](f.src, f.dst, w))
     discard
   return (dist,prev)
 

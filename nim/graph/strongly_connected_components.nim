@@ -3,8 +3,8 @@ proc StronglyConnectedComponents(g:Graph[int]):(seq[int], Graph[int]) =
     comp = newSeqWith(g.len, -1)
     used = newSeq[bool](g.len)
     order = newSeq[int]()
-    gg = newGraph[int](g.len)
-    rg = newGraph[int](g.len)
+    gg = initGraph[int](g.len)
+    rg = initGraph[int](g.len)
   for i in 0..<g.len:
     for e in g[i]:
       gg.addEdge(i,e.dst)
@@ -27,7 +27,7 @@ proc StronglyConnectedComponents(g:Graph[int]):(seq[int], Graph[int]) =
   for i in order:
     if comp[i] == -1: rdfs(i, p);p += 1
 
-  var t = newGraph[int](p)
+  var t = initGraph[int](p)
   for i in 0..<g.len:
     for e in g[i]:
       let

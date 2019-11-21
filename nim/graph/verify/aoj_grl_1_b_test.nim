@@ -8,7 +8,7 @@ include "../bellman_ford.nim"
 proc main() =
   var
     V, E, R = nextInt()
-  var g = newGraph[int](V)
+  var g = initGraph[int](V)
   for i in 0..<E:
     var a, b, c = nextInt()
     g.addEdge(a,b,c)

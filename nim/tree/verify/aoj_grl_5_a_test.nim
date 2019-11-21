@@ -7,7 +7,7 @@ include "../tree_diameter.nim"
 
 proc main() =
   let N = nextInt()
-  var g = newGraph[int](N)
+  var g = initGraph[int](N)
   for i in 1..<N:
     let x, y, z = nextInt()
     g.addBiEdge(x,y,z)

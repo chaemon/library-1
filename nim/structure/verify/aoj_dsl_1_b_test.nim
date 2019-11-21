@@ -6,7 +6,7 @@ include "../weighted_union_find.nim"
 
 proc main() =
   let N, M = nextInt()
-  var tree = newWeightedUnionFind[int](N)
+  var tree = initWeightedUnionFind[int](N)
   for i in 0..<M:
     let A, B, C = nextInt()
     if A == 0:

@@ -6,7 +6,7 @@ include "../lazy_segment_tree.nim"
 
 proc main() =
   let n, q = nextInt()
-  var st = newLazySegmentTree[int,int](n, (a:int,b:int) => min(a,b), (a:int, b:int) => (if a == int.infty: a else: a + b), (a:int, b:int) => a+b, int.infty, 0)
+  var st = initLazySegmentTree[int,int](n, (a:int,b:int) => min(a,b), (a:int, b:int) => (if a == int.infty: a else: a + b), (a:int, b:int) => a+b, int.infty, 0)
   st.build(newSeqWith(n,0))
   for i in 0..<q:
     let p, s, t = nextInt()

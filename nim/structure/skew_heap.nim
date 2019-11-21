@@ -8,10 +8,10 @@ type
     g:(T, E)->T
     h:(E, E)->E
  
-proc newSkewHeap[T,E](rev = false):SkewHeap[T,E] =
+proc initSkewHeap[T,E](rev = false):SkewHeap[T,E] =
   return SkewHeap[T,E](rev:rev, g:(a:T, b:E)=>a+b, h:(a:E,b:E)=>a+b)
   
-proc newSkewHeap[T,E](g:(T,E)->T, h:(E,E)->E, rev = false): SkewHeap[T,E] =
+proc initSkewHeap[T,E](g:(T,E)->T, h:(E,E)->E, rev = false): SkewHeap[T,E] =
   return SkewHeap[T,E](rev:rev, g:g, h:h)
 
 proc propagate[T,E](self:SkewHeap[T,E], t:Node[T,E]):Node[T,E] {.discardable.} =

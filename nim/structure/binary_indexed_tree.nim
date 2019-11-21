@@ -1,7 +1,7 @@
 type BinaryIndexedTree[T] = object
   data: seq[T]
 
-proc newBinaryIndexedTree[T](sz:int):BinaryIndexedTree[T] = BinaryIndexedTree[T](data:newSeq[T](sz + 1))
+proc initBinaryIndexedTree[T](sz:int):BinaryIndexedTree[T] = BinaryIndexedTree[T](data:newSeq[T](sz + 1))
 
 proc sum[T](self:BinaryIndexedTree[T], k:int):T =
   var

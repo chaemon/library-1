@@ -8,7 +8,7 @@ include "../hopcroft_karp.nim"
 
 proc main() =
   let X, Y, E = nextInt()
-  var bm = newHopcroftKarp(X, Y)
+  var bm = initHopcroftKarp(X, Y)
   for i in 0..<E:
     let a, b = nextInt()
     bm.addEdge(a, b)

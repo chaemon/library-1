@@ -6,7 +6,7 @@ include "../mod_pow.nim"
 
 proc main() =
   let
-    M = newMint(nextInt())
+    M = initMint(nextInt())
     N = nextInt()
   echo M.pow(N)
 

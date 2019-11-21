@@ -12,7 +12,7 @@ proc main() =
   var es = newSeq[Edge[int]]()
   for i in 0..<E:
     let x,y,z = nextInt()
-    es.add(newEdge(x,y,z))
+    es.add(initEdge(x,y,z))
   let INF = (1 shl 30)
   let f = proc(sz:int, belong:seq[int]):seq[(int,int)] =
     var ret = newSeqWith(sz, (INF, -1))

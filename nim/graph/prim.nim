@@ -6,7 +6,7 @@ proc prim[T](g:Graph[T], s:int = 0):(T, seq[Edge[T]]) =
     used = newSeqWith(g.len, false)
     que = initHeapQueue[Edge[T]]()
     es = newSeq[Edge[T]]()
-  que.push(newEdge[T](-1, s, 0))
+  que.push(initEdge[T](-1, s, 0))
   while que.len > 0:
     var p = que.pop()
     if used[p.dst]: continue

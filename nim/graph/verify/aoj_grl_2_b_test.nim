@@ -14,8 +14,8 @@ proc main() =
     edges = newSeq[Edge[int]]()
   for i in 0..<E:
     let a, b, c = nextInt()
-    edges.add(newEdge(a,b,c))
-  var t = newMinimumSpanningTreeArborescence[int](edges, V)
+    edges.add(initEdge(a,b,c))
+  var t = initMinimumSpanningTreeArborescence[int](edges, V)
   echo t.build(R)
 
 main()

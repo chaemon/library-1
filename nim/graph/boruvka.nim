@@ -2,7 +2,7 @@ proc boruvka[T,F](N:int, f:F):T =
   var
     rev = newseq[int](N)
     belong = newSeq[int](N)
-    uf = newUnionFind(N)
+    uf = initUnionFind(N)
     ret = T(0)
   while uf.size(0) != N:
     var p = 0

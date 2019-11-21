@@ -3,7 +3,7 @@ type DoublingLowestCommonAncestor[T] = object
   dep:seq[int]
   table:seq[seq[int]]
 
-proc newDoublingLowestCommonAncestor[T](g:Graph[T], r = 0):DoublingLowestCommonAncestor[T] =
+proc initDoublingLowestCommonAncestor[T](g:Graph[T], r = 0):DoublingLowestCommonAncestor[T] =
   var
     LOG = 0
     t = 1

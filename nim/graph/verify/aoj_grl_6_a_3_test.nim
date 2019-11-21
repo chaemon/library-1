@@ -7,7 +7,7 @@ include "../push_relabel.nim"
 
 proc main() =
   let V,E = nextInt()
-  var g = newPushRelabel[int](V)
+  var g = initPushRelabel[int](V)
   for i in 0..<E:
     let a,b,c = nextInt()
     g.addEdge(a, b, c)

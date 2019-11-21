@@ -7,7 +7,7 @@ include "../combination.nim"
 
 proc main() =
   let n, k = nextInt()
-  var T = newCombination[Mint]()
+  var T = initCombination[Mint]()
   echo T.C(n-1,k-1)
 
 main()

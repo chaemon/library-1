@@ -7,7 +7,7 @@ include "../dinic.nim"
 
 proc main() =
   let V, E = nextInt()
-  var g = newDinic[int](V)
+  var g = initDinic[int](V)
   for i in 0..<E:
     let a,b,c = nextInt()
     g.addEdge(a, b, c)

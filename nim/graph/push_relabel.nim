@@ -16,7 +16,7 @@ type
     hs:seq[seq[int]]
     Inf:flow_t
 
-proc newPushRelabel[flow_t](V:int):PushRelabel[flow_t] =
+proc initPushRelabel[flow_t](V:int):PushRelabel[flow_t] =
   return PushRelabel[flow_t](graph:newSeqWith(V, newSeq[flow_edge[flow_t]]()), Inf:flow_t.infty, hs:newSeqWith(V + 1,newSeq[int]()), high:0)
 
 proc addEdge[flow_t](self:var PushRelabel[flow_t], src, dst:int, cap:flow_t, idx = -1) =

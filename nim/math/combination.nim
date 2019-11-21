@@ -4,7 +4,7 @@ type Combination[T] = object
   sz:int
   fact_a, rfact_a, inv_a:seq[T]
 
-proc newCombination[T](sz = 1):Combination[T] = 
+proc initCombination[T](sz = 1):Combination[T] = 
   var
     fact_a = newSeqWith(sz + 1, T())
     rfact_a = newSeqWith(sz + 1, T())
@@ -19,13 +19,13 @@ proc newCombination[T](sz = 1):Combination[T] =
   return Combination[T](sz:sz, fact_a:fact_a, rfact_a:rfact_a,inv_a:inv_a)
 
 proc fact[T](self:var Combination[T], k:int):T =
-  while self.sz < k:self = newCombination[T](self.sz*2)
+  while self.sz < k:self = initCombination[T](self.sz*2)
   return self.fact_a[k]
 proc rfact[T](self:var Combination[T], k:int):T =
-  while self.sz < k:self = newCombination[T](self.sz*2)
+  while self.sz < k:self = initCombination[T](self.sz*2)
   self.rfact_a[k]
 proc inv[T](self:var Combination[T], k:int):T =
-  while self.sz < k:self = newCombination[T](self.sz*2)
+  while self.sz < k:self = initCombination[T](self.sz*2)
   self.inv_a[k]
 
 proc P[T](self:var Combination[T], n,r:int):T =

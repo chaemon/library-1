@@ -13,7 +13,7 @@ type
     rev:int
     isrev:bool
 
-proc newPrimalDual[flow_t, cost_t](V:int):PrimalDual[flow_t, cost_t] =
+proc initPrimalDual[flow_t, cost_t](V:int):PrimalDual[flow_t, cost_t] =
   return PrimalDual[flow_t, cost_t](graph: newSeqWith(V,newSeq[flow_edge[flow_t, cost_t]]()), Inf: cost_t.infty, potential: newSeqWith(V,0), preve:newSeqWith(V,-1),prevv:newSeqWith(V,-1))
 
 proc addEdge[flow_t, cost_t](self: var PrimalDual[flow_t, cost_t], src, dst:int, cap:flow_t, cost:cost_t) =

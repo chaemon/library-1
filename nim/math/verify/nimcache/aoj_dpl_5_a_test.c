@@ -33,10 +33,10 @@ N_NIMCALL(NI, nextint_159016)(NI base);
 N_NIMCALL(NimStringDesc*, HEX24_159192)(Mint159105 a);
 N_NIMCALL(NimStringDesc*, nimIntToStr)(NI x);
 N_NIMCALL(Mint159105, pow_159196)(Mint159105 x_159198, NI n_159199);
-N_NIMCALL(Mint159105, newmint_159205)(NI a_159209);
+N_NIMCALL(Mint159105, initmint_159205)(NI a_159209);
 N_NIMCALL(void, HEX2AHEX3D_159225)(Mint159105* a, Mint159105 b);
 static N_INLINE(void, HEX2AHEX3D_159233)(NI* x, NI y);
-N_NIMCALL(Mint159105, newmint_159125)(Mint159105 a);
+N_NIMCALL(Mint159105, initmint_159125)(Mint159105 a);
 static N_INLINE(void, initStackBottomWith)(void* locals);
 N_NOINLINE(void, setStackBottom)(void* thestackbottom);
 NIM_EXTERNC N_NOINLINE(void, systemInit000)(void);
@@ -91,7 +91,7 @@ N_NIMCALL(NimStringDesc*, HEX24_159192)(Mint159105 a) {
 	return result;
 }
 
-N_NIMCALL(Mint159105, newmint_159205)(NI a_159209) {
+N_NIMCALL(Mint159105, initmint_159205)(NI a_159209) {
 	Mint159105 result;
 	NI a;
 	Mint159105 LOC5;
@@ -115,7 +115,7 @@ static N_INLINE(void, HEX2AHEX3D_159233)(NI* x, NI y) {
 	(*x) = (NI)((*x) * y);
 }
 
-N_NIMCALL(Mint159105, newmint_159125)(Mint159105 a) {
+N_NIMCALL(Mint159105, initmint_159125)(Mint159105 a) {
 	Mint159105 result;
 {	memset((void*)(&result), 0, sizeof(result));
 	result = a;
@@ -126,7 +126,7 @@ N_NIMCALL(Mint159105, newmint_159125)(Mint159105 a) {
 
 N_NIMCALL(void, HEX2AHEX3D_159225)(Mint159105* a, Mint159105 b) {
 	Mint159105 LOC1;
-	LOC1 = newmint_159125(b);
+	LOC1 = initmint_159125(b);
 	HEX2AHEX3D_159233((&(*a).v), LOC1.v);
 	(*a).v = ((NI) ((NI)((*a).v % ((NI) 1000000007))));
 }
@@ -141,7 +141,7 @@ N_NIMCALL(Mint159105, pow_159196)(Mint159105 x_159198, NI n_159199) {
 	LOC1.Field1 = n_159199;
 	x = LOC1.Field0;
 	n = LOC1.Field1;
-	result = newmint_159205(((NI) 1));
+	result = initmint_159205(((NI) 1));
 	{
 		while (1) {
 			if (!(((NI) 0) < n)) goto LA3;
@@ -165,7 +165,7 @@ N_NIMCALL(void, main_159302)(void) {
 	NimStringDesc* LOC3;
 	n = nextint_159016(((NI) 0));
 	k = nextint_159016(((NI) 0));
-	LOC1 = newmint_159205(k);
+	LOC1 = initmint_159205(k);
 	LOC2 = pow_159196(LOC1, n);
 	LOC3 = 0;
 	LOC3 = HEX24_159192(LOC2);

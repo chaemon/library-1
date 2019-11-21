@@ -7,7 +7,7 @@ include "../segment_tree.nim"
 proc main() =
   let N, Q = nextInt()
   let inf = (1 shl 31) - 1
-  var st = newSegmentTree[int](N, (a:int,b:int)=>min(a,b), inf)
+  var st = initSegmentTree[int](N, (a:int,b:int)=>min(a,b), inf)
   st.build(newSeqWith(N,inf))
   for i in 0..<Q:
     let T, X, Y = nextInt()

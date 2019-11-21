@@ -10,7 +10,7 @@ type LazySegmentTree[Monoid, OperatorMonoid] = object
   M1: Monoid
   OM0: OperatorMonoid
 
-proc newLazySegmentTree[Monoid, OperatorMonoid](n: int, f: (Monoid, Monoid)->Monoid, g: (Monoid, OperatorMonoid)->Monoid, h:(OperatorMonoid, OperatorMonoid)->OperatorMonoid, M1: Monoid, OM0: OperatorMonoid): LazySegmentTree[Monoid, OperatorMonoid] =
+proc initLazySegmentTree[Monoid, OperatorMonoid](n: int, f: (Monoid, Monoid)->Monoid, g: (Monoid, OperatorMonoid)->Monoid, h:(OperatorMonoid, OperatorMonoid)->OperatorMonoid, M1: Monoid, OM0: OperatorMonoid): LazySegmentTree[Monoid, OperatorMonoid] =
   var
     sz = 1
     height = 0

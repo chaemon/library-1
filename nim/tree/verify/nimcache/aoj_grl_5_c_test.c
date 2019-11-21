@@ -227,7 +227,7 @@ struct TY159204 {
 };
 N_NIMCALL(void, main_159297)(void);
 N_NIMCALL(NI, nextint_159016)(NI base);
-N_NIMCALL(Graph159308*, newgraph_159301)(NI n);
+N_NIMCALL(Graph159308*, initgraph_159301)(NI n);
 N_NIMCALL(Graph159308*, newseq_159347)(NI len);
 N_NIMCALL(void, TMP36)(void* p, NI op);
 N_NIMCALL(void, nimGCvisit)(void* d, NI op);
@@ -240,9 +240,9 @@ N_NOINLINE(void, addzct_51417)(Cellseq47521* s, Cell47505* c);
 N_NIMCALL(void, genericSeqAssign)(void* dest, void* src_84004, TNimType* mt);
 static N_INLINE(Slice88082, HEX2EHEX2E_102424)(NI a, NI b);
 N_NIMCALL(void, addbiedge_159455)(Graph159308** g, NI src, NI dst, NI weight);
-N_NIMCALL(Edge159312, newedge_159477)(NI src, NI dst, NI weight, NI rev);
+N_NIMCALL(Edge159312, initedge_159477)(NI src, NI dst, NI weight, NI rev);
 N_NIMCALL(TGenericSeq*, incrSeqV2)(TGenericSeq* seq, NI elemsize);
-N_NIMCALL(void, newdoublinglowestcommonancestor_159538)(Graph159308* g, NI r, Doublinglowestcommonancestor159200* Result);
+N_NIMCALL(void, initdoublinglowestcommonancestor_159538)(Graph159308* g, NI r, Doublinglowestcommonancestor159200* Result);
 N_NIMCALL(void, TMP44)(void* p, NI op);
 N_NIMCALL(void, TMP45)(void* p, NI op);
 N_NIMCALL(void, TMP46)(void* p, NI op);
@@ -360,7 +360,7 @@ static N_INLINE(void, asgnRefNoCycle)(void** dest, void* src) {
 	(*dest) = src;
 }
 
-N_NIMCALL(Graph159308*, newgraph_159301)(NI n) {
+N_NIMCALL(Graph159308*, initgraph_159301)(NI n) {
 	Graph159308* result_159321;
 	Graph159308* result_159323;
 {	result_159321 = 0;
@@ -396,7 +396,7 @@ static N_INLINE(Slice88082, HEX2EHEX2E_102424)(NI a, NI b) {
 	return result;
 }
 
-N_NIMCALL(Edge159312, newedge_159477)(NI src, NI dst, NI weight, NI rev) {
+N_NIMCALL(Edge159312, initedge_159477)(NI src, NI dst, NI weight, NI rev) {
 	Edge159312 result;
 	Edge159312 e;
 {	memset((void*)(&result), 0, sizeof(result));
@@ -414,11 +414,11 @@ N_NIMCALL(Edge159312, newedge_159477)(NI src, NI dst, NI weight, NI rev) {
 N_NIMCALL(void, addbiedge_159455)(Graph159308** g, NI src, NI dst, NI weight) {
 	Edge159312 LOC1;
 	Edge159312 LOC2;
-	LOC1 = newedge_159477(src, dst, weight, ((*g)->data[dst] ? (*g)->data[dst]->Sup.len : 0));
+	LOC1 = initedge_159477(src, dst, weight, ((*g)->data[dst] ? (*g)->data[dst]->Sup.len : 0));
 	(*g)->data[src] = (TY159309*) incrSeqV2(&((*g)->data[src])->Sup, sizeof(Edge159312));
 	(*g)->data[src]->data[(*g)->data[src]->Sup.len] = LOC1;
 	++(*g)->data[src]->Sup.len;
-	LOC2 = newedge_159477(dst, src, weight, (NI)(((*g)->data[src] ? (*g)->data[src]->Sup.len : 0) - ((NI) 1)));
+	LOC2 = initedge_159477(dst, src, weight, (NI)(((*g)->data[src] ? (*g)->data[src]->Sup.len : 0) - ((NI) 1)));
 	(*g)->data[dst] = (TY159309*) incrSeqV2(&((*g)->data[dst])->Sup, sizeof(Edge159312));
 	(*g)->data[dst]->data[(*g)->data[dst]->Sup.len] = LOC2;
 	++(*g)->data[dst]->Sup.len;
@@ -485,7 +485,7 @@ N_CLOSURE(void, dfs_159740)(NI idx, NI par, NI d, void* ClEnv) {
 	}
 }
 
-N_NIMCALL(void, newdoublinglowestcommonancestor_159538)(Graph159308* g, NI r, Doublinglowestcommonancestor159200* Result) {
+N_NIMCALL(void, initdoublinglowestcommonancestor_159538)(Graph159308* g, NI r, Doublinglowestcommonancestor159200* Result) {
 	TY159873* HEX3Aenv_159880;
 	NI Log;
 	NI t;
@@ -721,7 +721,7 @@ N_NIMCALL(void, main_159297)(void) {
 	Doublinglowestcommonancestor159200 lca;
 	NI Q;
 	N = nextint_159016(((NI) 0));
-	g = newgraph_159301(N);
+	g = initgraph_159301(N);
 	{
 		NI i_159425;
 		Slice88082 HEX3Atmp_160049;
@@ -783,7 +783,7 @@ N_NIMCALL(void, main_159297)(void) {
 	}
 	memset((void*)(&lca), 0, sizeof(lca));
 	memset((void*)(&lca), 0, sizeof(lca));
-	newdoublinglowestcommonancestor_159538(g, ((NI) 0), (&lca));
+	initdoublinglowestcommonancestor_159538(g, ((NI) 0), (&lca));
 	Q = nextint_159016(((NI) 0));
 	{
 		NI i_159964;

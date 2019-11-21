@@ -7,7 +7,7 @@ include "../bipartite_matching.nim"
 
 proc main() =
   let X, Y, E = nextInt()
-  var bm = newBipartiteMatching(X + Y)
+  var bm = initBipartiteMatching(X + Y)
   for i in 0..<E:
     let a, b = nextInt()
     bm.add_edge(a, X + b);

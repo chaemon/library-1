@@ -6,7 +6,7 @@ include "../dual_segment_tree.nim"
 
 proc main() =
   let n, q = nextInt()
-  var st = newDualSegmentTree[int](n, (a:int,b:int)=>b, (1 shl 31) - 1)
+  var st = initDualSegmentTree[int](n, (a:int,b:int)=>b, (1 shl 31) - 1)
   for i in 0..<q:
     let p= nextInt()
     if p == 0:

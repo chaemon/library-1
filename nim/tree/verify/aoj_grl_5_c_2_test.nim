@@ -7,13 +7,13 @@ include "../heavy_light_decomposition.nim"
 
 proc main() =
   let N = nextInt()
-  var g = newGraph[int](N)
+  var g = initGraph[int](N)
   for i in 0..<N:
     let k = nextInt()
     for j in 0..<k:
       let c = nextInt()
       g.addBiEdge(i, c)
-  let tree = newHeavyLightDecomposition(g)
+  let tree = initHeavyLightDecomposition(g)
   let Q = nextInt()
   for i in 0..<Q:
     let u, v = nextInt()

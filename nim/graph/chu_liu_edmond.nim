@@ -4,18 +4,18 @@ type MinimumSpanningTreeArborescence[T] = object
   es:seq[Edge[T]]
   V:int
 
-proc newMinimumSpanningTreeArborescence[T](es:Edges[T], V:int):MinimumSpanningTreeArborescence[T] =
+proc initMinimumSpanningTreeArborescence[T](es:Edges[T], V:int):MinimumSpanningTreeArborescence[T] =
   return MinimumSpanningTreeArborescence[T](es:es, V:V)
 
 proc build[T](self: var MinimumSpanningTreeArborescence[T], start:int):T =
   let
     g = (a:(T,int), b:T) => (a[0] + b, a[1])
     h = (a:T, b:T) => a + b
-  var heap = newSkewHeap[(T,int), int](g, h)
+  var heap = initSkewHeap[(T,int), int](g, h)
   var heaps = newSeqWith(self.V, heap.makeheap())
   for e in self.es: heap.push(heaps[e.dst], (e.weight, e.src))
   var
-    uf = newUnionFind(self.V)
+    uf = initUnionFind(self.V)
     used = newSeqWith(self.V, -1)
   used[start] = start
 

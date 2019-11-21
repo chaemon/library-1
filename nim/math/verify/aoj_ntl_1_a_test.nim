@@ -7,7 +7,7 @@ include "../prime_factor.nim"
 proc main() =
   let N = nextInt()
   stdout.write N, ":"
-  let pf = prime_factor(N)
+  let pf = primeFactor(N)
   for k,v in pf:
     for i in 0..<v: stdout.write " ",k
   echo ""

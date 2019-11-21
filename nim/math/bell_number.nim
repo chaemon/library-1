@@ -4,7 +4,7 @@ proc bell_number[T](n,k:int):T =
     k = min(k,n)
     ret = T()
     pref = newSeq[T](k + 1)
-    uku = newCombination[T](k)
+    uku = initCombination[T](k)
   pref[0] = T().convert(1);
   for i in 1..k:
     if (i and 1)>0: pref[i] = pref[i - 1] - uku.rfact(i)

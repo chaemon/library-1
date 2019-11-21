@@ -67,19 +67,19 @@ N_NIMCALL(NI, nextint_159016)(NI base);
 N_NIMCALL(NimStringDesc*, HEX24_159192)(Mint159105 a);
 N_NIMCALL(NimStringDesc*, nimIntToStr)(NI x);
 N_NIMCALL(Mint159105, stirlingnumbersecond_159477)(NI n, NI k);
-N_NIMCALL(void, newcombination_159486)(NI sz, Combination159493* Result);
+N_NIMCALL(void, initcombination_159486)(NI sz, Combination159493* Result);
 N_NIMCALL(TY159499*, newseq_159514)(NI len);
 N_NIMCALL(void, TMP35)(void* p, NI op);
 N_NIMCALL(void, genericSeqAssign)(void* dest, void* src_84004, TNimType* mt);
 N_NIMCALL(Mint159105, convert_159610)(Mint159105 self, NI a);
-N_NIMCALL(Mint159105, newmint_159205)(NI a_159209);
+N_NIMCALL(Mint159105, initmint_159205)(NI a_159209);
 N_NIMCALL(Mint159105, HEX2A_159654)(Mint159105 a, NI b);
 N_NIMCALL(void, HEX2AHEX3D_159664)(Mint159105* a, NI b);
 static N_INLINE(void, HEX2AHEX3D_159233)(NI* x, NI y);
 N_NIMCALL(void, HEX2FHEX3D_159691)(Mint159105* a, Mint159105 b);
 N_NIMCALL(NI, invmod_159272)(NI a, NI m);
 N_NIMCALL(NI, extgcd_159254)(NI a, NI b, NI* x, NI* y);
-N_NIMCALL(Mint159105, newmint_159125)(Mint159105 a);
+N_NIMCALL(Mint159105, initmint_159125)(Mint159105 a);
 N_NIMCALL(Mint159105, HEX2A_159741)(Mint159105 a, Mint159105 b);
 N_NIMCALL(void, HEX2AHEX3D_159225)(Mint159105* a, Mint159105 b);
 N_NIMCALL(void, unsureAsgnRef)(void** dest, void* src);
@@ -154,7 +154,7 @@ N_NIMCALL(void, TMP35)(void* p, NI op) {
 	}
 }
 
-N_NIMCALL(Mint159105, newmint_159205)(NI a_159209) {
+N_NIMCALL(Mint159105, initmint_159205)(NI a_159209) {
 	Mint159105 result;
 	NI a;
 	Mint159105 LOC5;
@@ -177,7 +177,7 @@ N_NIMCALL(Mint159105, newmint_159205)(NI a_159209) {
 N_NIMCALL(Mint159105, convert_159610)(Mint159105 self, NI a) {
 	Mint159105 result;
 	memset((void*)(&result), 0, sizeof(result));
-	result = newmint_159205(a);
+	result = initmint_159205(a);
 	return result;
 }
 
@@ -187,7 +187,7 @@ static N_INLINE(void, HEX2AHEX3D_159233)(NI* x, NI y) {
 
 N_NIMCALL(void, HEX2AHEX3D_159664)(Mint159105* a, NI b) {
 	Mint159105 LOC1;
-	LOC1 = newmint_159205(b);
+	LOC1 = initmint_159205(b);
 	HEX2AHEX3D_159233((&(*a).v), LOC1.v);
 	(*a).v = ((NI) ((NI)((*a).v % ((NI) 1000000007))));
 }
@@ -249,7 +249,7 @@ N_NIMCALL(NI, invmod_159272)(NI a, NI m) {
 	return result;
 }
 
-N_NIMCALL(Mint159105, newmint_159125)(Mint159105 a) {
+N_NIMCALL(Mint159105, initmint_159125)(Mint159105 a) {
 	Mint159105 result;
 {	memset((void*)(&result), 0, sizeof(result));
 	result = a;
@@ -261,7 +261,7 @@ N_NIMCALL(Mint159105, newmint_159125)(Mint159105 a) {
 N_NIMCALL(void, HEX2FHEX3D_159691)(Mint159105* a, Mint159105 b) {
 	Mint159105 LOC1;
 	NI LOC2;
-	LOC1 = newmint_159125(b);
+	LOC1 = initmint_159125(b);
 	LOC2 = 0;
 	LOC2 = invmod_159272(LOC1.v, ((NI) 1000000007));
 	HEX2AHEX3D_159233((&(*a).v), LOC2);
@@ -270,7 +270,7 @@ N_NIMCALL(void, HEX2FHEX3D_159691)(Mint159105* a, Mint159105 b) {
 
 N_NIMCALL(void, HEX2AHEX3D_159225)(Mint159105* a, Mint159105 b) {
 	Mint159105 LOC1;
-	LOC1 = newmint_159125(b);
+	LOC1 = initmint_159125(b);
 	HEX2AHEX3D_159233((&(*a).v), LOC1.v);
 	(*a).v = ((NI) ((NI)((*a).v % ((NI) 1000000007))));
 }
@@ -287,7 +287,7 @@ N_NIMCALL(Mint159105, HEX2A_159741)(Mint159105 a, Mint159105 b) {
 	return result;
 }
 
-N_NIMCALL(void, newcombination_159486)(NI sz, Combination159493* Result) {
+N_NIMCALL(void, initcombination_159486)(NI sz, Combination159493* Result) {
 	TY159499* facta;
 	TY159499* result_159510;
 	TY159499* rfacta;
@@ -437,7 +437,7 @@ N_NIMCALL(Mint159105, pow_159196)(Mint159105 x_159198, NI n_159199) {
 	LOC1.Field1 = n_159199;
 	x = LOC1.Field0;
 	n = LOC1.Field1;
-	result = newmint_159205(((NI) 1));
+	result = initmint_159205(((NI) 1));
 	{
 		while (1) {
 			if (!(((NI) 0) < n)) goto LA3;
@@ -459,7 +459,7 @@ N_NIMCALL(Mint159105, fact_159848)(Combination159493* self, NI k) {
 	{
 		while (1) {
 			if (!((*self).sz < k)) goto LA2;
-			newcombination_159486((NI)((*self).sz * ((NI) 2)), (&(*self)));
+			initcombination_159486((NI)((*self).sz * ((NI) 2)), (&(*self)));
 		} LA2: ;
 	}
 	result = (*self).facta->data[k];
@@ -474,7 +474,7 @@ N_NIMCALL(Mint159105, rfact_159868)(Combination159493* self, NI k) {
 	{
 		while (1) {
 			if (!((*self).sz < k)) goto LA2;
-			newcombination_159486((NI)((*self).sz * ((NI) 2)), (&(*self)));
+			initcombination_159486((NI)((*self).sz * ((NI) 2)), (&(*self)));
 		} LA2: ;
 	}
 	result = (*self).rfacta->data[k];
@@ -514,7 +514,7 @@ N_NIMCALL(Mint159105, C_159835)(Combination159493* self, NI p, NI q) {
 
 N_NIMCALL(void, HEX2DHEX3D_159930)(Mint159105* a, Mint159105 b) {
 	Mint159105 LOC1;
-	LOC1 = newmint_159125(b);
+	LOC1 = initmint_159125(b);
 	(*a).v -= LOC1.v;
 	{
 		if (!((*a).v < ((NI) 0))) goto LA4;
@@ -525,7 +525,7 @@ N_NIMCALL(void, HEX2DHEX3D_159930)(Mint159105* a, Mint159105 b) {
 
 N_NIMCALL(void, HEX2BHEX3D_159957)(Mint159105* a, Mint159105 b) {
 	Mint159105 LOC1;
-	LOC1 = newmint_159125(b);
+	LOC1 = initmint_159125(b);
 	(*a).v += LOC1.v;
 	{
 		if (!(((NI) 1000000007) <= (*a).v)) goto LA4;
@@ -542,7 +542,7 @@ N_NIMCALL(Mint159105, stirlingnumbersecond_159477)(NI n, NI k) {
 	memset((void*)(&result), 0, sizeof(result));
 	memset((void*)(&table), 0, sizeof(table));
 	memset((void*)(&table), 0, sizeof(table));
-	newcombination_159486(k, (&table));
+	initcombination_159486(k, (&table));
 	memset((void*)(&LOC1), 0, sizeof(LOC1));
 	result = LOC1;
 	{

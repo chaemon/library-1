@@ -7,7 +7,7 @@ include "../ford_fulkerson.nim"
 
 proc main() =
   let V, E = nextInt()
-  var g = newFordFulkerson[int](V)
+  var g = initFordFulkerson[int](V)
   for i in 0..<E:
     let a,b,c = nextInt()
     g.addEdge(a, b, c);

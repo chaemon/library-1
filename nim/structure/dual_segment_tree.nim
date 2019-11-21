@@ -4,7 +4,7 @@ type DualSegmentTree[OperatorMonoid] = object
   h: (OperatorMonoid, OperatorMonoid) -> OperatorMonoid
   OM0: OperatorMonoid
 
-proc newDualSegmentTree[OperatorMonoid](n:int, h:(OperatorMonoid,OperatorMonoid)->OperatorMonoid, OM0:OperatorMonoid):DualSegmentTree[OperatorMonoid] =
+proc initDualSegmentTree[OperatorMonoid](n:int, h:(OperatorMonoid,OperatorMonoid)->OperatorMonoid, OM0:OperatorMonoid):DualSegmentTree[OperatorMonoid] =
   var
     sz = 1
     height = 0

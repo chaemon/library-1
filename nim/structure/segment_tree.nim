@@ -6,7 +6,7 @@ type SegmentTree[T] = object
   M1:T
   f:(T,T)->T
 
-proc newSegmentTree[T](n:int,f:(T,T)->T,M1:T):SegmentTree[T] =
+proc initSegmentTree[T](n:int,f:(T,T)->T,M1:T):SegmentTree[T] =
   var sz = 1
   while sz < n: sz *= 2
   return SegmentTree[T](sz:sz,data:newSeqWith(sz*2,M1),M1:M1,f:f)

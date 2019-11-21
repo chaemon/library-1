@@ -2,7 +2,7 @@
 type UnionFind = object
   data:seq[int]
 
-proc newUnionFind(size:int):UnionFind =
+proc initUnionFind(size:int):UnionFind =
   var uf:UnionFind
   uf.data = newSeqWith(size,-1)
   return uf

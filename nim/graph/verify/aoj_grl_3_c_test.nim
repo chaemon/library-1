@@ -7,7 +7,7 @@ include "../strongly_connected_components.nim"
 
 proc main() =
   let V, E = nextInt()
-  var g = newGraph[int](V)
+  var g = initGraph[int](V)
   for i in 0..<E:
     let a,b = nextInt()
     g.addEdge(a,b)

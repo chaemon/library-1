@@ -199,10 +199,10 @@ static N_INLINE(void, rtladdzct_53001)(Cell47505* c);
 N_NOINLINE(void, addzct_51417)(Cellseq47521* s, Cell47505* c);
 N_NIMCALL(void, genericSeqAssign)(void* dest, void* src_84004, TNimType* mt);
 N_NIMCALL(Mint159105, convert_159420)(Mint159105 self, NI a);
-N_NIMCALL(Mint159105, newmint_159205)(NI a_159209);
+N_NIMCALL(Mint159105, initmint_159205)(NI a_159209);
 N_NIMCALL(Mint159105, HEX2B_159456)(Mint159105 a, Mint159105 b);
 N_NIMCALL(void, HEX2BHEX3D_159466)(Mint159105* a, Mint159105 b);
-N_NIMCALL(Mint159105, newmint_159125)(Mint159105 a);
+N_NIMCALL(Mint159105, initmint_159125)(Mint159105 a);
 static N_INLINE(void, initStackBottomWith)(void* locals);
 N_NOINLINE(void, setStackBottom)(void* thestackbottom);
 NIM_EXTERNC N_NOINLINE(void, systemInit000)(void);
@@ -314,7 +314,7 @@ static N_INLINE(void, asgnRefNoCycle)(void** dest, void* src) {
 	(*dest) = src;
 }
 
-N_NIMCALL(Mint159105, newmint_159205)(NI a_159209) {
+N_NIMCALL(Mint159105, initmint_159205)(NI a_159209) {
 	Mint159105 result;
 	NI a;
 	Mint159105 LOC5;
@@ -337,11 +337,11 @@ N_NIMCALL(Mint159105, newmint_159205)(NI a_159209) {
 N_NIMCALL(Mint159105, convert_159420)(Mint159105 self, NI a) {
 	Mint159105 result;
 	memset((void*)(&result), 0, sizeof(result));
-	result = newmint_159205(a);
+	result = initmint_159205(a);
 	return result;
 }
 
-N_NIMCALL(Mint159105, newmint_159125)(Mint159105 a) {
+N_NIMCALL(Mint159105, initmint_159125)(Mint159105 a) {
 	Mint159105 result;
 {	memset((void*)(&result), 0, sizeof(result));
 	result = a;
@@ -352,7 +352,7 @@ N_NIMCALL(Mint159105, newmint_159125)(Mint159105 a) {
 
 N_NIMCALL(void, HEX2BHEX3D_159466)(Mint159105* a, Mint159105 b) {
 	Mint159105 LOC1;
-	LOC1 = newmint_159125(b);
+	LOC1 = initmint_159125(b);
 	(*a).v += LOC1.v;
 	{
 		if (!(((NI) 1000000007) <= (*a).v)) goto LA4;

@@ -1,5 +1,5 @@
 proc stirlingNumberSecond[T](n,k:int):T =
-  var table = newCombination[T](k)
+  var table = initCombination[T](k)
   result = T()
   for i in 0..k:
     let a = T().convert(i).pow(n) * table.C(k, i)

@@ -235,7 +235,7 @@ struct TY159201 {
 };
 N_NIMCALL(void, main_159404)(void);
 N_NIMCALL(NI, nextint_159016)(NI base);
-N_NIMCALL(Graph159415*, newgraph_159408)(NI n);
+N_NIMCALL(Graph159415*, initgraph_159408)(NI n);
 N_NIMCALL(Graph159415*, newseq_159454)(NI len);
 N_NIMCALL(void, TMP36)(void* p, NI op);
 N_NIMCALL(void, nimGCvisit)(void* d, NI op);
@@ -248,9 +248,9 @@ N_NOINLINE(void, addzct_51417)(Cellseq47521* s, Cell47505* c);
 N_NIMCALL(void, genericSeqAssign)(void* dest, void* src_84004, TNimType* mt);
 static N_INLINE(Slice88082, HEX2EHEX2E_102424)(NI a, NI b);
 N_NIMCALL(void, addbiedge_159562)(Graph159415** g, NI src, NI dst, NI weight);
-N_NIMCALL(Edge159419, newedge_159584)(NI src, NI dst, NI weight, NI rev);
+N_NIMCALL(Edge159419, initedge_159584)(NI src, NI dst, NI weight, NI rev);
 N_NIMCALL(TGenericSeq*, incrSeqV2)(TGenericSeq* seq, NI elemsize);
-N_NIMCALL(void, newheavylightdecomposition_159645)(Graph159415* g_159650, Heavylightdecomposition159200* Result);
+N_NIMCALL(void, initheavylightdecomposition_159645)(Graph159415* g_159650, Heavylightdecomposition159200* Result);
 N_NIMCALL(void, TMP44)(void* p, NI op);
 N_NIMCALL(void, TMP45)(void* p, NI op);
 N_NIMCALL(void*, newObj)(TNimType* typ, NI size);
@@ -366,7 +366,7 @@ static N_INLINE(void, asgnRefNoCycle)(void** dest, void* src) {
 	(*dest) = src;
 }
 
-N_NIMCALL(Graph159415*, newgraph_159408)(NI n) {
+N_NIMCALL(Graph159415*, initgraph_159408)(NI n) {
 	Graph159415* result_159428;
 	Graph159415* result_159430;
 {	result_159428 = 0;
@@ -402,7 +402,7 @@ static N_INLINE(Slice88082, HEX2EHEX2E_102424)(NI a, NI b) {
 	return result;
 }
 
-N_NIMCALL(Edge159419, newedge_159584)(NI src, NI dst, NI weight, NI rev) {
+N_NIMCALL(Edge159419, initedge_159584)(NI src, NI dst, NI weight, NI rev) {
 	Edge159419 result;
 	Edge159419 e;
 {	memset((void*)(&result), 0, sizeof(result));
@@ -420,11 +420,11 @@ N_NIMCALL(Edge159419, newedge_159584)(NI src, NI dst, NI weight, NI rev) {
 N_NIMCALL(void, addbiedge_159562)(Graph159415** g, NI src, NI dst, NI weight) {
 	Edge159419 LOC1;
 	Edge159419 LOC2;
-	LOC1 = newedge_159584(src, dst, weight, ((*g)->data[dst] ? (*g)->data[dst]->Sup.len : 0));
+	LOC1 = initedge_159584(src, dst, weight, ((*g)->data[dst] ? (*g)->data[dst]->Sup.len : 0));
 	(*g)->data[src] = (TY159416*) incrSeqV2(&((*g)->data[src])->Sup, sizeof(Edge159419));
 	(*g)->data[src]->data[(*g)->data[src]->Sup.len] = LOC1;
 	++(*g)->data[src]->Sup.len;
-	LOC2 = newedge_159584(dst, src, weight, (NI)(((*g)->data[src] ? (*g)->data[src]->Sup.len : 0) - ((NI) 1)));
+	LOC2 = initedge_159584(dst, src, weight, (NI)(((*g)->data[src] ? (*g)->data[src]->Sup.len : 0) - ((NI) 1)));
 	(*g)->data[dst] = (TY159416*) incrSeqV2(&((*g)->data[dst])->Sup, sizeof(Edge159419));
 	(*g)->data[dst]->data[(*g)->data[dst]->Sup.len] = LOC2;
 	++(*g)->data[dst]->Sup.len;
@@ -555,7 +555,7 @@ N_CLOSURE(void, dfshld_159830)(NI idx, NI par, NI* times, void* ClEnv) {
 	(*HEX3Aenvp_160023).outa159683->data[idx] = (*times);
 }
 
-N_NIMCALL(void, newheavylightdecomposition_159645)(Graph159415* g_159650, Heavylightdecomposition159200* Result) {
+N_NIMCALL(void, initheavylightdecomposition_159645)(Graph159415* g_159650, Heavylightdecomposition159200* Result) {
 	TY160016* HEX3Aenv_160028;
 	TY159688 LOC1;
 	NI t;
@@ -630,7 +630,7 @@ N_NIMCALL(void, main_159404)(void) {
 	Heavylightdecomposition159200 tree;
 	NI Q;
 	N = nextint_159016(((NI) 0));
-	g = newgraph_159408(N);
+	g = initgraph_159408(N);
 	{
 		NI i_159532;
 		Slice88082 HEX3Atmp_160104;
@@ -692,7 +692,7 @@ N_NIMCALL(void, main_159404)(void) {
 	}
 	memset((void*)(&tree), 0, sizeof(tree));
 	memset((void*)(&tree), 0, sizeof(tree));
-	newheavylightdecomposition_159645(g, (&tree));
+	initheavylightdecomposition_159645(g, (&tree));
 	Q = nextint_159016(((NI) 0));
 	{
 		NI i_160057;

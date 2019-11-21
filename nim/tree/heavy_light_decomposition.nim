@@ -3,7 +3,7 @@ import future
 type HeavyLightDecomposition[T] = object
   sz, in_a, out_a, head, rev, par:seq[int]
 
-proc newHeavyLightDecomposition[T](g:Graph[T]):HeavyLightDecomposition[T] =
+proc initHeavyLightDecomposition[T](g:Graph[T]):HeavyLightDecomposition[T] =
   var
     g = g
     sz, in_a, out_a, head, rev, par = newSeq[int](g.len)

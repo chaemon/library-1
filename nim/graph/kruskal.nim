@@ -6,7 +6,7 @@ proc kruskal[T](g:Graph[T]):(T, seq[Edge[T]]) =
   es.sort()
   var
     ret = newSeq[Edge[T]]()
-    tree = newUnionFind(g.len)
+    tree = initUnionFind(g.len)
     total = T(0)
   for e in es:
     if tree.unionSet(e.src, e.dst):

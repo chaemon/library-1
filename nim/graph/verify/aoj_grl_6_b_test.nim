@@ -7,7 +7,7 @@ include "../primal_dual.nim"
 
 proc main() =
   let V, E, F = nextInt()
-  var g = newPrimalDual[int,int](V)
+  var g = initPrimalDual[int,int](V)
   for i in 0..<E:
     let a, b, c, d = nextInt()
     g.add_edge(a, b, c, d)

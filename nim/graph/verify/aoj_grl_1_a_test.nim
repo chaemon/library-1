@@ -10,7 +10,7 @@ proc main() =
     V = nextInt()
     E = nextInt()
     R = nextInt()
-    g = newGraph[int](V)
+    g = initGraph[int](V)
 
   for i in 0..<E:
     var

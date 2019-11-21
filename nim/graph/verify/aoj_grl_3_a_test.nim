@@ -7,7 +7,7 @@ include "../lowlink.nim"
 
 proc main() =
   let V,E = nextInt()
-  var g = newGraph[int](V)
+  var g = initGraph[int](V)
   for i in 0..<E:
     var x,y = nextInt()
     g.addBiEdge(x,y)

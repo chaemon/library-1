@@ -4,7 +4,7 @@ type WeightedUnionFind[T] = object
   data:seq[int]
   ws:seq[T]
 
-proc newWeightedUnionFind[T](sz:int):WeightedUnionFind[T] =
+proc initWeightedUnionFind[T](sz:int):WeightedUnionFind[T] =
   WeightedUnionFind[T](data:newSeqWith(sz, -1), ws:newSeq[T](sz))
 
 proc root[T](self:var WeightedUnionFind[T], k:int):int{.discardable.} =

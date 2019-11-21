@@ -6,7 +6,7 @@ include "../binary_indexed_tree.nim"
 
 proc main() =
   let N, Q = nextInt()
-  var bit = newBinaryIndexedTree[int](N)
+  var bit = initBinaryIndexedTree[int](N)
   for i in 0..<Q:
     let T, X, Y = nextInt()
     if T == 0: bit.add(X - 1, Y)
