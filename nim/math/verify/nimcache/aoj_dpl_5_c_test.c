@@ -68,7 +68,7 @@ N_NIMCALL(void, initcombination_159455)(NI sz, Combination159462* Result);
 N_NIMCALL(TY159468*, newseq_159483)(NI len);
 N_NIMCALL(void, TMP35)(void* p, NI op);
 N_NIMCALL(void, genericSeqAssign)(void* dest, void* src_84004, TNimType* mt);
-N_NIMCALL(Mint159105, convert_159579)(Mint159105 self, NI a);
+N_NIMCALL(Mint159105, init_159579)(Mint159105 self, NI a);
 N_NIMCALL(Mint159105, initmint_159205)(NI a_159209);
 N_NIMCALL(Mint159105, HEX2A_159623)(Mint159105 a, NI b);
 N_NIMCALL(void, HEX2AHEX3D_159633)(Mint159105* a, NI b);
@@ -164,7 +164,7 @@ N_NIMCALL(Mint159105, initmint_159205)(NI a_159209) {
 	return result;
 }
 
-N_NIMCALL(Mint159105, convert_159579)(Mint159105 self, NI a) {
+N_NIMCALL(Mint159105, init_159579)(Mint159105 self, NI a) {
 	Mint159105 result;
 	memset((void*)(&result), 0, sizeof(result));
 	result = initmint_159205(a);
@@ -352,11 +352,11 @@ N_NIMCALL(void, initcombination_159455)(NI sz, Combination159462* Result) {
 	}
 	genericSeqAssign((&inva), result_159549, (&NTI159468));
 	memset((void*)(&LOC13), 0, sizeof(LOC13));
-	facta->data[((NI) 0)] = convert_159579(LOC13, ((NI) 1));
+	facta->data[((NI) 0)] = init_159579(LOC13, ((NI) 1));
 	memset((void*)(&LOC14), 0, sizeof(LOC14));
-	rfacta->data[sz] = convert_159579(LOC14, ((NI) 1));
+	rfacta->data[sz] = init_159579(LOC14, ((NI) 1));
 	memset((void*)(&LOC15), 0, sizeof(LOC15));
-	inva->data[((NI) 0)] = convert_159579(LOC15, ((NI) 1));
+	inva->data[((NI) 0)] = init_159579(LOC15, ((NI) 1));
 	{
 		NI i_159621;
 		NI res_159763;

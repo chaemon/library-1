@@ -8,7 +8,7 @@ proc initMint[T](a:T):Mint =
   a = a mod MOD
   if a < 0: a += MOD
   return Mint(v:a)
-proc convert[T](self:Mint, a:T):Mint = initMint(a)
+proc init[T](self:Mint, a:T):Mint = initMint(a)
 proc initMint(a:Mint):Mint =
   return a
 proc `+=`[T](a:var Mint, b:T):void =

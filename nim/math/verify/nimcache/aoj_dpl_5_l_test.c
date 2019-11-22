@@ -198,7 +198,7 @@ static N_INLINE(Cell47505*, usrtocell_51440)(void* usr);
 static N_INLINE(void, rtladdzct_53001)(Cell47505* c);
 N_NOINLINE(void, addzct_51417)(Cellseq47521* s, Cell47505* c);
 N_NIMCALL(void, genericSeqAssign)(void* dest, void* src_84004, TNimType* mt);
-N_NIMCALL(Mint159105, convert_159420)(Mint159105 self, NI a);
+N_NIMCALL(Mint159105, init_159420)(Mint159105 self, NI a);
 N_NIMCALL(Mint159105, initmint_159205)(NI a_159209);
 N_NIMCALL(Mint159105, HEX2B_159456)(Mint159105 a, Mint159105 b);
 N_NIMCALL(void, HEX2BHEX3D_159466)(Mint159105* a, Mint159105 b);
@@ -334,7 +334,7 @@ N_NIMCALL(Mint159105, initmint_159205)(NI a_159209) {
 	return result;
 }
 
-N_NIMCALL(Mint159105, convert_159420)(Mint159105 self, NI a) {
+N_NIMCALL(Mint159105, init_159420)(Mint159105 self, NI a) {
 	Mint159105 result;
 	memset((void*)(&result), 0, sizeof(result));
 	result = initmint_159205(a);
@@ -398,7 +398,7 @@ N_NIMCALL(TY159351*, getpartition_159344)(NI n, NI k) {
 	}
 	genericSeqAssign((&result_159353), result_159355, (&NTI159351));
 	memset((void*)(&LOC4), 0, sizeof(LOC4));
-	result_159353->data[((NI) 0)]->data[((NI) 0)] = convert_159420(LOC4, ((NI) 1));
+	result_159353->data[((NI) 0)]->data[((NI) 0)] = init_159420(LOC4, ((NI) 1));
 	{
 		NI i_159444;
 		NI res_159511;
