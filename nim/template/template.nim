@@ -1,8 +1,7 @@
+{.hints:off checks:off}
 import algorithm, sequtils, tables, macros, math, sets, strutils, streams
 when defined(MYDEBUG):
   import header
-else:
-  {.hints:off checks:off}
 
 when (not (NimMajor <= 0)) or NimMinor >= 19:
   import sugar

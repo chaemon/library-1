@@ -64,7 +64,6 @@ proc match(self: AhoCorasick, str: string, now = 0):Table[int,seq[int]] =
   var now = now
   result = initTable[int,seq[int]]()
   for i, c in str:
-#    while self.nodes[now].nxt[c.ord - self.margin] == -1: now = self.nodes[now].nxt[self.FAIL]
     now = self.nodes[now].nxt[c.ord - self.margin]
     for v in self.nodes[now].accept:
       if v notin result: result[v] = newSeq[int]()
