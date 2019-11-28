@@ -13,7 +13,7 @@ proc initCombination[T](sz = 1):Combination[T] =
   rfact_a[sz] = T().init(1)
   inv_a[0] = T().init(1)
   for i in 1..sz:fact_a[i] = fact_a[i-1] * i
-  rfact_a[sz] /= fact_a[sz];
+  rfact_a[sz] /= fact_a[sz]
   for i in countdown(sz - 1, 0): rfact_a[i] = rfact_a[i + 1] * (i + 1)
   for i in 1..sz: inv_a[i] = rfact_a[i] * fact_a[i - 1]
   return Combination[T](sz:sz, fact_a:fact_a, rfact_a:rfact_a,inv_a:inv_a)

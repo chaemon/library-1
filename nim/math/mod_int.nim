@@ -39,6 +39,8 @@ proc `-`[T](a:Mint,b:T):Mint =
   return c
 proc `$`(a:Mint):string =
   return $(a.v)
+proc `==`(a:Mint, b:Mint):bool = a.v == b.v
+proc `!=`(a:Mint, b:Mint):bool = a.v != b.v
 proc pow(x:Mint, n:int):Mint =
   var (x,n) = (x,n)
   result = initMint(1)
@@ -46,25 +48,18 @@ proc pow(x:Mint, n:int):Mint =
     if (n and 1) > 0: result *= x
     x *= x
     n = (n shr 1)
-proc extGcd(a,b:int, x,y:var int):int =
-  var g = a
-  x = 1
-  y = 0
-  if b != 0:
-    g = extGcd(b, a mod b, y, x)
-    y -= (a div b) * x
-  return g;
-proc invMod(a,m:int):int =
-  var
-    x,y:int
-  if extGcd(a, m, x, y) == 1: return (x + m) mod m
-  else: return 0 # unsolvable
+proc inverse(x:int):Mint =
+  var (a, b) = (x, MOD)
+  var (u, v) = (1, 0)
+  while b > 0:
+    let t = a div b
+    a -= t * b;swap(a,b)
+    u -= t * v;swap(u,v)
+  return initMint(u)
 proc `/=`[T](a:var Mint,b:T):void =
-  a.v *= invMod(initMint(b).v,MOD)
-  a.v = a.v mod MOD
+  a *= initMint(b).v.inverse()
 proc `/`[T](a:Mint,b:T):Mint =
   var c = a
   c /= b
   return c
 #}}}
-
