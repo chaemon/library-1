@@ -11,7 +11,7 @@ proc main() =
     let p = nextInt()
     if p == 0:
       let s, t, x = nextInt()
-      st.update(s, t + 1, x)
+      st.update(s..t, x)
     else:
       let i = nextInt()
       echo st[i]

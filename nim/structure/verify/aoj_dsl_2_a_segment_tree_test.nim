@@ -12,6 +12,6 @@ proc main() =
   for i in 0..<Q:
     let T, X, Y = nextInt()
     if T == 0: st.update(X, Y)
-    else: echo st.query(X, Y + 1)
+    else: echo st.query(X..Y)
 
 main()

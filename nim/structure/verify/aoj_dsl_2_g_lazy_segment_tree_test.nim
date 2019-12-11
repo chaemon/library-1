@@ -13,8 +13,8 @@ proc main() =
     let s, t = nextInt() - 1
     if p == 0:
       let x = nextInt()
-      st.update(s, t + 1, x)
+      st.update(s..t, x)
     else:
-      echo st.query(s, t + 1)[0]
+      echo st.query(s..t)[0]
 
 main()
