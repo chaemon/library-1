@@ -20,10 +20,10 @@ proc propagate[OperatorMonoid](self: var DualSegmentTree[OperatorMonoid], k:int)
 proc thrust[OperatorMonoid](self: var DualSegmentTree[OperatorMonoid], k:int) =
   for i in countdown(self.height,1): self.propagate(k shr i)
 
-proc update[OperatorMonoid](self: var DualSegmentTree[OperatorMonoid], a,b:int, x:OperatorMonoid) =
+proc update[OperatorMonoid](self: var DualSegmentTree[OperatorMonoid], p:Slice[int], x:OperatorMonoid) =
   var
-    a = a + self.sz
-    b = b + self.sz - 1
+    a = p.a + self.sz
+    b = p.b + self.sz
   self.thrust(a)
   self.thrust(b)
   var

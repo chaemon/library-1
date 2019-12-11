@@ -8,7 +8,7 @@ include "../combination.nim"
 proc main() =
   let n, k = nextInt()
   var
-    T = initCombination[Mint](k)
+    T = initCombination[Mint[MOD]](k)
     s = initMint(0)
   for i in 1..k:
     if (k - i) mod 2 == 0: s += T.C(k,i) * initMint(i).pow(n)

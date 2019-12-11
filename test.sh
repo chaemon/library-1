@@ -52,8 +52,10 @@ run() {
     file="$1"
     url="$(get-url "$file")"
 #    dir=test/$(echo -n "$url" | md5sum | sed 's/ .*//')
-	dir=$(pwd)/test/$(echo -n $(basename "$file"))
-    mkdir -p ${dir}
+    dir=$(pwd)/test/bin/$(echo -n $(basename "$file"))
+    test_dir="$(pwd)/test/case/${url##*id=}"
+
+	mkdir -p ${dir}
 
     # ignore if IGNORE is defined
     if list-defined "$file" | grep '^#define IGNORE ' > /dev/null ; then
@@ -67,12 +69,12 @@ run() {
         nim c -d:release -o:${dir}/a.out "$file"
         if [[ -n ${url} ]] ; then
             # download
-            if [[ ! -e ${dir}/test ]] ; then
+            if [[ ! -e ${test_dir} ]] ; then
                 sleep 2
-                oj download --system "$url" -d ${dir}/test
+                oj download --system "$url" -d ${test_dir}
             fi
             # test
-            oj test -c ${dir}/a.out -d ${dir}/test
+            oj test -c ${dir}/a.out -d ${test_dir}
         else
             # run
             ${dir}/a.out

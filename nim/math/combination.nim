@@ -1,17 +1,18 @@
+#{{{ combination
 import sequtils
 
 type Combination[T] = object
   sz:int
   fact_a, rfact_a, inv_a:seq[T]
 
-proc initCombination[T](sz = 1):Combination[T] = 
+proc initCombination[T](sz = 100):Combination[T] = 
   var
-    fact_a = newSeqWith(sz + 1, T())
-    rfact_a = newSeqWith(sz + 1, T())
-    inv_a = newSeqWith(sz + 1, T())
-  fact_a[0] = T().init(1)
-  rfact_a[sz] = T().init(1)
-  inv_a[0] = T().init(1)
+    fact_a = newSeqWith(sz + 1, getDefault(T))
+    rfact_a = newSeqWith(sz + 1, getDefault(T))
+    inv_a = newSeqWith(sz + 1, getDefault(T))
+  fact_a[0] = getDefault(T).init(1)
+  rfact_a[sz] = getDefault(T).init(1)
+  inv_a[0] = getDefault(T).init(1)
   for i in 1..sz:fact_a[i] = fact_a[i-1] * i
   rfact_a[sz] /= fact_a[sz]
   for i in countdown(sz - 1, 0): rfact_a[i] = rfact_a[i + 1] * (i + 1)
@@ -39,3 +40,4 @@ proc C[T](self:var Combination[T], p,q:int):T =
 proc H[T](self:var Combination[T], n,r:int):T =
   if n < 0 or r < 0: return T()
   return if r == 0: T().init(1) else: self.C(n + r - 1, r)
+#}}}

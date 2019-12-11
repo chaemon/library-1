@@ -9,6 +9,6 @@ include "../stirling_number_second.nim"
 
 proc main() =
   let N, K = nextInt()
-  echo stirling_number_second[Mint](N, K)
+  echo stirling_number_second[Mint[MOD]](N, K)
 
 main()

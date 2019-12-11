@@ -54,10 +54,10 @@ proc thrust[Monoid, OperatorMonoid](self: var LazySegmentTree[Monoid, OperatorMo
   for i in countdown(self.height, 1):
     self.propagate(k shr i)
 
-proc update[Monoid, OperatorMonoid](self: var LazySegmentTree[Monoid, OperatorMonoid], a,b:int, x:OperatorMonoid) =
+proc update[Monoid, OperatorMonoid](self: var LazySegmentTree[Monoid, OperatorMonoid], p:Slice[int], x:OperatorMonoid) =
   let
-    a = a + self.sz
-    b = b + self.sz - 1
+    a = p.a + self.sz
+    b = p.b + self.sz
   self.thrust(a)
   self.thrust(b)
   var
@@ -70,10 +70,10 @@ proc update[Monoid, OperatorMonoid](self: var LazySegmentTree[Monoid, OperatorMo
   self.recalc(a);
   self.recalc(b);
 
-proc query[Monoid, OperatorMonoid](self: var LazySegmentTree[Monoid, OperatorMonoid], a,b:int):Monoid =
+proc query[Monoid, OperatorMonoid](self: var LazySegmentTree[Monoid, OperatorMonoid], p:Slice[int]):Monoid =
   let
-    a = a + self.sz
-    b = b + self.sz - 1
+    a = p.a + self.sz
+    b = p.b + self.sz
   self.thrust(a)
   self.thrust(b)
   var
@@ -88,7 +88,7 @@ proc query[Monoid, OperatorMonoid](self: var LazySegmentTree[Monoid, OperatorMon
   return self.f(L, R);
 
 proc `[]`[Monoid, OperatorMonoid](self: var LazySegmentTree[Monoid, OperatorMonoid], k:int):Monoid =
-  return self.query(k, k + 1)
+  return self.query(k..k)
 
 proc findSubtree[Monoid, OperatorMonoid](self: var LazySegmentTree[Monoid, OperatorMonoid], a:int, check:proc(a:Monoid):bool, M:var Monoid, t:int):int =
   var a = a

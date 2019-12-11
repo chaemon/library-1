@@ -9,6 +9,6 @@ include "../bell_number.nim"
 
 proc main() =
   let N, K = nextInt()
-  echo bellNumber[Mint](N, K)
+  echo bellNumber[Mint[MOD]](N, K)
 
 main()

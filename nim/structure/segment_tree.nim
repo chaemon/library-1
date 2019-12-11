@@ -1,5 +1,4 @@
 #{{{ segment tree
-
 type SegmentTree[T] = object
   sz:int
   data:seq[T]
@@ -29,10 +28,10 @@ proc update[T](self:var SegmentTree[T], k:int, x:T) =
     if k == 0: break
     self.data[k] = self.f(self.data[2 * k + 0], self.data[2 * k + 1])
 
-proc query[T](self:SegmentTree[T],a,b:int):T =
+proc query[T](self:SegmentTree[T],p:Slice[int]):T =
   var
     (L,R) = (self.M1, self.M1)
-    (a,b) = (a + self.sz, b + self.sz)
+    (a,b) = (p.a + self.sz, p.b + 1 + self.sz)
   while a < b:
     if a mod 2 == 1: L = self.f(L, self.data[a]);a += 1
     if b mod 2 == 1: b -= 1;R = self.f(self.data[b], R)
