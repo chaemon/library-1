@@ -13,6 +13,7 @@ type BitSet = object
   len: int
   data: seq[uint64]
 
+
 proc initBitSet(n: int): BitSet =
   var q = n div BitWidth
   if n mod BitWidth != 0: q += 1
