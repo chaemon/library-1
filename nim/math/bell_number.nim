@@ -9,5 +9,5 @@ proc bell_number[T](n,k:int):T =
   for i in 1..k:
     if (i and 1)>0: pref[i] = pref[i - 1] - uku.rfact(i)
     else: pref[i] = pref[i - 1] + uku.rfact(i)
-  for i in 1..k: ret += T().init(i).pow(n) * uku.rfact(i) * pref[k - i]
+  for i in 1..k: ret += T().init(i)^n * uku.rfact(i) * pref[k - i]
   return ret

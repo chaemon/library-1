@@ -8,6 +8,6 @@ proc main() =
   let
     M = initMint(nextInt())
     N = nextInt()
-  echo M.pow(N)
+  echo M^N
 
 main()

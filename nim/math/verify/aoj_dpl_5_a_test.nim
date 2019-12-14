@@ -6,6 +6,6 @@ include "../mod_int.nim"
 
 proc main() =
   let n, k = nextInt()
-  echo initMint(k).pow(n)
+  echo initMint(k)^n
 
 main()

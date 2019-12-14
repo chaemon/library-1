@@ -35,7 +35,7 @@ proc `*=`[T](self:var Mint[Mod],a:T):void =
   self.v *= initMint(a, Mod).v
   self.v = self.v mod MOD
 proc `^=`(self:var Mint[Mod], n:int) =
-  var (x,n,a) = (self,n,initMint(1, Mod))
+  var (x,n,a) = (self,n,self.Identity)
   while n > 0:
     if (n and 1) > 0: a *= x
     x *= x
@@ -54,5 +54,5 @@ proc `+`[T](a:Mint[Mod],b:T):Mint[Mod] = result = a;result += b
 proc `-`[T](a:Mint[Mod],b:T):Mint[Mod] = result = a;result -= b
 proc `*`[T](a:Mint[Mod],b:T):Mint[Mod] = result = a;result *= b
 proc `/`[T](a:Mint[Mod],b:T):Mint[Mod] = result = a; result /= b
-proc `^`[T](a:Mint[Mod],b:int):Mint[Mod] = result = a; result /= b
+proc `^`(a:Mint[Mod],b:int):Mint[Mod] = result = a; result ^= b
 #}}}
