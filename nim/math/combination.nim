@@ -5,28 +5,31 @@ type Combination[T] = object
   sz:int
   fact_a, rfact_a, inv_a:seq[T]
 
+proc resize[T](self: var Combination[T], sz:int) =
+  if sz < self.sz: return
+  var sz = max(self.sz * 2, sz)
+  self.fact_a.setlen(sz + 1)
+  self.rfact_a.setlen(sz + 1)
+  self.inv_a.setlen(sz + 1)
+  for i in self.sz + 1..sz: self.fact_a[i] = self.fact_a[i-1] * i
+  self.rfact_a[sz] = getDefault(T).init(1) / self.fact_a[sz]
+  for i in countdown(sz - 1, self.sz + 1): self.rfact_a[i] = self.rfact_a[i + 1] * (i + 1)
+  for i in self.sz + 1..sz: self.inv_a[i] = self.rfact_a[i] * self.fact_a[i - 1]
+  self.sz = sz
+
 proc initCombination[T](sz = 100):Combination[T] = 
-  var
-    fact_a = newSeqWith(sz + 1, getDefault(T))
-    rfact_a = newSeqWith(sz + 1, getDefault(T))
-    inv_a = newSeqWith(sz + 1, getDefault(T))
-  fact_a[0] = getDefault(T).init(1)
-  rfact_a[sz] = getDefault(T).init(1)
-  inv_a[0] = getDefault(T).init(1)
-  for i in 1..sz:fact_a[i] = fact_a[i-1] * i
-  rfact_a[sz] /= fact_a[sz]
-  for i in countdown(sz - 1, 0): rfact_a[i] = rfact_a[i + 1] * (i + 1)
-  for i in 1..sz: inv_a[i] = rfact_a[i] * fact_a[i - 1]
-  return Combination[T](sz:sz, fact_a:fact_a, rfact_a:rfact_a,inv_a:inv_a)
+  let one = getDefault(T).init(1)
+  result = Combination[T](sz:0, fact_a: @[one], rfact_a: @[one], inv_a: @[one])
+  result.resize(sz)
 
 proc fact[T](self:var Combination[T], k:int):T =
-  while self.sz < k:self = initCombination[T](self.sz*2)
+  self.resize(k)
   return self.fact_a[k]
 proc rfact[T](self:var Combination[T], k:int):T =
-  while self.sz < k:self = initCombination[T](self.sz*2)
+  self.resize(k)
   self.rfact_a[k]
 proc inv[T](self:var Combination[T], k:int):T =
-  while self.sz < k:self = initCombination[T](self.sz*2)
+  self.resize(k)
   self.inv_a[k]
 
 proc P[T](self:var Combination[T], n,r:int):T =
