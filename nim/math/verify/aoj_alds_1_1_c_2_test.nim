@@ -6,7 +6,7 @@ include "../eratosthenes.nim"
 
 proc main() =
   let
-    p = eratosthenes(100000000)
+    p = initEratosthenes(100000000)
     N = nextInt()
   var ret = 0;
   for i in 0..<N:
