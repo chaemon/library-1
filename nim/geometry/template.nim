@@ -128,82 +128,63 @@ proc reflection(l:Line, p:Point):Point = return p + (projection(l, p) - p) * 2.0
 proc intersect(l:Line, p:Point):bool = abs(ccw(l.a, l.b, p)) != 1
 proc intersect(l,m: Line):bool = abs(cross(l.b - l.a, m.b - m.a)) > EPS or abs(cross(l.b - l.a, m.b - l.a)) < EPS
 
-bool intersect(const Segment &s, const Point &p) {
-  return ccw(s.a, s.b, p) == 0;
-}
+proc intersect(s:Segment, p:Point):bool = ccw(s.a, s.b, p) == 0
 
-bool intersect(const Line &l, const Segment &s) {
-  return cross(l.b - l.a, s.a - l.a) * cross(l.b - l.a, s.b - l.a) < EPS;
-}
+proc intersect(l:Line, s:Segment):bool = cross(l.b - l.a, s.a - l.a) * cross(l.b - l.a, s.b - l.a) < EPS
 
-Real distance(const Line &l, const Point &p);
+proc distance(l:Line, p:Point):Real
+proc intersect(c:Circle, l:Line):bool = distance(l, c.p) <= c.r + EPS
 
-bool intersect(const Circle &c, const Line &l) {
-  return distance(l, c.p) <= c.r + EPS;
-}
+proc intersect(c:Circle, p:Point): bool = abs(abs(p - c.p) - c.r) < EPS
 
-bool intersect(const Circle &c, const Point &p) {
-  return abs(abs(p - c.p) - c.r) < EPS;
-}
+# http://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=CGL_2_B
+proc intersect(s, t: Segment):bool =
+  return ccw(s.a, s.b, t.a) * ccw(s.a, s.b, t.b) <= 0 and ccw(t.a, t.b, s.a) * ccw(t.a, t.b, s.b) <= 0
 
-// http://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=CGL_2_B
-bool intersect(const Segment &s, const Segment &t) {
-  return ccw(s.a, s.b, t.a) * ccw(s.a, s.b, t.b) <= 0 and ccw(t.a, t.b, s.a) * ccw(t.a, t.b, s.b) <= 0;
-}
+proc intersect(c:Circle, l:Segment):int =
+  if norm(projection(l, c.p) - c.p) - c.r * c.r > EPS: return 0
+  let
+    d1 = abs(c.p - l.a)
+    d2 = abs(c.p - l.b)
+  if d1 < c.r + EPS and d2 < c.r + EPS: return 0
+  if d1 < c.r - EPS and d2 > c.r + EPS or d1 > c.r + EPS and d2 < c.r - EPS: return 1
+  let h:Point = projection(l, c.p)
+  if dot(l.a - h, l.b - h) < 0: return 2
+  return 0
 
-int intersect(const Circle &c, const Segment &l) {
-  if(norm(projection(l, c.p) - c.p) - c.r * c.r > EPS) return 0;
-  auto d1 = abs(c.p - l.a), d2 = abs(c.p - l.b);
-  if(d1 < c.r + EPS and d2 < c.r + EPS) return 0;
-  if(d1 < c.r - EPS and d2 > c.r + EPS or d1 > c.r + EPS and d2 < c.r - EPS) return 1;
-  const Point h = projection(l, c.p);
-  if(dot(l.a - h, l.b - h) < 0) return 2;
-  return 0;
-}
+# http://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=CGL_7_A&lang=jp
+proc intersect(c1, c2: Circle):int =
+  var (c1, c2) = (c1, c2)
+  if c1.r < c2.r: swap(c1, c2)
+  let d = abs(c1.p - c2.p)
+  if c1.r + c2.r < d: return 4
+  if eq(c1.r + c2.r, d): return 3
+  if c1.r - c2.r < d: return 2
+  if eq(c1.r - c2.r, d): return 1
+  return 0
 
-// http://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=CGL_7_A&lang=jp
-int intersect(Circle c1, Circle c2) {
-  if(c1.r < c2.r) swap(c1, c2);
-  Real d = abs(c1.p - c2.p);
-  if(c1.r + c2.r < d) return 4;
-  if(eq(c1.r + c2.r, d)) return 3;
-  if(c1.r - c2.r < d) return 2;
-  if(eq(c1.r - c2.r, d)) return 1;
-  return 0;
-}
+proc distance(a, b:Point):Real = abs(a - b)
+proc distance(l:Line, p:Point):Real = abs(p - projection(l, p))
+proc distance(l, m: Line):Real = (if intersect(l, m): 0.0 else: distance(l, m.a))
 
-Real distance(const Point &a, const Point &b) {
-  return abs(a - b);
-}
+proc distance(s:Segment, p:Point):Real =
+  let r = projection(s, p)
+  if intersect(s, r): return abs(r - p)
+  return min(abs(s.a - p), abs(s.b - p))
 
-Real distance(const Line &l, const Point &p) {
-  return abs(p - projection(l, p));
-}
+# http://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=CGL_2_D
+proc distance(a, b:Segment):Real =
+  if intersect(a, b): return 0
+  return min(distance(a, b.a), distance(a, b.b), distance(b, a.a), distance(b, a.b))
 
-Real distance(const Line &l, const Line &m) {
-  return intersect(l, m) ? 0 : distance(l, m.a);
-}
-
-Real distance(const Segment &s, const Point &p) {
-  Point r = projection(s, p);
-  if(intersect(s, r)) return abs(r - p);
-  return min(abs(s.a - p), abs(s.b - p));
-}
-
-// http://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=CGL_2_D
-Real distance(const Segment &a, const Segment &b) {
-  if(intersect(a, b)) return 0;
-  return min({distance(a, b.a), distance(a, b.b), distance(b, a.a), distance(b, a.b)});
-}
-
-Real distance(const Line &l, const Segment &s) {
-  if(intersect(l, s)) return 0;
+proc distance(l:Line, s:Segment):Real =
+  if intersect(l, s): return 0
   return min(distance(l, s.a), distance(l, s.b));
-}
 
-Point crosspoint(const Line &l, const Line &m) {
-  Real A = cross(l.b - l.a, m.b - m.a);
-  Real B = cross(l.b - l.a, l.b - m.a);
+proc crosspoint(l,m:Line):Point =
+  let
+    A = cross(l.b - l.a, m.b - m.a)
+    B = cross(l.b - l.a, l.b - m.a)
   if(eq(abs(A), 0.0) and eq(abs(B), 0.0)) return m.a;
   return m.a + (m.b - m.a) * B / A;
 }
