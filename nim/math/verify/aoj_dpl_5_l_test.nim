@@ -9,6 +9,6 @@ include "../partition_table.nim"
 proc main() =
   let N, K = nextInt()
   if N - K < 0: echo 0
-  else: echo getPartition[Mint[MOD]](N - K, K)[N - K][K]
+  else: echo getPartition[Mint](N - K, K)[N - K][K]
 
 main()

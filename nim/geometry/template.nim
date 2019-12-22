@@ -52,6 +52,8 @@ proc `<`(a,b:Point):bool =
 type Line = object
   a, b:Point
 
+type Segment = distinct Line
+
 proc initLine(a,b:Point):Line = Line(a:a, b:b)
 
 proc initLine(A, B, C:Real):Line = # Ax + By = C
@@ -70,9 +72,9 @@ proc initLine(A, B, C:Real):Line = # Ax + By = C
 #  }
 #};
 
-type Segment = Line
 
-proc initSegment(a, b:Point):Segment = Segment(a:a, b:b)
+proc initSegment(a, b:Point):Segment = Segment(Line(a:a, b:b))
+
 #struct Segment : Line {
 #  Segment() = default;
 #
@@ -116,21 +118,26 @@ proc orthogonal(a,b:Line):bool = eq(dot(a.a - a.b, b.a - b.b), 0.0)
 # http://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=CGL_1_A
 proc projection(l:Line, p:Point):Point =
   let t = dot(p - l.a, l.a - l.b) / norm(l.a - l.b)
-  return l.a + (l.a - l.b) * t
+  return l.a + (l.a - l.b) * complex(t)
 
 proc projection(l:Segment, p:Point):Point =
+  let l = cast[Line](l)
   let t = dot(p - l.a, l.a - l.b) / norm(l.a - l.b)
-  return l.a + (l.a - l.b) * t
+  return l.a + (l.a - l.b) * complex(t)
 
 # http://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=CGL_1_B
-proc reflection(l:Line, p:Point):Point = return p + (projection(l, p) - p) * 2.0
+proc reflection(l:Line, p:Point):Point = return p + (projection(l, p) - p) * complex(2.0)
 
 proc intersect(l:Line, p:Point):bool = abs(ccw(l.a, l.b, p)) != 1
 proc intersect(l,m: Line):bool = abs(cross(l.b - l.a, m.b - m.a)) > EPS or abs(cross(l.b - l.a, m.b - l.a)) < EPS
 
-proc intersect(s:Segment, p:Point):bool = ccw(s.a, s.b, p) == 0
+proc intersect(s:Segment, p:Point):bool =
+  let s = cast[Line](s)
+  ccw(s.a, s.b, p) == 0
 
-proc intersect(l:Line, s:Segment):bool = cross(l.b - l.a, s.a - l.a) * cross(l.b - l.a, s.b - l.a) < EPS
+proc intersect(l:Line, s:Segment):bool =
+  let s = cast[Line](s)
+  cross(l.b - l.a, s.a - l.a) * cross(l.b - l.a, s.b - l.a) < EPS
 
 proc distance(l:Line, p:Point):Real
 proc intersect(c:Circle, l:Line):bool = distance(l, c.p) <= c.r + EPS
@@ -139,11 +146,13 @@ proc intersect(c:Circle, p:Point): bool = abs(abs(p - c.p) - c.r) < EPS
 
 # http://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=CGL_2_B
 proc intersect(s, t: Segment):bool =
+  let (s,t) = (cast[Line](s), cast[Line](t))
   return ccw(s.a, s.b, t.a) * ccw(s.a, s.b, t.b) <= 0 and ccw(t.a, t.b, s.a) * ccw(t.a, t.b, s.b) <= 0
 
 proc intersect(c:Circle, l:Segment):int =
   if norm(projection(l, c.p) - c.p) - c.r * c.r > EPS: return 0
   let
+    l = cast[Line](l)
     d1 = abs(c.p - l.a)
     d2 = abs(c.p - l.b)
   if d1 < c.r + EPS and d2 < c.r + EPS: return 0
@@ -169,48 +178,48 @@ proc distance(l, m: Line):Real = (if intersect(l, m): 0.0 else: distance(l, m.a)
 
 proc distance(s:Segment, p:Point):Real =
   let r = projection(s, p)
+  let s = cast[Line](s)
   if intersect(s, r): return abs(r - p)
   return min(abs(s.a - p), abs(s.b - p))
 
 # http://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=CGL_2_D
 proc distance(a, b:Segment):Real =
   if intersect(a, b): return 0
+  let (a,b) = (cast[Line](a), cast[Line](b))
   return min(distance(a, b.a), distance(a, b.b), distance(b, a.a), distance(b, a.b))
 
 proc distance(l:Line, s:Segment):Real =
   if intersect(l, s): return 0
+  let s = cast[Line](s)
   return min(distance(l, s.a), distance(l, s.b));
 
 proc crosspoint(l,m:Line):Point =
   let
     A = cross(l.b - l.a, m.b - m.a)
     B = cross(l.b - l.a, l.b - m.a)
-  if(eq(abs(A), 0.0) and eq(abs(B), 0.0)) return m.a;
-  return m.a + (m.b - m.a) * B / A;
-}
+  if eq(abs(A), 0.0) and eq(abs(B), 0.0): return m.a
+  return m.a + (m.b - m.a) * complex(B) / A
 
-// http://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=CGL_2_C
-Point crosspoint(const Segment &l, const Segment &m) {
+# http://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=CGL_2_C
+proc crosspoint(l,m:Segment):Point =
   return crosspoint(Line(l), Line(m));
-}
 
-// http://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=CGL_7_D
-pair< Point, Point > crosspoint(const Circle &c, const Line l) {
-  Point pr = projection(l, c.p);
-  Point e = (l.b - l.a) / abs(l.b - l.a);
-  if(eq(distance(l, c.p), c.r)) return {pr, pr};
-  double base = sqrt(c.r * c.r - norm(pr - c.p));
-  return {pr - e * base, pr + e * base};
-}
+# http://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=CGL_7_D
+proc crosspoint(c:Circle, l:Line):(Point,Point) =
+  let pr = projection(l, c.p)
+  let e = (l.b - l.a) / abs(l.b - l.a)
+  if eq(distance(l, c.p), c.r): return (pr, pr)
+  let base = sqrt(c.r * c.r - norm(pr - c.p))
+  return (pr - e * complex(base), pr + e * complex(base))
 
-pair< Point, Point > crosspoint(const Circle &c, const Segment &l) {
-  Line aa = Line(l.a, l.b);
-  if(intersect(c, l) == 2) return crosspoint(c, aa);
-  auto ret = crosspoint(c, aa);
-  if(dot(l.a - ret.first, l.b - ret.first) < 0) ret.second = ret.first;
+proc crosspoint(c:Circle, l:Segment):(Point,Point) =
+  let
+    aa = cast[Line](l)
+  if intersect(c, l) == 2: return crosspoint(c, aa)
+  let ret = crosspoint(c, aa)
+  if dot(l.a - ret.first, l.b - ret.first) < 0: ret.second = ret.first;
   else ret.first = ret.second;
   return ret;
-}
 
 # http://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=CGL_7_E
 pair< Point, Point > crosspoint(const Circle &c1, const Circle &c2) {
@@ -222,14 +231,14 @@ pair< Point, Point > crosspoint(const Circle &c1, const Circle &c2) {
   return {p1, p2};
 }
 
-// http://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=CGL_7_F
-// tangent of circle c through point p
+# http://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=CGL_7_F
+# tangent of circle c through point p
 pair< Point, Point > tangent(const Circle &c1, const Point &p2) {
   return crosspoint(c1, Circle(p2, sqrt(norm(c1.p - p2) - c1.r * c1.r)));
 }
 
-// http://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=CGL_7_G
-// common tangent of circles c1 and c2
+# http://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=CGL_7_G
+# common tangent of circles c1 and c2
 Lines tangent(Circle c1, Circle c2) {
   Lines ret;
   if(c1.r < c2.r) swap(c1, c2);
@@ -427,7 +436,7 @@ Real convex_diameter(const Polygon &p) {
   return sqrt(maxdis);
 }
 
-// http://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=CGL_5_A
+# http://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=CGL_5_A
 Real closest_pair(Points ps) {
   if(ps.size() <= 1) throw (0);
   sort(begin(ps), end(ps));

@@ -8,6 +8,6 @@ include "../partition_table.nim"
 
 proc main() =
   let N, K = nextInt()
-  echo get_partition[Mint[MOD]](N, K)[N][K]
+  echo get_partition[Mint](N, K)[N][K]
 
 main()
