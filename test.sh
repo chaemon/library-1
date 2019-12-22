@@ -53,9 +53,17 @@ run() {
     url="$(get-url "$file")"
 #    dir=test/$(echo -n "$url" | md5sum | sed 's/ .*//')
     dir=$(pwd)/test/bin/$(echo -n $(basename "$file"))
-    test_dir="$(pwd)/test/case/${url##*id=}"
+	oj_dir="None"
+	if [[ $url == http://judge.u-aizu.ac.jp* ]]; then
+		oj_dir="aoj"
+	elif [[ $url == https://judge.yosupo.jp* ]]; then
+		oj_dir="yosupo"
+	else
+		exit;
+	fi
 
 	mkdir -p ${dir}
+    test_dir="$(pwd)/test/case/$oj_dir/${url##*id=}"
 
     # ignore if IGNORE is defined
     if list-defined "$file" | grep '^#define IGNORE ' > /dev/null ; then
@@ -66,7 +74,7 @@ run() {
         # compile
 #        $CXX $CXXFLAGS -I . -o ${dir}/a.out "$file"
 #        echo "dir: ${dir}"
-        nim c -d:release -o:${dir}/a.out "$file"
+        nim c -d:release --warnings:off -o:${dir}/a.out "$file"
         if [[ -n ${url} ]] ; then
             # download
             if [[ ! -e ${test_dir} ]] ; then
