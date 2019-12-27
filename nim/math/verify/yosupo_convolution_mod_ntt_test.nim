@@ -1,10 +1,10 @@
 #define PROBLEM "https://judge.yosupo.jp/problem/convolution_mod"
 
+const Mod = 998244353
 include "../../template/template.nim"
 include "../number_theoretic_transform.nim"
 
 block main:
-  Mod = 998244353
   let N, M = nextInt()
   var a, b = newSeq[int](max(N, M)+1)
   for i in 1..N: a[i] = nextInt()

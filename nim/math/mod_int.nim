@@ -1,4 +1,5 @@
-const MOD = 1_000_000_007
+when not declared(MOD):
+  const MOD = 998244353
 
 #{{{ ModInt[Mod]
 proc getDefault(T:typedesc): T = (var temp:T;temp)
@@ -14,11 +15,12 @@ proc initModInt[T](a:T, Mod: static[int]):ModInt[Mod] =
     a = a mod Mod
     if a < 0: a += Mod
     result.v = a
+proc initModInt[T](a:T):ModInt[Mod] = initModInt(a, MOD)
 proc init[T](self:ModInt[Mod], a:T):ModInt[Mod] = initModInt(a, Mod)
 proc Identity(self:ModInt[Mod]):ModInt[Mod] = return initModInt(1, Mod)
 
-proc `==`[T](a:ModInt[Mod], b:T):bool = a.v == initModInt(b, Mod).v
-proc `!=`[T](a:ModInt[Mod], b:T):bool = a.v != initModInt(b, Mod).v
+proc `==`[T](a:ModInt[Mod], b:T):bool = a.v == a.init(b).v
+proc `!=`[T](a:ModInt[Mod], b:T):bool = a.v != a.init(b).v
 proc `-`(self:ModInt[Mod]):ModInt[Mod] =
   if self.v == 0: return self
   else: return ModInt[Mod](v:MOD - self.v)

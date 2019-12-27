@@ -1,68 +1,7 @@
 import sequtils, algorithm
 
-const MOD = 1_000_000_007
-
-#{{{ ModInt[Mod]
-proc getDefault(T:typedesc): T = (var temp:T;temp)
-proc getDefault[T](x:T): T = (var temp:T;temp)
-
-type ModInt[Mod: static[int]] = object
-  v:int
-proc initModInt[T](a:T, Mod: static[int]):ModInt[Mod] =
-  when T is ModInt[Mod]:
-    return a
-  else:
-    var a = a
-    a = a mod Mod
-    if a < 0: a += Mod
-    result.v = a
-proc init[T](self:ModInt[Mod], a:T):ModInt[Mod] = initModInt(a, Mod)
-proc Identity(self:ModInt[Mod]):ModInt[Mod] = return initModInt(1, Mod)
-
-proc `==`[T](a:ModInt[Mod], b:T):bool = a.v == initModInt(b, Mod).v
-proc `!=`[T](a:ModInt[Mod], b:T):bool = a.v != initModInt(b, Mod).v
-proc `-`(self:ModInt[Mod]):ModInt[Mod] =
-  if self.v == 0: return self
-  else: return ModInt[Mod](v:MOD - self.v)
-proc `$`(a:ModInt[Mod]):string = return $(a.v)
-
-proc `+=`[T](self:var ModInt[Mod]; a:T):void =
-  self.v += initModInt(a, Mod).v
-  if self.v >= MOD: self.v -= MOD
-proc `-=`[T](self:var ModInt[Mod],a:T):void =
-  self.v -= initModInt(a, Mod).v
-  if self.v < 0: self.v += MOD
-proc `*=`[T](self:var ModInt[Mod],a:T):void =
-  self.v *= initModInt(a, Mod).v
-  self.v = self.v mod MOD
-proc `^=`(self:var ModInt[Mod], n:int) =
-  var (x,n,a) = (self,n,self.Identity)
-  while n > 0:
-    if (n and 1) > 0: a *= x
-    x *= x
-    n = (n shr 1)
-  swap(self, a)
-proc inverse(x:int):ModInt[Mod] =
-  var (a, b) = (x, MOD)
-  var (u, v) = (1, 0)
-  while b > 0:
-    let t = a div b
-    a -= t * b;swap(a,b)
-    u -= t * v;swap(u,v)
-  return initModInt(u, Mod)
-proc `/=`[T](a:var ModInt[Mod],b:T):void = a *= initModInt(b, Mod).v.inverse()
-proc `+`[T](a:ModInt[Mod],b:T):ModInt[Mod] = result = a;result += b
-proc `-`[T](a:ModInt[Mod],b:T):ModInt[Mod] = result = a;result -= b
-proc `*`[T](a:ModInt[Mod],b:T):ModInt[Mod] = result = a;result *= b
-proc `/`[T](a:ModInt[Mod],b:T):ModInt[Mod] = result = a; result /= b
-proc `^`(a:ModInt[Mod],b:int):ModInt[Mod] = result = a; result ^= b
-#}}}
-
-type Mint = ModInt[Mod]
-proc initMint[T](a:T):ModInt[Mod] = initModInt(a, Mod)
-
-
-
+when not declared(MOD):
+  const MOD = 1_000_000_007
 
 # NumberTheoricTransform using Modint {{{
 proc builtin_popcount(n: int): int{.importc: "__builtin_popcount", nodecl.}
@@ -129,7 +68,8 @@ proc intt(self: var NumberTheoreticTransform;a:var seq[ModInt[Mod]]) =
   let inv_sz = initMint(1) / n
   for i in 0..<n: a[i] *= inv_sz
 
-proc multiply(self: var NumberTheoreticTransform;a,b: var seq[ModInt[Mod]]):seq[ModInt[Mod]] =
+proc multiply(self: var NumberTheoreticTransform;a,b: seq[ModInt[Mod]]):seq[ModInt[Mod]] =
+  var (a,b) = (a,b)
   let need = a.len + b.len - 1
   var nbase = 1
   while (1 shl nbase) < need: nbase += 1

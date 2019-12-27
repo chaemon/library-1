@@ -26,7 +26,7 @@ type FastFourierTransform = object
 proc initFastFourierTransform():FastFourierTransform = 
   return FastFourierTransform(base:1, rts: @[initC(0,0),initC(1,0)], rev: @[0, 1])
 
-proc ensureBase(self:var FastFourierTransformnbase:int) =
+proc ensureBase(self:var FastFourierTransform; nbase:int) =
   if nbase <= self.base: return
   self.rev.setlen(1 shl nbase)
   self.rts.setlen(1 shl nbase)
@@ -39,7 +39,7 @@ proc ensureBase(self:var FastFourierTransformnbase:int) =
       self.rts[(i shl 1) + 1] = initC(cos(angle_i), sin(angle_i))
     self.base.inc
 
-proc fft(self:var FastFourierTransform a:var seq[C], n:int) =
+proc fft(self:var FastFourierTransform; a:var seq[C], n:int) =
   assert((n and (n - 1)) == 0)
   let zeros = builtin_ctz(n)
   self.ensureBase(zeros)
@@ -58,7 +58,7 @@ proc fft(self:var FastFourierTransform a:var seq[C], n:int) =
       i += 2 * k
     k = k shl 1
 
-proc multiply(self:var FastFourierTransform a,b:seq[int]):seq[int] =
+proc multiply(self:var FastFourierTransform; a,b:seq[int]):seq[int] =
   let need = a.len + b.len - 1
   var nbase = 1
   while (1 shl nbase) < need: nbase.inc

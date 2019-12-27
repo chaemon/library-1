@@ -1,7 +1,8 @@
 #{{{ NumberTheoricTransform
 import algorithm
 
-var Mod = 1012924417
+when not declared(Mod):
+  const Mod = 1012924417
 
 proc builtin_popcount(n: int): int{.importc: "__builtin_popcount", nodecl.}
 proc builtin_ctz(n: int): int{.importc: "__builtin_ctz", nodecl.}

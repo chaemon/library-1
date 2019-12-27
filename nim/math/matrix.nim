@@ -20,7 +20,7 @@ proc Identity[T](n:int):Matrix[T] =
   for i in 0..<n: result[i][i] = getDefault(T).init(1)
 proc Identity[T](self: Matrix[T]):Matrix[T] =
   result = initMatrix[T](self.n)
-  for i in 0..<n: result[i][i] = getDefault(T).init(1)
+  for i in 0..<self.n: result[i][i] = getDefault(T).init(1)
 
 proc `+=`[T](self: var Matrix[T], B: Matrix[T]) =
   let (n, m) = (self.height, self.width)

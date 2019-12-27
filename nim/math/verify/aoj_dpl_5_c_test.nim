@@ -2,6 +2,7 @@
 
 include "../../template/template.nim"
 
+const MOD = 1000000007
 include "../mod_int.nim"
 include "../combination.nim"
 

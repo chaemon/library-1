@@ -56,14 +56,19 @@ run() {
 	oj_dir="None"
 	if [[ $url == http://judge.u-aizu.ac.jp* ]]; then
 		oj_dir="aoj"
+		id=${url##*id=}
+#		return
 	elif [[ $url == https://judge.yosupo.jp* ]]; then
 		oj_dir="yosupo"
+		id=${url##*problem/}
+#		return
 	else
+		echo "WARNING!!!! NO OBJ DIR"
 		exit;
 	fi
 
 	mkdir -p ${dir}
-    test_dir="$(pwd)/test/case/$oj_dir/${url##*id=}"
+    test_dir="$(pwd)/test/case/$oj_dir/$id"
 
     # ignore if IGNORE is defined
     if list-defined "$file" | grep '^#define IGNORE ' > /dev/null ; then
@@ -82,6 +87,7 @@ run() {
                 oj download --system "$url" -d ${test_dir}
             fi
             # test
+#            oj test -c ${dir}/a.out -d ${test_dir} --special-judge ${test_dir}/judge.py
             oj test -c ${dir}/a.out -d ${test_dir}
         else
             # run
