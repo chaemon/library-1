@@ -1,9 +1,9 @@
+dist: bionic
 language: nim
 compiler:
     - nim
     #    - clang
     #    - gcc
-dist: xenial
 addons:
     apt:
         packages:
