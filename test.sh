@@ -25,25 +25,49 @@ get-url() {
     list-defined "$file" | grep '^#define PROBLEM ' | sed 's/^#define PROBLEM "\(.*\)"$/\1/'
 }
 
+#is-verified() {
+#    file="$1"
+#    cache=test/timestamp/$(echo -n "$file" | md5sum | sed 's/ .*//')
+#    timestamp="$(list-dependencies "$file" | xargs -I '{}' find "$file" '{}' -printf "%T+\t%p\n" | sort -nr | head -n 1 | cut -f 2)"
+#    [[ -e $cache ]] && [[ $timestamp -ot $cache ]]
+#}
 is-verified() {
-    file="$1"
-    cache=test/timestamp/$(echo -n "$file" | md5sum | sed 's/ .*//')
-    timestamp="$(list-dependencies "$file" | xargs -I '{}' find "$file" '{}' -printf "%T+\t%p\n" | sort -nr | head -n 1 | cut -f 2)"
-    [[ -e $cache ]] && [[ $timestamp -ot $cache ]]
+    dir="$1"
+    checksum=$dir/checksum.txt
+    md5=`md5sum -b $dir/"a.out" | awk '{ print $1 }'`
+    if [ -e $checksum ]; then
+        old_md5=`cat $checksum`
+        if [[ $md5 == $old_md5 ]]; then
+            true
+        else
+            false
+        fi
+    else
+        false
+    fi
 }
 
+
+#mark-verified() {
+#    file="$1"
+#    cache=test/timestamp/$(echo -n "$file" | md5sum | sed 's/ .*//')
+#    mkdir -p test/timestamp
+#    touch $cache
+#}
 mark-verified() {
-    file="$1"
-    cache=test/timestamp/$(echo -n "$file" | md5sum | sed 's/ .*//')
-    mkdir -p test/timestamp
-    touch $cache
+    echo "mark verified"
+    dir="$1"
+    checksum=$dir/checksum.txt
+    md5=`md5sum -b $dir/"a.out" | awk '{ print $1 }'`
+    echo $md5 > $checksum
 }
+
 
 list-recently-updated() {
 #    for file in $(find . -name \*.test.cpp) ; do
     for file in $(find . -name \*_test.nim) ; do
         list-dependencies "$file" | xargs -n 1 | while read f ; do
-            git log -1 --format="%ci	${file}" "$f"
+            git log -1 --format="%ci    ${file}" "$f"
         done | sort -nr | head -n 1
     done | sort -nr | head -n 20 | cut -f 2
 }
@@ -52,49 +76,51 @@ run() {
     file="$1"
     url="$(get-url "$file")"
 #    dir=test/$(echo -n "$url" | md5sum | sed 's/ .*//')
-    dir=$(pwd)/test/bin/$(echo -n $(basename "$file"))
-	oj_dir="None"
-	if [[ $url == http://judge.u-aizu.ac.jp* ]]; then
-		oj_dir="aoj"
-		id=${url##*id=}
-#		return
-	elif [[ $url == https://judge.yosupo.jp* ]]; then
-		oj_dir="yosupo"
-		id=${url##*problem/}
-#		return
-	else
-		echo "WARNING!!!! NO OBJ DIR"
-		exit;
-	fi
+    bin_dir=$(pwd)/test/bin/$(echo -n $(basename "$file"))
+    oj_dir="None"
+    if [[ $url == http://judge.u-aizu.ac.jp* ]]; then
+        oj_dir="aoj"
+        id=${url##*id=}
+#        return
+    elif [[ $url == https://judge.yosupo.jp* ]]; then
+        oj_dir="yosupo"
+        id=${url##*problem/}
+#        return
+    else
+        echo "WARNING!!!! NO OBJ DIR"
+        exit;
+    fi
 
-	mkdir -p ${dir}
+    mkdir -p ${bin_dir}
     test_dir="$(pwd)/test/case/$oj_dir/$id"
 
     # ignore if IGNORE is defined
     if list-defined "$file" | grep '^#define IGNORE ' > /dev/null ; then
         return
     fi
-
+    nim c -d:release --warnings:off -o:${bin_dir}/a.out "$file"
 #    if ! is-verified "$file" ; then
+    if ! is-verified "$bin_dir" ; then
         # compile
 #        $CXX $CXXFLAGS -I . -o ${dir}/a.out "$file"
 #        echo "dir: ${dir}"
-        nim c -d:release --warnings:off -o:${dir}/a.out "$file"
         if [[ -n ${url} ]] ; then
+            echo "run"
             # download
             if [[ ! -e ${test_dir} ]] ; then
                 sleep 2
                 oj download --system "$url" -d ${test_dir}
             fi
+            echo "test"
             # test
 #            oj test -c ${dir}/a.out -d ${test_dir} --special-judge ${test_dir}/judge.py
-            oj test -c ${dir}/a.out -d ${test_dir}
+            oj test -c ${bin_dir}/a.out -d ${test_dir}
         else
             # run
-            ${dir}/a.out
+            ${bin_dir}/a.out
         fi
-        mark-verified "$file"
-#    fi
+        mark-verified "$bin_dir"
+    fi
 }
 
 

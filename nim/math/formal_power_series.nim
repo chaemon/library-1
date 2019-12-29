@@ -284,55 +284,50 @@ proc onlineConvolutionExp[T](self: FormalPowerSeries[T], conv_coeff:FormalPowerS
   rec(0, n, 0)
   return conv_arg
 
+proc pow[T](self: FormalPowerSeries[T], k:int, deg = -1):FormalPowerSeries[T] =
+  let n = self.data.len
+  var deg = deg
+  if deg == -1: deg = n
+  for i in 0..<n:
+    if self.data[i] != T().init(0):
+      let rev = T().init(1) / self.data[i]
+      var ret = (((self * rev) shr i).log() * T().init(k)).exp() * (self.data[i]^k)
+      if i * k > deg: return initFormalPowerSeries[T](deg)
+      ret = (ret shl (i * k)).pre(deg)
+      if ret.data.len < deg: ret.data.setlen(deg)
+      return ret
+  return self
 
-#P pow(int64_t k, int deg = -1) const {
-#  const int n = (int) self.len;
-#  if(deg == -1) deg = n;
-#  for(int i = 0; i < n; i++) {
-#    if((*self)[i] != T(0)) {
-#      T rev = T(1) / (*self)[i];
-#      P ret = (((*self * rev) >> i).log() * k).exp() * ((*self)[i].pow(k));
-#      if(i * k > deg) return P(deg, T(0));
-#      ret = (ret << (i * k)).pre(deg);
-#      if(ret.len < deg) ret.setlen(deg, T(0));
-#      return ret;
-#    }
-#  }
-#  return *self;
-#}
-#
-#T eval(T x) const {
-#  T r = 0, w = 1;
-#  for(auto &v : *self) {
-#    r += w * v;
-#    w *= x;
-#  }
-#  return r;
-#}
-#
-#P pow_mod(int64_t n, P mod) const {
-#  P modinv = mod.rev().inv();
-#  auto get_div = [&](P base) {
-#    if(base.len < mod.len) {
-#      base.clear();
-#      return base;
-#    }
-#    int n = base.len - mod.len + 1;
-#    return (base.rev().pre(n) * modinv.pre(n)).pre(n).rev(n);
-#  };
-#  P x(*self), ret{1};
-#  while(n > 0) {
-#    if(n & 1) {
-#      ret *= x;
-#      ret -= get_div(ret) * mod;
-#    }
-#    x *= x;
-#    x -= get_div(x) * mod;
-#    n >>= 1;
-#  }
-#  return ret;
-#}
+proc eval[T](self: FormalPowerSeries[T], x:T):T =
+  var
+    r = T().init(0)
+    w = T().init(1)
+  for v in self.data:
+    r += w * v
+    w *= x
+  return r
 
+proc powMod[T](self: FormalPowerSeries[T], n:int, M:FormalPowerSeries[T]):FormalPowerSeries[T] =
+  let modinv = M.rev().inv()
+  proc getDiv(base:FormalPowerSeries[T]):FormalPowerSeries[T] =
+    var base = base
+    if base.data.len < M.data.len:
+      base.data.setlen(0)
+      return base
+    let n = base.data.len - M.data.len + 1
+    return (base.rev().pre(n) * modinv.pre(n)).pre(n).rev(n)
+  var
+    n = n
+    x = self
+    ret = initFormalPowerSeries[T](@[T().init(1)])
+  while n > 0:
+    if (n and 1) > 0:
+      ret *= x
+      ret -= getDiv(ret) * M
+    x *= x
+    x -= getDiv(x) * M
+    n = n shr 1
+  return ret
 
 proc `+`[T](self:FormalPowerSeries[T];r:FormalPowerSeries[T]):FormalPowerSeries[T] =  result = self;result += r
 proc `+`[T](self:FormalPowerSeries[T];v:T   ):FormalPowerSeries[T] =  result = self;result += v

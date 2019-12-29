@@ -1,3 +1,4 @@
+# CumulativeSum2D {{{
 type CumulativeSum2D[T] = object
   data: seq[seq[T]]
 
@@ -15,3 +16,4 @@ proc build[T](self:var CumulativeSum2D[T]) =
 
 proc query[T](self: CumulativeSum2D[T], sx, sy, gx, gy:int):T =
   return self.data[gx][gy] - self.data[sx][gy] - self.data[gx][sy] + self.data[sx][sy]
+#}}}
