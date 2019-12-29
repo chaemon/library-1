@@ -16,4 +16,5 @@ before_install:
     - pip3 install online-judge-tools
     - sudo apt install nim
 script:
+    - nim --version
     - ./test.sh
