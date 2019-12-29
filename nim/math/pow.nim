@@ -11,5 +11,5 @@ proc `^=`[T](self: var T, k:int) =
   self.swap(B)
 
 proc `^`[T](self: T, k:int):T =
-  result = self; result ^= k
+  result = self;result ^= k
 #}}}
