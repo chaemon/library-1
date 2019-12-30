@@ -83,7 +83,7 @@ proc `*=`[T](self: var FormalPowerSeries[T],  r: FormalPowerSeries[T]) =
   else:
     self = (self.getMult)(self, r)
 
-proc `mod=`[T](self: var FormalPowerSeries[T], r:FormalPowerSeries[T]):FormalPowerSeries[T] = self -= self / r * r
+proc `mod=`[T](self: var FormalPowerSeries[T], r:FormalPowerSeries[T]) = self -= self div r * r
 
 proc `-`[T](self: FormalPowerSeries[T]):FormalPowerSeries[T] =
   var ret = self
@@ -103,12 +103,12 @@ proc pre[T](self: FormalPowerSeries[T], sz:int):FormalPowerSeries[T] =
   result = self
   result.data.setlen(min(self.data.len, sz))
 
-proc `div=`[T](self: var FormalPowerSeries[T], r: FormalPowerSeries[T]):FormalPowerSeries[T] =
+proc `div=`[T](self: var FormalPowerSeries[T], r: FormalPowerSeries[T]) =
   if self.data.len < r.data.len:
-    self.setlen(0)
+    self.data.setlen(0)
   else:
-    let n = self.len - r.len + 1
-    self = (self.rev().pre(n) * r.rev().inv(n)).pre(n).rev(n);
+    let n = self.data.len - r.data.len + 1
+    self = (self.rev().pre(n) * r.rev().inv(n)).pre(n).rev(n)
 
 proc dot[T](self:FormalPowerSeries[T], r: FormalPowerSeries[T]):FormalPowerSeries[T] =
   var ret = initFormalPowerSeries[T](min(self.len, r.len))
@@ -119,7 +119,6 @@ proc `shr`[T](self: FormalPowerSeries[T], sz:int):FormalPowerSeries[T] =
   if self.data.len <= sz: return initFormalPowerSeries[T](0)
   var ret = self
   ret.data.delete(0, sz - 1)
-#  ret.erase(ret.begin(), ret.begin() + sz);
   return ret
 
 proc `shl`[T](self: FormalPowerSeries[T], sz:int):FormalPowerSeries[T] =
@@ -335,6 +334,6 @@ proc `-`[T](self:FormalPowerSeries[T];r:FormalPowerSeries[T]):FormalPowerSeries[
 proc `-`[T](self:FormalPowerSeries[T];v:T   ):FormalPowerSeries[T] =  result = self;result -= v
 proc `*`[T](self:FormalPowerSeries[T];r:FormalPowerSeries[T]):FormalPowerSeries[T] =  result = self;result *= r
 proc `*`[T](self:FormalPowerSeries[T];v:T   ):FormalPowerSeries[T] =  result = self;result *= v
-proc `div`[T](self:FormalPowerSeries[T];r:FormalPowerSeries[T]):FormalPowerSeries[T] =  result = self;result `div=` (r)
-proc `mod`[T](self:FormalPowerSeries[T];r:FormalPowerSeries[T]):FormalPowerSeries[T] =  result = self;result `mod=` (r)
+proc `div`[T](self:FormalPowerSeries[T];r:FormalPowerSeries[T]):FormalPowerSeries[T] =  result = self;result.`div=` (r)
+proc `mod`[T](self:FormalPowerSeries[T];r:FormalPowerSeries[T]):FormalPowerSeries[T] =  result = self;result.`mod=` (r)
 
