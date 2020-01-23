@@ -2,8 +2,6 @@ dist: bionic
 language: nim
 compiler:
     - nim
-    #    - clang
-    #    - gcc
 addons:
     apt:
         packages:
