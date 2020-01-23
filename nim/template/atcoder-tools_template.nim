@@ -1,5 +1,5 @@
 {{"#{{{ header"}}
-{.hints:off checks:off.}
+{.hints:off warnings:off optimization:speed.}
 import algorithm, sequtils, tables, macros, math, sets, strutils
 when defined(MYDEBUG):
   import header
@@ -12,7 +12,7 @@ proc nextString(): string =
   var get = false
   result = ""
   while true:
-    var c = getchar()
+    let c = getchar()
     if int(c) > int(' '):
       get = true
       result.add(c)
@@ -46,32 +46,35 @@ macro `:=`(x, y: untyped): untyped =
     return quote do:
       `x` = `y`
       discardableId(`x`)
+macro dump*(x: typed): untyped =
+  let s = x.toStrLit
+  let r = quote do:
+    debugEcho `s`, " = ", `x`
+  return r
 {{"#}}}"}}
 
 {% if mod %}
-let MOD = {{ mod }}
+const MOD = {{ mod }}
 {% endif %}
 {% if yes_str %}
-let YES = "{{ yes_str }}"
+const YES = "{{ yes_str }}"
 {% endif %}
 {% if no_str %}
-let NO = "{{ no_str }}"
+const NO = "{{ no_str }}"
+{% endif %}
+{% if prediction_success %}
+{{ global_declaration }}
 {% endif %}
 
-{% if prediction_success %}
-proc solve({{ formal_arguments }}) =
+proc solve() =
   return
-{% endif %}
 
-{{"#{{{ main function"}}
-proc main() =
+{{"#{{{ input part"}}
+block:
 {% if prediction_success %}
-  {{input_part}}
-  solve({{ actual_arguments }});
+  {{global_input_part}}
 {% else %}
 # Failed to predict input format
 {% endif %}
-  return
-
-main()
+  solve()
 {{"#}}}"}}

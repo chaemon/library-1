@@ -1,3 +1,12 @@
+# deduplicate {{{
+proc deduplicate[T](s: openArray[T]): seq[T] =
+  let h = s.toOrderedSet
+  newSeq(result, h.len)
+  var i = 0
+  for el in h:
+    result[i] = el
+    inc(i)
+# }}}
 #{{{ Compress[T]
 type Compress[T] = object
   xs: seq[T]

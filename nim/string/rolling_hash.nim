@@ -27,8 +27,8 @@ proc initRollingHash(s:string, base = 10007'u):RollingHash =
     if hashed[i + 1] >= MOD: hashed[i + 1] -= MOD
   return RollingHash(hashed: hashed, power: power)
 
-proc get(self: RollingHash; l, r:int):uint =
-  result = self.hashed[r] + MOD - mul(self.hashed[l], self.power[r - l])
+proc get(self: RollingHash; s:Slice[int]):uint =
+  result = self.hashed[s.b+1] + MOD - mul(self.hashed[s.a], self.power[s.b-s.a+1])
   if result >= MOD: result -= MOD
 
 proc connect(self: RollingHash; h1, h2:uint, h2len:int):uint =
@@ -42,6 +42,6 @@ proc LCP(self, b:RollingHash; l1, r1, l2, r2:int):int =
     high = len + 1
   while high - low > 1:
     let mid = (low + high) div 2
-    if self.get(l1, l1 + mid) == b.get(l2, l2 + mid): low = mid
+    if self.get(l1..<l1 + mid) == b.get(l2..<l2 + mid): low = mid
     else: high = mid
   return low

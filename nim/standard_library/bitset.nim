@@ -6,7 +6,7 @@ let BitWidth = 64
 proc toBin(b:uint64, n: int): string =
   result = ""
   for i in countdown(n-1, 0):
-    if (b and (1'u64 shl uint64(i))) != 0'u64: result &= "1"
+    if (b and (1.uint64 shl i.uint64)) != 0.uint64: result &= "1"
     else: result &= "0"
 
 type BitSet = object
@@ -15,8 +15,7 @@ type BitSet = object
 
 
 proc initBitSet(n: int): BitSet =
-  var q = n div BitWidth
-  if n mod BitWidth != 0: q += 1
+  var q = (n + BitWidth - 1) div BitWidth
   return BitSet(len:n, data: newSeq[uint64](q))
 proc initBitSet1(n: int): BitSet =
   var
@@ -73,13 +72,13 @@ proc `shl`(a: BitSet, n:int): BitSet =
   var r = n mod BitWidth
   if r < 0: r += BitWidth
   let q = (n - r) div BitWidth
-  let maskl = setBits(BitWidth - r)
+  let maskl = setBits[uint64](BitWidth - r)
   for i in 0..<a.data.len:
     let d = (a.data[i] and maskl) shl uint64(r)
     let i2 = i + q
     if 0 <= i2 and i2 < a.data.len: result.data[i2] = result.data[i2] or d
   if r != 0:
-    let maskr = setBits(r) shl uint64(BitWidth - r)
+    let maskr = setBits[uint64](r) shl (BitWidth - r).uint64
     for i in 0..<a.data.len:
       let d = (a.data[i] and maskr) shr uint64(BitWidth - r)
       let i2 = i + q + 1
@@ -87,7 +86,7 @@ proc `shl`(a: BitSet, n:int): BitSet =
   block:
     let r = a.len mod BitWidth
     if r != 0:
-      let mask = not (setBits(BitWidth - r) shl uint64(r))
+      let mask = not (setBits[uint64](BitWidth - r) shl uint64(r))
       result.data[^1] = result.data[^1] and mask
 proc `shr`(a: BitSet, n:int): BitSet = a shl (-n)
 #}}}

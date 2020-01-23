@@ -15,6 +15,8 @@ proc eq(a,b:Real):bool = return abs(b - a) < EPS
 proc `*`(p:Point, d:Real):Point =
   return Point(re:p.re * d, im:p.im * d)
 
+proc `$`(p:Point):string = "(" & $(p.re) & "," & $(p.im) & ")"
+
 #istream &operator>>(istream &is, Point &p) {
 #  Real a, b;
 #  is >> a >> b;
@@ -22,16 +24,12 @@ proc `*`(p:Point, d:Real):Point =
 #  return is;
 #}
 #
-#ostream &operator<<(ostream &os, Point &p) {
-#  return os << fixed << setprecision(10) << p.re << " " << p.im;
-#}
 
 # rotate point p counterclockwise by theta rad
 proc rotate(theta:Real, p:Point):Point =
   return Point(re:cos(theta) * p.re - sin(theta) * p.im, im:sin(theta) * p.re + cos(theta) * p.im)
 
 proc radianToDegree(r:Real):Real = r * 180.0 / PI
-
 proc degreeToRadian(d:Real):Real = d * PI / 180.0
 
 # smaller angle of the a-b-c
@@ -62,6 +60,9 @@ proc initLine(A, B, C:Real):Line = # Ax + By = C
   elif eq(B, 0): b = initPoint(C / A, 0); b = initPoint(C / A, 1)
   else: a = initPoint(0, C / B); b = initPoint(C / A, 0)
   return initLine(a, b)
+
+proc `$`(p:Line):string =
+  return $(p.a) & " to " & $(p.b)
 
 #  friend ostream &operator<<(ostream &os, Line &p) {
 #    return os << p.a << " to " << p.b;
@@ -216,75 +217,80 @@ proc crosspoint(c:Circle, l:Segment):(Point,Point) =
   let
     aa = cast[Line](l)
   if intersect(c, l) == 2: return crosspoint(c, aa)
-  let ret = crosspoint(c, aa)
-  if dot(l.a - ret.first, l.b - ret.first) < 0: ret.second = ret.first;
-  else ret.first = ret.second;
-  return ret;
+  result = crosspoint(c, aa)
+  if dot(cast[Line](l).a - result[0], cast[Line](l).b - result[0]) < 0: result[1] = result[0]
+  else: result[0] = result[1]
 
 # http://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=CGL_7_E
-pair< Point, Point > crosspoint(const Circle &c1, const Circle &c2) {
-  Real d = abs(c1.p - c2.p);
-  Real a = arccos((c1.r * c1.r + d * d - c2.r * c2.r) / (2 * c1.r * d));
-  Real t = arctan2(c2.p.im - c1.p.im, c2.p.re - c1.p.re);
-  Point p1 = c1.p + Point(cos(t + a) * c1.r, sin(t + a) * c1.r);
-  Point p2 = c1.p + Point(cos(t - a) * c1.r, sin(t - a) * c1.r);
-  return {p1, p2};
-}
+proc crosspoint(c1, c2: Circle):(Point,Point) =
+  let
+    d = abs(c1.p - c2.p)
+    a = arccos((c1.r * c1.r + d * d - c2.r * c2.r) / (2 * c1.r * d))
+    t = arctan2(c2.p.im - c1.p.im, c2.p.re - c1.p.re)
+  return (c1.p + initPoint(cos(t + a) * c1.r, sin(t + a) * c1.r),
+          c1.p + initPoint(cos(t - a) * c1.r, sin(t - a) * c1.r))
 
 # http://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=CGL_7_F
 # tangent of circle c through point p
-pair< Point, Point > tangent(const Circle &c1, const Point &p2) {
-  return crosspoint(c1, Circle(p2, sqrt(norm(c1.p - p2) - c1.r * c1.r)));
-}
+proc tangent(c1: Circle, p2:Point):(Point, Point) =
+  return crosspoint(c1, initCircle(p2, sqrt(norm(c1.p - p2) - c1.r * c1.r)))
 
 # http://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=CGL_7_G
 # common tangent of circles c1 and c2
-Lines tangent(Circle c1, Circle c2) {
-  Lines ret;
-  if(c1.r < c2.r) swap(c1, c2);
-  Real g = norm(c1.p - c2.p);
-  if(eq(g, 0)) return ret;
-  Point u = (c2.p - c1.p) / sqrt(g);
-  Point v = rotate(PI * 0.5, u);
-  for(int s : {-1, 1}) {
-    Real h = (c1.r + s * c2.r) / sqrt(g);
-    if(eq(1 - h * h, 0)) {
-      ret.emplace_back(c1.p + u * c1.r, c1.p + (u + v) * c1.r);
-    } else if(1 - h * h > 0) {
-      Point uu = u * h, vv = v * sqrt(1 - h * h);
-      ret.emplace_back(c1.p + (uu + vv) * c1.r, c2.p - (uu + vv) * c2.r * s);
-      ret.emplace_back(c1.p + (uu - vv) * c1.r, c2.p - (uu - vv) * c2.r * s);
-    }
-  }
-  return ret;
-}
+proc tangent(c1, c2: Circle):Lines =
+  result = newSeq[Line]()
+  var (c1, c2) = (c1, c2)
+  if c1.r < c2.r: swap(c1, c2)
+  let g = norm(c1.p - c2.p)
+  if eq(g, 0): return
+  let
+    u = (c2.p - c1.p) / sqrt(g)
+    v = rotate(PI * 0.5, u)
+  for s in [-1, 1]:
+    let h = (c1.r + s.float * c2.r) / sqrt(g)
+    if eq(1 - h * h, 0):
+      result.add(initLine(c1.p + u * c1.r.complex, c1.p + (u + v) * c1.r.complex))
+    elif 1 - h * h > 0:
+      let
+        uu = u * h.complex
+        vv = v * sqrt(1 - h * h).complex
+      result.add(initLine(c1.p + (uu + vv) * c1.r.complex, c2.p - (uu + vv) * c2.r.complex * s.float.complex))
+      result.add(initLine(c1.p + (uu - vv) * c1.r.complex, c2.p - (uu - vv) * c2.r.complex * s.float.complex))
 
-// http://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=CGL_3_B
-bool is_convex(const Polygon &p) {
-  int n = (int) p.size();
-  for(int i = 0; i < n; i++) {
-    if(ccw(p[(i + n - 1) % n], p[i], p[(i + 1) % n]) == -1) return false;
-  }
-  return true;
-}
+# http://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=CGL_3_B
+proc isConvex(p:Polygon):bool =
+  let n = p.len
+  for i in 0..<n:
+    if ccw(p[(i + n - 1) mod n], p[i], p[(i + 1) mod n]) == -1: return false
+  return true
 
-// http://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=CGL_4_A
-Polygon convex_hull(Polygon &p) {
-  int n = (int) p.size(), k = 0;
-  if(n <= 2) return p;
-  sort(p.begin(), p.end());
-  vector< Point > ch(2 * n);
-  for(int i = 0; i < n; ch[k++] = p[i++]) {
-    while(k >= 2 and cross(ch[k - 1] - ch[k - 2], p[i] - ch[k - 1]) < EPS) --k;
-  }
-  for(int i = n - 2, t = k + 1; i >= 0; ch[k++] = p[i--]) {
-    while(k >= t and cross(ch[k - 1] - ch[k - 2], p[i] - ch[k - 1]) < EPS) --k;
-  }
-  ch.resize(k - 1);
-  return ch;
-}
+import algorithm
 
-// http://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=CGL_3_C
+# http://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=CGL_4_A
+proc convexHull(p:Polygon): Polygon =
+  let n = p.len
+  var
+    k = 0
+    p = p
+  if n <= 2: return p
+  p.sort(cmp[Point])
+  var
+    ch = newSeq[Point](2 * n)
+    i = 0
+  while i < n:
+    while k >= 2 and cross(ch[k - 1] - ch[k - 2], p[i] - ch[k - 1]) < EPS: k.dec
+    ch[k] = p[i]
+    k.inc;i.inc
+  i = n - 2
+  var t = k + 1
+  while i >= 0:
+    while k >= t and cross(ch[k - 1] - ch[k - 2], p[i] - ch[k - 1]) < EPS: k.dec
+    ch[k] = p[i]
+    k.inc;i.dec
+  ch.setLen(k - 1)
+  return ch
+
+# http://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=CGL_3_C
 enum {
   OUT, ON, IN
 };
@@ -301,8 +307,8 @@ int contains(const Polygon &Q, const Point &p) {
 }
 
 
-// http://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=1033
-// deduplication of line segments
+# http://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=1033
+# deduplication of line segments
 void merge_segments(vector< Segment > &segs) {
 
   auto merge_if_able = [](Segment &s1, const Segment &s2) {

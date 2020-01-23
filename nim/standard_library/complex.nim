@@ -1,3 +1,4 @@
+#{{{ complex class
 {.push checks: off, line_dir: off, stack_trace: off, debugger: off.}
 # the user does not want to trace a part of the standard library!
 
@@ -31,10 +32,10 @@ proc `==` *(x, y: Complex): bool =
   ## Compare two complex numbers ``x`` and ``y`` for equality.
   result = x.re == y.re and x.im == y.im
 
-proc `+` *(x: float; y: Complex): Complex =
-  ## Add a real number to a complex number.
-  result.re = x + y.re
-  result.im = y.im
+#proc `+` *(x: float; y: Complex): Complex =
+#  ## Add a real number to a complex number.
+#  result.re = x + y.re
+#  result.im = y.im
 
 proc `+` *(x: Complex; y: float): Complex =
   ## Add a complex number to a real number.
@@ -51,9 +52,9 @@ proc `-` *(z: Complex): Complex =
   result.re = -z.re
   result.im = -z.im
 
-proc `-` *(x: float; y: Complex): Complex =
-  ## Subtract a complex number from a real number.
-  x + (-y)
+#proc `-` *(x: float; y: Complex): Complex =
+#  ## Subtract a complex number from a real number.
+#  x + (-y)
 
 proc `-` *(x: Complex; y: float): Complex =
   ## Subtract a real number from a complex number.
@@ -70,10 +71,10 @@ proc `*` *(x, y: Complex): Complex =
   result.re = x.re * y.re - x.im * y.im
   result.im = x.im * y.re + x.re * y.im
 
-proc `*` *(x: float; y: Complex): Complex =
-  ## Multiply a real number and a complex number.
-  result.re = x * y.re
-  result.im = x * y.im
+#proc `*` *(x: float; y: Complex): Complex =
+#  ## Multiply a real number and a complex number.
+#  result.re = x * y.re
+#  result.im = x * y.im
 
 proc `*` *(x: Complex; y: float): Complex =
   ## Multiply a complex number with a real number.
@@ -89,9 +90,9 @@ proc inv*(z: Complex): Complex =
   ## Multiplicative inverse of complex number ``z``.
   conjugate(z) / abs2(z)
 
-proc `/` *(x: float; y: Complex): Complex =
-  ## Divide real number ``x`` by complex number ``y``.
-  result = x * inv(y)
+#proc `/` *(x: float; y: Complex): Complex =
+#  ## Divide real number ``x`` by complex number ``y``.
+#  result = x * inv(y)
 
 proc `/` *(x, y: Complex): Complex =
   ## Divide ``x`` by ``y``.
@@ -184,7 +185,7 @@ proc pow*(x, y: Complex): Complex =
   elif y.re == 1.0 and y.im == 0.0:
     result = x
   elif y.re == -1.0 and y.im == 0.0:
-    result = float(1.0) / x
+    result = complex(1.0) / x
   else:
     var
       rho = abs(x)
@@ -206,7 +207,7 @@ proc sin*(z: Complex): Complex =
 
 proc arcsin*(z: Complex): Complex =
   ## Returns the inverse sine of ``z``.
-  result = -im(float) * ln(im(float) * z + sqrt(float(1.0) - z*z))
+  result = -im(float) * ln(im(float) * z + sqrt(complex(1.0) - z*z))
 
 proc cos*(z: Complex): Complex =
   ## Returns the cosine of ``z``.
@@ -223,7 +224,7 @@ proc tan*(z: Complex): Complex =
 
 proc arctan*(z: Complex): Complex =
   ## Returns the inverse tangent of ``z``.
-  result = float(0.5)*im(float) * (ln(float(1.0) - im(float)*z) - ln(float(1.0) + im(float)*z))
+  result = complex(0.5)*im(float) * (ln(complex(1.0) - im(float)*z) - ln(complex(1.0) + im(float)*z))
 
 proc cot*(z: Complex): Complex =
   ## Returns the cotangent of ``z``.
@@ -231,27 +232,27 @@ proc cot*(z: Complex): Complex =
 
 proc arccot*(z: Complex): Complex =
   ## Returns the inverse cotangent of ``z``.
-  result = float(0.5)*im(float) * (ln(float(1.0) - im(float)/z) - ln(float(1.0) + im(float)/z))
+  result = complex(0.5)*im(float) * (ln(complex(1.0) - im(float)/z) - ln(complex(1.0) + im(float)/z))
 
 proc sec*(z: Complex): Complex =
   ## Returns the secant of ``z``.
-  result = float(1.0) / cos(z)
+  result = complex(1.0) / cos(z)
 
 proc arcsec*(z: Complex): Complex =
   ## Returns the inverse secant of ``z``.
-  result = -im(float) * ln(im(float) * sqrt(1.0 - 1.0/(z*z)) + float(1.0)/z)
+  result = -im(float) * ln(im(float) * sqrt(complex(1.0) - complex(1.0)/(z*z)) + complex(1.0)/z)
 
 proc csc*(z: Complex): Complex =
   ## Returns the cosecant of ``z``.
-  result = float(1.0) / sin(z)
+  result = complex(1.0) / sin(z)
 
 proc arccsc*(z: Complex): Complex =
   ## Returns the inverse cosecant of ``z``.
-  result = -im(float) * ln(sqrt(float(1.0) - float(1.0)/(z*z)) + im(float)/z)
+  result = -im(float) * ln(sqrt(complex(1.0) - complex(1.0)/(z*z)) + im(float)/z)
 
 proc sinh*(z: Complex): Complex =
   ## Returns the hyperbolic sine of ``z``.
-  result = float(0.5) * (exp(z) - exp(-z))
+  result = complex(0.5) * (exp(z) - exp(-z))
 
 proc arcsinh*(z: Complex): Complex =
   ## Returns the inverse hyperbolic sine of ``z``.
@@ -259,7 +260,7 @@ proc arcsinh*(z: Complex): Complex =
 
 proc cosh*(z: Complex): Complex =
   ## Returns the hyperbolic cosine of ``z``.
-  result = float(0.5) * (exp(z) + exp(-z))
+  result = complex(0.5) * (exp(z) + exp(-z))
 
 proc arccosh*(z: Complex): Complex =
   ## Returns the inverse hyperbolic cosine of ``z``.
@@ -271,23 +272,23 @@ proc tanh*(z: Complex): Complex =
 
 proc arctanh*(z: Complex): Complex =
   ## Returns the inverse hyperbolic tangent of ``z``.
-  result = float(0.5) * (ln((float(1.0)+z) / (float(1.0)-z)))
+  result = complex(0.5) * (ln((complex(1.0)+z) / (complex(1.0)-z)))
 
 proc sech*(z: Complex): Complex =
   ## Returns the hyperbolic secant of ``z``.
-  result = float(2.0) / (exp(z) + exp(-z))
+  result = complex(2.0) / (exp(z) + exp(-z))
 
 proc arcsech*(z: Complex): Complex =
   ## Returns the inverse hyperbolic secant of ``z``.
-  result = ln(1.0/z + sqrt(float(1.0)/z+float(1.0)) * sqrt(float(1.0)/z-float(1.0)))
+  result = ln(1.0.complex/z + sqrt(complex(1.0)/z+float(1.0)) * sqrt(complex(1.0)/z-float(1.0)))
 
 proc csch*(z: Complex): Complex =
   ## Returns the hyperbolic cosecant of ``z``.
-  result = float(2.0) / (exp(z) - exp(-z))
+  result = complex(2.0) / (exp(z) - exp(-z))
 
 proc arccsch*(z: Complex): Complex =
   ## Returns the inverse hyperbolic cosecant of ``z``.
-  result = ln(float(1.0)/z + sqrt(float(1.0)/(z*z) + float(1.0)))
+  result = ln(complex(1.0)/z + sqrt(complex(1.0)/(z*z) + float(1.0)))
 
 proc coth*(z: Complex): Complex =
   ## Returns the hyperbolic cotangent of ``z``.
@@ -295,7 +296,7 @@ proc coth*(z: Complex): Complex =
 
 proc arccoth*(z: Complex): Complex =
   ## Returns the inverse hyperbolic cotangent of ``z``.
-  result = float(0.5) * (ln(float(1.0) + float(1.0)/z) - ln(float(1.0) - float(1.0)/z))
+  result = complex(0.5) * (ln(complex(1.0) + complex(1.0)/z) - ln(complex(1.0) - complex(1.0)/z))
 
 proc phase*(z: Complex): float =
   ## Returns the phase of ``z``.
@@ -318,89 +319,4 @@ proc `$`*(z: Complex): string =
   result = "(" & $z.re & ", " & $z.im & ")"
 
 {.pop.}
-
-
-when isMainModule:
-  proc `=~`(x, y: Complex): bool =
-    result = abs(x.re-y.re) < 1e-6 and abs(x.im-y.im) < 1e-6
-
-  proc `=~`(x: Complex; y: float): bool =
-    result = abs(x.re-y) < 1e-6 and abs(x.im) < 1e-6
-
-  var
-    z: Complex = complex(0.0, 0.0)
-    oo: Complex = complex(1.0, 1.0)
-    a: Complex = complex(1.0, 2.0)
-    b: Complex = complex(-1.0, -2.0)
-    m1: Complex = complex(-1.0, 0.0)
-    i: Complex = complex(0.0, 1.0)
-    one: Complex = complex(1.0, 0.0)
-    tt: Complex = complex(10.0, 20.0)
-    ipi: Complex = complex(0.0, -PI)
-
-  doAssert(a/2.0 =~ complex(0.5, 1.0))
-  doAssert(a == a)
-  doAssert((a-a) == z)
-  doAssert((a+b) == z)
-  doAssert((a+b) =~ 0.0)
-  doAssert((a/b) == m1)
-  doAssert((1.0/a) =~ complex(0.2, -0.4))
-  doAssert((a*b) == complex(3.0, -4.0))
-  doAssert(10.0*a == tt)
-  doAssert(a*10.0 == tt)
-  doAssert(tt/10.0 == a)
-  doAssert(oo+(-1.0) == i)
-  doAssert( (-1.0)+oo == i)
-  doAssert(abs(oo) == sqrt(2.0))
-  doAssert(conjugate(a) == complex(1.0, -2.0))
-  doAssert(sqrt(m1) == i)
-  doAssert(exp(ipi) =~ m1)
-
-  doAssert(pow(a, b) =~ complex(-3.72999124927876, -1.68815826725068))
-  doAssert(pow(z, a) =~ complex(0.0, 0.0))
-  doAssert(pow(z, z) =~ complex(1.0, 0.0))
-  doAssert(pow(a, one) =~ a)
-  doAssert(pow(a, m1) =~ complex(0.2, -0.4))
-  doAssert(pow(a, 2.0) =~ complex(-3.0, 4.0))
-  doAssert(pow(a, 2) =~ complex(-3.0, 4.0))
-  doAssert(not(pow(a, 2.0) =~ a))
-
-  doAssert(ln(a) =~ complex(0.804718956217050, 1.107148717794090))
-  doAssert(log10(a) =~ complex(0.349485002168009, 0.480828578784234))
-  doAssert(log2(a) =~ complex(1.16096404744368, 1.59727796468811))
-
-  doAssert(sin(a) =~ complex(3.16577851321617, 1.95960104142161))
-  doAssert(cos(a) =~ complex(2.03272300701967, -3.05189779915180))
-  doAssert(tan(a) =~ complex(0.0338128260798967, 1.0147936161466335))
-  doAssert(cot(a) =~ 1.0 / tan(a))
-  doAssert(sec(a) =~ 1.0 / cos(a))
-  doAssert(csc(a) =~ 1.0 / sin(a))
-  doAssert(arcsin(a) =~ complex(0.427078586392476, 1.528570919480998))
-  doAssert(arccos(a) =~ complex(1.14371774040242, -1.52857091948100))
-  doAssert(arctan(a) =~ complex(1.338972522294494, 0.402359478108525))
-  doAssert(arccot(a) =~ complex(0.2318238045004031, -0.402359478108525))
-  doAssert(arcsec(a) =~ complex(1.384478272687081, 0.3965682301123288))
-  doAssert(arccsc(a) =~ complex(0.1863180541078155, -0.3965682301123291))
-
-  doAssert(cosh(a) =~ complex(-0.642148124715520, 1.068607421382778))
-  doAssert(sinh(a) =~ complex(-0.489056259041294, 1.403119250622040))
-  doAssert(tanh(a) =~ complex(1.1667362572409199, -0.243458201185725))
-  doAssert(sech(a) =~ 1.0 / cosh(a))
-  doAssert(csch(a) =~ 1.0 / sinh(a))
-  doAssert(coth(a) =~ 1.0 / tanh(a))
-  doAssert(arccosh(a) =~ complex(1.528570919480998, 1.14371774040242))
-  doAssert(arcsinh(a) =~ complex(1.469351744368185, 1.06344002357775))
-  doAssert(arctanh(a) =~ complex(0.173286795139986, 1.17809724509617))
-  doAssert(arcsech(a) =~ arccosh(1.0/a))
-  doAssert(arccsch(a) =~ arcsinh(1.0/a))
-  doAssert(arccoth(a) =~ arctanh(1.0/a))
-
-  doAssert(phase(a) == 1.1071487177940904)
-  var t = polar(a)
-  doAssert(rect(t.r, t.phi) =~ a)
-  doAssert(rect(1.0, 2.0) =~ complex(-0.4161468365471424, 0.9092974268256817))
-
-  doAssert(sizeof(a) == 16)
-
-  doAssert 123.0.im + 456.0 == complex(456, 123)
-
+#}}}

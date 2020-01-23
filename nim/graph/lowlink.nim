@@ -1,3 +1,4 @@
+# LowLink {{{
 proc LowLink(g:Graph[int]):tuple[articulation:seq[int], bridge:seq[(int,int)]] =
   var
     used = newSeq[bool](g.len)
@@ -31,3 +32,4 @@ proc LowLink(g:Graph[int]):tuple[articulation:seq[int], bridge:seq[(int,int)]] =
   for i in 0..<g.len:
     if not used[i]: k = dfs(i, k, -1)
   return (articulation, bridge)
+#}}}
