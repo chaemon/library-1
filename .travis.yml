@@ -13,6 +13,7 @@ before_install:
     - pip3 install -U setuptools
     - pip3 install online-judge-tools
     - tar -Jxvf nim-0.13.0.tar.xz
+    - cd nim-0.13.0
     - ./build.sh
     - sudo sh install.sh /usr/bin
 script:
