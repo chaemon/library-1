@@ -66,15 +66,15 @@ const NO = "{{ no_str }}"
 {{ global_declaration }}
 {% endif %}
 
-proc solve({{formal_arguments}}) =
+proc solve() =
   return
 
 {{"#{{{ input part"}}
 block:
 {% if prediction_success %}
-  {{input_part}}
+  {{global_input_part}}
 {% else %}
 # Failed to predict input format
 {% endif %}
-  solve({{actual_arguments}})
+  solve()
 {{"#}}}"}}
