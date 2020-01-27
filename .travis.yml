@@ -16,6 +16,7 @@ before_install:
     - cd nim-0.13.0
     - ./build.sh
     - sudo sh install.sh /usr/bin
+    - cd ..
 script:
     - nim --version
     - ./test.sh
