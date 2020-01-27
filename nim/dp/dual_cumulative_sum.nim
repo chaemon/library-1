@@ -2,29 +2,30 @@
 import sequtils
 
 type DualCumulativeSum[T] = object
-  built:bool
+  pos: int
   data: seq[T]
 
-proc initDualCumulativeSum[T](sz:int = 100):DualCumulativeSum[T] = DualCumulativeSum[T](data: newSeqWith(sz, T(0)), built:false)
-proc initDualCumulativeSum[T](data:seq[T]):DualCumulativeSum[T] =
-  result = DualCumulativeSum[T](data: data, built:false)
-  result.build()
+proc initDualCumulativeSum[T](sz:int = 100):DualCumulativeSum[T] = DualCumulativeSum[T](data: newSeqWith(sz, T(0)), pos: -1)
+proc initDualCumulativeSum[T](a:seq[T]):DualCumulativeSum[T] =
+  var data = a
+  data.add(T(0))
+  for i in 0..<a.len:
+    data[i + 1] -= a[i]
+  return DualCumulativeSum[T](data: data, pos: -1)
 proc add[T](self: var DualCumulativeSum[T], s:Slice[int], x:T) =
-  assert(not self.built)
+  assert(self.pos < s.a)
+  if s.a > s.b: return
   if self.data.len <= s.b + 1:
-    self.data.setlen(s.b + 1)
+    self.data.setlen(s.b + 1 + 1)
   self.data[s.a] += x
   self.data[s.b + 1] -= x
 
-proc build[T](self: var DualCumulativeSum[T]) =
-  assert(not self.built)
-  self.built = true
-  self.data[0] = T(0)
-  for i in 1..<self.data.len:
-    self.data[i] += self.data[i - 1];
-
-proc `[]`[T](self: DualCumulativeSum[T], k:int):T =
-  assert(self.built)
+proc `[]`[T](self: var DualCumulativeSum[T], k:int):T =
   if k < 0: return T(0)
-  return self.data[min(k, self.data.len - 1)]
+  if self.data.len <= k:
+    self.data.setlen(k + 1)
+  while self.pos < k:
+    self.pos += 1
+    if self.pos > 0: self.data[self.pos] += self.data[self.pos - 1]
+  return self.data[k]
 #}}}

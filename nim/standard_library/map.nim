@@ -15,7 +15,7 @@ type
 
 proc insert*[T,U](self: var SomeMap[T,U],x:T,y:U) {.importcpp: "#.insert(std::make_pair(#,#))", nodecl.}
 proc `[]=`[T,U](self: var CMap[T,U], x:T, y:U) {.importcpp: "#[#] = #", nodecl.}
-proc `[]`[T,U](self: var CMap[T,U], x:T):U {.importcpp: "#[#]", nodecl.}
+proc `[]`[T,U](self: var CMap[T,U], x:T):var U {.importcpp: "#[#]", nodecl.}
 proc empty*[T,U](self: SomeMap[T,U]):bool {.importcpp: "#.empty()", nodecl.}
 proc size*[T,U](self: SomeMap[T,U]):int {.importcpp: "#.size()", nodecl.}
 proc clear*[T,U](self:var SomeMap[T,U]) {.importcpp: "#.clear()", nodecl.}
