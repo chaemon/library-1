@@ -14,7 +14,7 @@ before_install:
     - pip3 install -U setuptools
     - pip3 install online-judge-tools
     - curl https://nim-lang.org/choosenim/init.sh -sSf | bash -s -- -y
-    - PATH=/root/.nimble/bin:$PATH
+    - export PATH=/home/travis/.nimble/bin:$PATH
 #    - nimble install neo -y
 #    - apt install libopenblas-base -y
 #    - nimble install bignum -y
