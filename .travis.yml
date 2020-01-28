@@ -10,13 +10,19 @@ addons:
             - python3-setuptools
 
 before_install:
+    - apt update && apt install -y curl xz-utils g++ git
     - pip3 install -U setuptools
     - pip3 install online-judge-tools
-    - tar -Jxvf nim-0.13.0.tar.xz
-    - cd nim-0.13.0
-    - ./build.sh
-    - sudo sh install.sh /usr/bin
-    - cd ..
+    - curl https://nim-lang.org/choosenim/init.sh -sSf | bash -s -- -y
+    - PATH=/root/.nimble/bin:$PATH
+    - nimble install neo -y
+    - apt install libopenblas-base -y
+    - nimble install bignum -y
+#    - tar -Jxvf nim-0.13.0.tar.xz
+#    - cd nim-0.13.0
+#    - ./build.sh
+#    - sudo sh install.sh /usr/bin
+#    - cd ..
 script:
     - nim --version
     - ./test.sh
