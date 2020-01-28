@@ -10,7 +10,7 @@ addons:
             - python3-setuptools
 
 before_install:
-    - apt update && apt install -y curl xz-utils g++ git
+    - sudo apt update && sudo apt install -y curl xz-utils g++ git
     - pip3 install -U setuptools
     - pip3 install online-judge-tools
     - curl https://nim-lang.org/choosenim/init.sh -sSf | bash -s -- -y
