@@ -1,5 +1,3 @@
-import future
-
 type HeavyLightDecomposition[T] = object
   sz, in_a, out_a, head, rev, par:seq[int]
 

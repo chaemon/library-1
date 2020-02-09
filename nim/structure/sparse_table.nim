@@ -1,4 +1,4 @@
-import sequtils, math, future
+import sequtils, math
 
 type SparseTable[T] = object
   data: seq[seq[T]]

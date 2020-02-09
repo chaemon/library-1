@@ -10,7 +10,7 @@ type
     timestamp: int
 
 proc initFordFulkerson[flow_t](n:int): FordFulkerson[flow_t] =
-  return FordFulkerson[flow_t](graph:newSeqWith(n, newSeq[flow_edge[flow_t]]()), used:newSeqWith(n,-1), inf:flow_t.infty, timestamp:0)
+  return FordFulkerson[flow_t](graph:newSeqWith(n, newSeq[flow_edge[flow_t]]()), used:newSeqWith(n,-1), inf:flow_t.inf, timestamp:0)
 
 proc addEdge[flow_t](self:var FordFulkerson[flow_t], src, dst:int, cap:flow_t, idx = -1) =
   self.graph[src].add(flow_edge[flow_t](dst:dst, cap:cap, rev:self.graph[dst].len, isrev:false, idx:idx))

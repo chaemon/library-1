@@ -344,7 +344,7 @@ proc write[K,V](self: Node[K, V], h = 0) =
   if self.isLeaf:
     stderr.write "*\n"
   else:
-    if self.key == int.infty: stderr.write "inf"
+    if self.key == int.inf: stderr.write "inf"
     else: stderr.write self.key
     stderr.write " ", self.value, " ", self.color, " ", self.t, "\n"
     if h >= 15:

@@ -1,4 +1,4 @@
-import sequtils, future
+import sequtils
 
 type
   TrieNode = ref object

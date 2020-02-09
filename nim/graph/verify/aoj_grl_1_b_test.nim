@@ -16,7 +16,7 @@ proc main() =
   if not r: echo "NEGATIVE CYCLE"
   else:
     for dist in dists:
-      if dist == int.infty: echo "INF"
+      if dist == int.inf: echo "INF"
       else: echo dist
 
 main()

@@ -13,7 +13,7 @@ type
     min_cost, iter: seq[int]
     Inf: flow_t
 
-proc initDinic[flow_t](V:int): Dinic[flow_t] = Dinic[flow_t](graph:newSeqWith(V,newSeq[flow_edge[flow_t]]()), Inf:flow_t.infty)
+proc initDinic[flow_t](V:int): Dinic[flow_t] = Dinic[flow_t](graph:newSeqWith(V,newSeq[flow_edge[flow_t]]()), Inf:flow_t.inf)
 
 proc addEdge[flow_t](self: var Dinic[flow_t], src, dst:int, cap:flow_t, idx = -1) =
   self.graph[src].add(flow_edge[flow_t](dst:dst, cap:cap, rev:self.graph[dst].len, isrev:false, idx:idx))

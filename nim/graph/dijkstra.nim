@@ -4,7 +4,7 @@ include "../standard_library/heapqueue.nim"
 proc dijkstra[T](g:Graph[T], s:int): (seq[T],seq[int]) = 
   var
     n = g.len
-    dist = newSeqWith(n,T.infty)
+    dist = newSeqWith(n,T.inf)
     prev = newSeqWith(n,-1)
     Q = initHeapQueue[Edge[T]]()
   dist[s] = 0

@@ -23,7 +23,6 @@ proc nextString(): string =
     elif get: break
 template `max=`*(x,y:typed):void = x = max(x,y)
 template `min=`*(x,y:typed):void = x = min(x,y)
-template infty(T): untyped = ((T(1) shl T(sizeof(T)*8-2)) - 1)
 
 proc discardableId[T](x: T): T {.discardable.} =
   return x

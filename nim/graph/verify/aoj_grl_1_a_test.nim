@@ -21,7 +21,7 @@ proc main() =
   
   let dist = dijkstra(g, R)[0]
   for d in dist:
-    if d == int.infty: echo "INF"
+    if d == int.inf: echo "INF"
     else: echo d
 
 main()
