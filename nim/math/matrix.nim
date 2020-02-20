@@ -1,3 +1,4 @@
+# Matrix {{{
 proc getDefault(T:typedesc): T = (var temp:T;temp)
 proc getDefault[T](x:T): T = (var temp:T;temp)
 
@@ -90,4 +91,4 @@ proc determinant[T](self: Matrix[T]):T =
       let a = B[j][i]
       for k in 0..<self.width():
         B[j][k] -= B[i][k] * a;
-
+# }}}

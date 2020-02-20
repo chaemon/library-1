@@ -98,7 +98,8 @@ run() {
     if list-defined "$file" | grep '^#define IGNORE ' > /dev/null ; then
         return
     fi
-    nim c -d:release --warnings:off -o:${bin_dir}/a.out "$file"
+#    nim c -d:release --warnings:off -o:${bin_dir}/a.out "$file"
+    nim c --cc=tcc -d:release --warnings:off -o:${bin_dir}/a.out "$file"
 #    if ! is-verified "$file" ; then
     if ! is-verified "$bin_dir" ; then
         # compile

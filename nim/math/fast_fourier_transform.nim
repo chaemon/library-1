@@ -1,6 +1,7 @@
 #{{{ FastFourierTransform
-proc builtin_popcount(n: int): int{.importc: "__builtin_popcount", nodecl.}
-proc builtin_ctz(n: int): int{.importc: "__builtin_ctz", nodecl.}
+#proc builtin_popcount(n: int): int{.importc: "__builtin_popcount", nodecl.}
+#proc builtin_ctz(n: int): int{.importc: "__builtin_ctz", nodecl.}
+include "../standard_library/bitutils.nim"
 proc llround(n: float): int{.importc: "llround", nodecl.}
 
 import math, sequtils

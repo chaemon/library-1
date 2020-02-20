@@ -7,7 +7,7 @@ proc deduplicate[T](s: openArray[T]): seq[T] =
     result[i] = el
     inc(i)
 # }}}
-#{{{ Compress[T]
+# Compress[T] {{{
 type Compress[T] = object
   xs: seq[T]
 proc initCompress[T](xs:seq[T]):Compress[T] =

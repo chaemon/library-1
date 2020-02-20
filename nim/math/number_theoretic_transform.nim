@@ -4,8 +4,9 @@ import algorithm
 when not declared(Mod):
   const Mod = 1012924417
 
-proc builtin_popcount(n: int): int{.importc: "__builtin_popcount", nodecl.}
-proc builtin_ctz(n: int): int{.importc: "__builtin_ctz", nodecl.}
+include "../standard_library/bitutils.nim"
+#proc builtin_popcount(n: int): int{.importc: "__builtin_popcount", nodecl.}
+#proc builtin_ctz(n: int): int{.importc: "__builtin_ctz", nodecl.}
 proc llround(n: float): int{.importc: "llround", nodecl.}
 
 type NumberTheoreticTransform = object

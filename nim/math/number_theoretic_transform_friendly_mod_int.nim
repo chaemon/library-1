@@ -4,8 +4,10 @@ when not declared(MOD):
   const MOD = 1_000_000_007
 
 # NumberTheoricTransform using Modint {{{
-proc builtin_popcount(n: int): int{.importc: "__builtin_popcount", nodecl.}
-proc builtin_ctz(n: int): int{.importc: "__builtin_ctz", nodecl.}
+#proc builtin_popcount(n: int): int{.importc: "__builtin_popcount", nodecl.}
+#proc builtin_ctz(n: int): int{.importc: "__builtin_ctz", nodecl.}
+
+include "../standard_library/bitutils.nim"
 proc llround(n: float): int{.importc: "llround", nodecl.}
 
 type NumberTheoreticTransform = object

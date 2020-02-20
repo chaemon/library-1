@@ -16,4 +16,12 @@ proc writeBits[B:SomeInteger](b:B,n:int) =
   for i in countdown(n-1,0):stdout.write(b[i])
   echo ""
 proc setBits[B:SomeInteger](n:int):B = return (B(1) shl B(n)) - B(1)
+proc builtin_ctz(n:int):int =
+  for i in 0..<(8 * sizeof(n)):
+    if n[i] == 1: return i
+  assert(false)
+proc builtin_popcount(n:int):int =
+  result = 0
+  for i in 0..<(8 * sizeof(n)):
+    if n[i] == 1: result += 1
 #}}}

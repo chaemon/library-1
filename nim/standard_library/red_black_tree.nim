@@ -7,39 +7,54 @@ type
     key: K
     value: V
     color: Color
-  RedBlackTree*[K, V] = ref object
+    id: int
+  RedBlackTree*[K, V] = object of RootObj
     greater: proc(a,b:K):bool
     leaf,root,End: Node[K, V]
     size: int
     multi: bool
     cmp: proc(a:K,node:Node[K,V]):int
+    next_id: int
+  OrderedSet[K] = object of RedBlackTree[K, int]
+  OrderedMap[K, V] = object of RedBlackTree[K, V]
 
-proc eq_cmp[K,V](greater:proc(a,b:K):bool, End:Node[K,V]):proc (a:K, node:Node[K,V]):int =
+proc get_cmp[K,V](self: RedBlackTree[K, V], greater:proc(a,b:K):bool):proc (a:K, node:Node[K,V]):int =
+  let End = self.End
   return proc(a:K, node:Node[K,V]):int = 
     if node == End or greater(a, node.key): -1
     elif a > node.key: 1
     else: 0
-proc neq_cmp[K,V](greater:proc(a,b:K):bool, End:Node[K,V]):proc (a:K, node:Node[K,V]):int =
-  return proc(a:K, node:Node[K,V]):int =
-    if node == End or greater(a, node.key): -1
-    else: 1
-proc newNode[K, V](self: RedBlackTree[K, V], parent: Node[K, V], key: K, value: V): Node[K, V] =
-  return Node[K, V](parent: parent, left: self.leaf, right: self.leaf, key: key, value: value, color: Color.red)
+proc newNode[K, V](self: var RedBlackTree[K, V], parent: Node[K, V], key: K, value: V): Node[K, V] =
+  result = Node[K, V](parent: parent, left: self.leaf, right: self.leaf, key: key, value: value, color: Color.red, id: self.next_id)
+  self.next_id += 1
 
-proc newRedBlackTree*[K, V](greater: proc(a,b:K):bool, multi:bool): RedBlackTree[K, V] =
+proc initRedBlackTree*[K, V](greater: proc(a,b:K):bool, multi:bool): RedBlackTree[K, V] =
   let leaf = Node[K, V](color: Color.black)
   leaf.left = leaf;leaf.right = leaf
   let End = Node[K, V](color: Color.black)
   End.left = leaf;End.right = leaf
-  let cmp = if multi: neq_cmp[K,V](greater,End) else: eq_cmp[K,V](greater,End)
-  return RedBlackTree[K, V](leaf: leaf, End: End, root: End, cmp: cmp, greater: greater)
+  result = RedBlackTree[K, V](leaf: leaf, End: End, root: End, multi: multi, greater: greater, next_id: 0)
+  result.cmp = result.get_cmp(greater)
 
 proc greater[K](a,b:K):bool = a < b
 
-proc newOrderedSet*[K](): RedBlackTree[K,int] = newRedBlackTree[K,int](greater[K],false)
-proc newOrderedMultiSet*[K](): RedBlackTree[K,int] = newRedBlackTree[K,int](greater[K],true)
-proc newOrderedMap*[K,V](): RedBlackTree[K,V] = newRedBlackTree[K,V](greater[K],false)
-proc newOrderedMultiMap*[K,V](): RedBlackTree[K,V] = newRedBlackTree[K,V](greater[K],true)
+proc initOrderedSet*[K](multi:bool = false): OrderedSet[K] = 
+  let leaf = Node[K, int](color: Color.black)
+  leaf.left = leaf;leaf.right = leaf
+  let End = Node[K, int](color: Color.black)
+  End.left = leaf;End.right = leaf
+  result = OrderedSet[K](leaf: leaf, End: End, root: End, multi: multi, greater: greater, next_id: 0)
+  result.cmp = result.get_cmp(greater)
+proc initOrderedMultiSet*[K](): OrderedSet[K] = initOrderedSet[K](true)
+proc initOrderedMap*[K,V](multi:bool = false): OrderedMap[K,V] = 
+  let leaf = Node[K, V](color: Color.black)
+  leaf.left = leaf;leaf.right = leaf
+  let End = Node[K, V](color: Color.black)
+  End.left = leaf;End.right = leaf
+  result = OrderedMap[K, V](leaf: leaf, End: End, root: End, multi: multi, greater: greater, next_id: 0)
+  result.cmp = result.get_cmp(greater)
+
+proc initOrderedMultiMap*[K,V](): OrderedMap[K,V] = initOrderedMap[K, V](true)
 
 proc isLeaf[K,V](self: Node[K,V]):bool = self.left == self
 
@@ -74,7 +89,7 @@ proc pred[K, V](node: Node[K, V]): Node[K, V] =
   else: return node.parentRight
 
 #{{{ rotate founctions
-proc rotateLeft[K, V](self: RedBlackTree[K, V], parent: Node[K, V]) =
+proc rotateLeft[K, V](self: var RedBlackTree[K, V], parent: Node[K, V]) =
   if parent == nil: return
   var right = parent.right
   parent.right = right.left
@@ -86,7 +101,7 @@ proc rotateLeft[K, V](self: RedBlackTree[K, V], parent: Node[K, V]) =
   right.left = parent
   parent.parent = right
 
-proc rotateRight[K, V](self: RedBlackTree[K, V], parent: Node[K, V]) =
+proc rotateRight[K, V](self: var RedBlackTree[K, V], parent: Node[K, V]) =
   if parent == nil: return
   var left = parent.left
   parent.left = left.right
@@ -99,47 +114,8 @@ proc rotateRight[K, V](self: RedBlackTree[K, V], parent: Node[K, V]) =
   parent.parent = left
 #}}}
 
-proc findNode[K, V](self: RedBlackTree[K, V], key: K): Node[K, V] =
-  var curr = self.root
-  while not curr.isLeaf:
-    let comp = self.cmp(key, curr)
-    if comp == 0: return curr
-    elif comp < 0: curr = curr.left
-    else: curr = curr.right
-  return nil
-
-#{{{ lowerBound and upperBound
-proc lowerBound[K, V](self: RedBlackTree[K, V], curr: Node[K,V], key: K): Node[K,V] =
-  if curr.isLeaf: return nil
-  if curr != self.End and self.greater(curr.key, key):
-    return self.lowerBound(curr.right,key)
-  else:
-    let lb = self.lowerBound(curr.left,key)
-    if lb == nil: return curr
-    else: return lb
-
-proc lowerBound[K, V](self: RedBlackTree[K, V], key: K): Node[K,V] =
-  let t = self.lowerBound(self.root,key)
-  if t == nil: return self.End
-  else: return t
-
-proc upperBound[K, V](self: RedBlackTree[K, V], curr: Node[K,V], key: K): Node[K,V] =
-  if curr.isLeaf: return nil
-  if curr == self.End or self.greater(key, curr.key):
-    let ub = self.upperBound(curr.left,key)
-    if ub == nil: return curr
-    else: return ub
-  else:
-    return self.upperBound(curr.right,key)
-
-proc upperBound[K, V](self: RedBlackTree[K, V], key: K): Node[K,V] =
-  let t = self.upperBound(self.root,key)
-  if t == nil: return self.End
-  else: return t
-#}}}
-
-#{{{ Insert and remove
-proc fixInsert[K, V](self: RedBlackTree[K, V], node: Node[K, V]) =
+# insert {{{
+proc fixInsert[K, V](self: var RedBlackTree[K, V], node: Node[K, V]) =
   ## Rebalances a tree after an insertion
   var curr = node
   while curr != self.root and curr.parent.color == Color.red:
@@ -175,40 +151,63 @@ proc fixInsert[K, V](self: RedBlackTree[K, V], node: Node[K, V]) =
           self.rotateLeft(curr.parent.parent)
   self.root.color = Color.black
 
-proc insert*[K, V](self: RedBlackTree[K, V], key: K, value: V): bool {.discardable.} =
+proc insert*[K, V](self: var RedBlackTree[K, V], node: var Node[K, V]): Node[K, V] {.discardable.} =
   if self.root == nil:
-    self.root = newNode[K, V](self, nil, key, value)
+    node.parent = nil
+    self.root = node
     self.size += 1
     self.fixInsert(self.root)
-    return true
+    return node
 
   # Otherwise find the insertion point
   var curr = self.root
   while not curr.isLeaf:
-    let comp = self.cmp(key, curr)
+    var comp = self.cmp(node.key, curr)
+    if self.multi and comp == 0:
+      comp = 1
     if comp == 0:
       # If it's already there, set the data and return
-      curr.value = value
-      return false
+      curr.value = node.value
+      return nil
     elif comp < 0:
       # Goes to the left
       if curr.left.isLeaf:
         # Nothing there, insert here
-        curr.left = newNode[K, V](self, curr, key, value)
+        node.parent = curr
+        curr.left = node
         self.size += 1
         self.fixInsert(curr.left)
-        return true
+        return node
       curr = curr.left
     else:
       # Goes to the right
       if curr.right.isLeaf:
         # Nothing there, insert here
-        curr.right = newNode[K, V](self, curr, key, value)
+        node.parent = curr
+        curr.right = node
         self.size += 1
         self.fixInsert(curr.right)
-        return true
+        return node
       curr = curr.right
-  return false
+  return nil
+
+proc insert*[K, V](self: var RedBlackTree[K, V], key: K, value: V): Node[K, V] {.discardable.} =
+  var node = self.newNode(nil, key, value)
+  return self.insert(node)
+
+proc insert*[K](self: var OrderedSet[K], key: K): Node[K, int] {.discardable.} =
+  return self.insert(key, 0)
+# }}}
+
+# find {{{
+proc findNode[K, V](self: RedBlackTree[K, V], key: K): Node[K, V] =
+  var curr = self.root
+  while not curr.isLeaf:
+    let comp = self.cmp(key, curr)
+    if comp == 0: return curr
+    elif comp < 0: curr = curr.left
+    else: curr = curr.right
+  return nil
 
 proc find*[K, V](self: RedBlackTree[K, V], key: K): (V, bool) =
   let node = self.findNode(key)
@@ -217,7 +216,46 @@ proc find*[K, V](self: RedBlackTree[K, V], key: K): (V, bool) =
   var default: V
   return (default, false)
 
-proc fixRemove[K, V](self: RedBlackTree[K, V], node: Node[K, V], parent: Node[K, V]) =
+proc contains*[K, V](self: RedBlackTree[K, V], key: K):bool = self.find(key)[1]
+
+proc `[]`[K, V](self: var OrderedMap[K, V], key: K): var V =
+  var node = self.findNode(key)
+  if node == nil: node = self.insert(key, V(0))
+  return self.findNode(key).value
+
+#{{{ lowerBound and upperBound
+proc lowerBound[K, V](self: RedBlackTree[K, V], curr: Node[K,V], key: K): Node[K,V] =
+  if curr.isLeaf: return nil
+  if curr != self.End and self.greater(curr.key, key):
+    return self.lowerBound(curr.right,key)
+  else:
+    let lb = self.lowerBound(curr.left,key)
+    if lb == nil: return curr
+    else: return lb
+
+proc lowerBound[K, V](self: RedBlackTree[K, V], key: K): Node[K,V] =
+  let t = self.lowerBound(self.root,key)
+  if t == nil: return self.End
+  else: return t
+
+proc upperBound[K, V](self: RedBlackTree[K, V], curr: Node[K,V], key: K): Node[K,V] =
+  if curr.isLeaf: return nil
+  if curr == self.End or self.greater(key, curr.key):
+    let ub = self.upperBound(curr.left,key)
+    if ub == nil: return curr
+    else: return ub
+  else:
+    return self.upperBound(curr.right,key)
+
+proc upperBound[K, V](self: RedBlackTree[K, V], key: K): Node[K,V] =
+  let t = self.upperBound(self.root,key)
+  if t == nil: return self.End
+  else: return t
+#}}}
+# }}}
+
+# remove {{{
+proc fixRemove[K, V](self: var RedBlackTree[K, V], node: Node[K, V], parent: Node[K, V]) =
   var
     child = node
     parent = parent
@@ -272,7 +310,7 @@ proc fixRemove[K, V](self: RedBlackTree[K, V], node: Node[K, V], parent: Node[K,
         parent = child.parent
   child.color = Color.black
 
-proc remove*[K, V](self: RedBlackTree[K, V], node: Node[K,V]) =
+proc remove*[K, V](self: var RedBlackTree[K, V], node: Node[K,V]) =
   var node = node
 
   self.size -= 1
@@ -304,12 +342,12 @@ proc remove*[K, V](self: RedBlackTree[K, V], node: Node[K,V]) =
     if node.color == Color.black:
       self.fixRemove(self.leaf, node.parent)
 
-proc remove*[K, V](self: RedBlackTree[K, V], key: K): bool {.discardable.} =
+proc remove*[K, V](self: var RedBlackTree[K, V], key: K): bool {.discardable.} =
   var node = self.findNode(key)
   if node == nil: return false
   self.remove(node)
   return true
-#}}}
+# }}}
 
 proc len*[K, V](self: RedBlackTree[K, V]): int =
   return self.size
@@ -326,10 +364,10 @@ iterator iterOrder*[K, V](self: RedBlackTree[K, V]): (K, V) =
       if node == self.End: break
       yield (node.key, node.value)
       node = node.right
-proc `$`[K,V](self: RedBlackTree[K, V]): string =
-  result = "["
+proc `$`[K](self: OrderedSet[K]): string =
+  result = "[ "
   var node = self.root
-  var stack: seq[Node[K, V]] = @[]
+  var stack: seq[Node[K, int]] = @[]
   while stack.len() != 0 or not node.isLeaf:
     if not node.isLeaf:
       stack.add(node)
@@ -339,6 +377,20 @@ proc `$`[K,V](self: RedBlackTree[K, V]): string =
       result &= $(node.key) & " "
       node = node.right
   result &= "]"
+proc `$`[K,V](self: OrderedMap[K, V]): string =
+  result = "[ "
+  var node = self.root
+  var stack: seq[Node[K, V]] = @[]
+  while stack.len() != 0 or not node.isLeaf:
+    if not node.isLeaf:
+      stack.add(node)
+      node = node.left
+    else:
+      node = stack.pop()
+      result &= $(node.key) & ": " & $(node.value) & " "
+      node = node.right
+  result &= "]"
+
 proc write[K,V](self: Node[K, V], h = 0) =
   for i in 0..<h: stderr.write " | "
   if self.isLeaf:
