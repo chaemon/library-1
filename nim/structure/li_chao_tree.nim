@@ -11,12 +11,12 @@ proc initLine[T](a, b:T):Line[T] = Line[T](a:a, b:b)
 proc get[T](self: Line[T], x:T):T = self.a * x + self.b
 proc over[T](self, b: Line[T], x: T):bool = self.get(x) < b.get(x)
 
-proc initLiChaoTree[T](x: seq[T], INF:T):LiChaoTree[T] =
+proc initLiChaoTree[T](x: seq[T], inf:T):LiChaoTree[T] =
   var xs = x
   var sz = 1
   while sz < xs.len: sz = sz shl 1
   while xs.len < sz: xs.add(xs[^1] + 1)
-  return LiChaoTree[T](sz:sz, xs:xs, seg:newSeqWith(2 * sz - 1, initLine(0, INF)))
+  return LiChaoTree[T](sz:sz, xs:xs, seg:newSeqWith(2 * sz - 1, initLine(0, inf)))
 
 #proc update[T](self: var LiChaoTree[T], x:Line[T], k, l, r:int) =
 #  let
