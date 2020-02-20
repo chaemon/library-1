@@ -99,7 +99,7 @@ run() {
         return
     fi
 #    nim c -d:release --warnings:off -o:${bin_dir}/a.out "$file"
-    nim c --cc=tcc -d:release --warnings:off -o:${bin_dir}/a.out "$file"
+    nim c --cc=gcc -d:release --warnings:off -o:${bin_dir}/a.out "$file"
 #    if ! is-verified "$file" ; then
     if ! is-verified "$bin_dir" ; then
         # compile
