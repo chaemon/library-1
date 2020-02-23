@@ -1,5 +1,5 @@
 {.hints:off checks:off}
-import algorithm, sequtils, tables, macros, math, sets, strutils, streams
+import algorithm, sequtils, tables, macros, math, sets, strutils, streams, strformat
 when defined(MYDEBUG):
   import header
 
@@ -23,7 +23,10 @@ proc nextString(): string =
     elif get: break
 template `max=`*(x,y:typed):void = x = max(x,y)
 template `min=`*(x,y:typed):void = x = min(x,y)
-template inf(T): untyped = ((T(1) shl T(sizeof(T)*8-2)) - 1)
+template inf(T): untyped = 
+  when T is SomeFloat: T(Inf)
+  elif T is SomeInteger: ((T(1) shl T(sizeof(T)*8-2)) - (T(1) shl T(sizeof(T)*4-1)))
+  else: assert(false)
 
 proc discardableId[T](x: T): T {.discardable.} =
   return x

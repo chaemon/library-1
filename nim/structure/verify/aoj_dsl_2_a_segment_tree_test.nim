@@ -11,7 +11,7 @@ proc main() =
   st.build(newSeqWith(N,inf))
   for i in 0..<Q:
     let T, X, Y = nextInt()
-    if T == 0: st.update(X, Y)
-    else: echo st.query(X..Y)
+    if T == 0: st[X] = Y
+    else: echo st[X..Y]
 
 main()

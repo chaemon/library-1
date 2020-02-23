@@ -20,10 +20,20 @@ proc initEdge[T](src,dst:int,weight:T,rev:int = -1):Edge[T] =
 proc initGraph[T](n:int):Graph[T] =
   return newSeqWith(n,newSeq[Edge[T]]())
 
+proc addBiEdge[T](g:var Graph[T],e:Edge[T]):void =
+  var e_rev = e
+  swap(e_rev.src, e_rev.dst)
+  let (r, s) = (g[e.src].len, g[e.dst].len)
+  g[e.src].add(e)
+  g[e.dst].add(e_rev)
+  g[e.src][^1].rev = s
+  g[e.dst][^1].rev = r
 proc addBiEdge[T](g:var Graph[T],src,dst:int,weight:T=1):void =
   g[src].add(initEdge(src,dst,weight,g[dst].len))
   g[dst].add(initEdge(dst,src,weight,g[src].len-1))
 
+proc addEdge[T](g:var Graph[T],e:Edge[T]):void =
+  g[e.src].add(e)
 proc addEdge[T](g:var Graph[T],src,dst:int,weight:T=1):void =
   g[src].add(initEdge(src,dst,weight,-1))
 

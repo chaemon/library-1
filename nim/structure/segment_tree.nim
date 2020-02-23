@@ -1,36 +1,47 @@
 #{{{ segment tree
-type SegmentTree[T] = object
+type SegmentTree[D] = object
   sz:int
-  data:seq[T]
-  M1:T
-  f:(T,T)->T
+  data:seq[D]
+  D0:D
+  f:(D,D)->D
 
-proc initSegmentTree[T](n:int,f:(T,T)->T,M1:T):SegmentTree[T] =
+proc initSegmentTree[D](n:int,f:(D,D)->D,D0:D):SegmentTree[D] =
   var sz = 1
   while sz < n: sz *= 2
-  return SegmentTree[T](sz:sz,data:newSeqWith(sz*2,M1),M1:M1,f:f)
+  return SegmentTree[D](sz:sz,data:newSeqWith(sz*2,D0),D0:D0,f:f)
 
-proc set[T](self:var SegmentTree[T], k:int, x:T) =
+# preset and build {{{
+proc preset[D](self:var SegmentTree[D], k:int, x:D) =
   self.data[k + self.sz] = x
 
-proc build[T](self:var SegmentTree[T], v:seq[T]) =
+proc build[D](self:var SegmentTree[D], v:seq[D]) =
   var v = v
-  while v.len < self.sz: v.add(self.M1)
+  while v.len < self.sz: v.add(self.D0)
   for i in 0..<v.len: self.data[self.sz + i] = v[i]
   for k in countdown(self.sz-1,1):
     self.data[k] = self.f(self.data[2 * k + 0], self.data[2 * k + 1]);
-proc update[T](self:var SegmentTree[T], k:int, x:T) =
-  var k = k + self.sz
-  self.data[k] = x
-#  self.data[k] = self.f(self.data[k], x)
+# }}}
+
+proc recalc[D](self: var SegmentTree[D], k:int) =
+  var k = k
   while true:
     k = (k shr 1)
     if k == 0: break
     self.data[k] = self.f(self.data[2 * k + 0], self.data[2 * k + 1])
 
-proc query[T](self:SegmentTree[T],p:Slice[int]):T =
+proc update[D](self:var SegmentTree[D], k:int, x:D) =
+  var k = k + self.sz
+  self.data[k] = self.f(self.data[k], x)
+  self.recalc(k)
+
+proc `[]=`[D](self:var SegmentTree[D], k:int, x:D) =
+  var k = k + self.sz
+  self.data[k] = x
+  self.recalc(k)
+
+proc `[]`[D](self:SegmentTree[D],p:Slice[int]):D =
   var
-    (L,R) = (self.M1, self.M1)
+    (L,R) = (self.D0, self.D0)
     (a,b) = (p.a + self.sz, p.b + 1 + self.sz)
   while a < b:
     if a mod 2 == 1: L = self.f(L, self.data[a]);a += 1
@@ -39,17 +50,17 @@ proc query[T](self:SegmentTree[T],p:Slice[int]):T =
     b = (b shr 1)
   return self.f(L, R)
 
-proc `[]`[T](self:SegmentTree[T],k:int):T = self.data[k + self.sz]
+proc `[]`[D](self:SegmentTree[D],k:int):D = self.data[k + self.sz]
 
-proc findSubtree[T](self:var SegmentTree[T], a:int, check:(T)->bool, M: var T, t:int):int =
+proc findSubtree[D](self:var SegmentTree[D], a:int, check:(D)->bool, M: var D, t:int):int =
   while a < self.sz:
     var nxt = if t == 1: self.f(self.data[2 * a + t], M) else: self.f(M, self.data[2 * a + t])
     if check(nxt): a = 2 * a + t
     else: M = nxt; a = 2 * a + 1 - t
   return a - self.sz
 
-proc findFirst[T](self: SegmentTree[T], a:int, check:(T)->bool):int =
-  var L = self.M1
+proc findFirst[D](self: SegmentTree[D], a:int, check:(D)->bool):int =
+  var L = self.D0
   if a <= 0:
     if check(self.f(L, self.data[1])): return self.findSubtree(1, check, L, 0)
     return -1
@@ -65,8 +76,8 @@ proc findFirst[T](self: SegmentTree[T], a:int, check:(T)->bool):int =
     a = a shr 1;b = b shr 1
   return -1;
 
-proc findLast[T](self: SegmentTree[T], b:int, check:(T)->bool):int =
-  var R = self.M1
+proc findLast[D](self: SegmentTree[D], b:int, check:(D)->bool):int =
+  var R = self.D0
   if b >= self.sz:
     if check(self.f(self.data[1], R)): return self.findSubtree(1, check, R, 1)
     return -1

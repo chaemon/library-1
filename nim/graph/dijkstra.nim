@@ -1,5 +1,5 @@
-#import heapqueue
-include "../standard_library/heapqueue.nim"
+#include "../standard_library/heapqueue.nim"
+import heapqueue
 
 proc dijkstra[T](g:Graph[T], s:int): (seq[T],seq[int]) = 
   var
@@ -7,8 +7,8 @@ proc dijkstra[T](g:Graph[T], s:int): (seq[T],seq[int]) =
     dist = newSeqWith(n,T.inf)
     prev = newSeqWith(n,-1)
     Q = initHeapQueue[Edge[T]]()
-  dist[s] = 0
-  Q.push(initEdge[int](-2,s,0))
+  dist[s] = T(0)
+  Q.push(initEdge[T](-2,s,T(0)))
   while Q.len > 0:
     var e = Q.pop()
     if prev[e.dst] != -1: continue

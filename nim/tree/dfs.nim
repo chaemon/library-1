@@ -1,8 +1,6 @@
 # depth first search {{{
-proc dfs(u:int, p = -1) =
-  size[u] = 1
+proc dfs[T](g:Graph[T], u:int, p = -1) =
   for e in g[u]:
     if e.dst == p: continue
-    dfs(e.dst, u)
-    size[u] += size[e.dst]
+    g.dfs(e.dst, u)
 #}}}

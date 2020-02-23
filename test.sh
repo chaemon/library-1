@@ -25,6 +25,11 @@ get-url() {
     list-defined "$file" | grep '^#define PROBLEM ' | sed 's/^#define PROBLEM "\(.*\)"$/\1/'
 }
 
+get-error() {
+    file="$1"
+    list-defined "$file" | grep '^#define ERROR ' | sed 's/^#define ERROR \(.*\)$/\1/'
+}
+
 #is-verified() {
 #    file="$1"
 #    cache=test/timestamp/$(echo -n "$file" | md5sum | sed 's/ .*//')
@@ -75,6 +80,7 @@ list-recently-updated() {
 run() {
     file="$1"
     url="$(get-url "$file")"
+    error="$(get-error "$file")"
 #    dir=test/$(echo -n "$url" | md5sum | sed 's/ .*//')
     bin_dir=$(pwd)/test/bin/$(echo -n $(basename "$file"))
     oj_dir="None"
@@ -99,7 +105,7 @@ run() {
         return
     fi
 #    nim c -d:release --warnings:off -o:${bin_dir}/a.out "$file"
-    nim c --cc=gcc -d:release --warnings:off -o:${bin_dir}/a.out "$file"
+    nim c -d:release --warnings:off -o:${bin_dir}/a.out "$file"
 #    if ! is-verified "$file" ; then
     if ! is-verified "$bin_dir" ; then
         # compile
@@ -115,7 +121,11 @@ run() {
             echo "test"
             # test
 #            oj test -c ${dir}/a.out -d ${test_dir} --special-judge ${test_dir}/judge.py
-            oj test -c ${bin_dir}/a.out -d ${test_dir}
+            if [ -n "$error" ]; then
+                oj test -c ${bin_dir}/a.out -d ${test_dir} -e ${error}
+            else
+                oj test -c ${bin_dir}/a.out -d ${test_dir}
+            fi
         else
             # run
             ${bin_dir}/a.out
