@@ -29,13 +29,12 @@ proc addBiEdge[T](g:var Graph[T],e:Edge[T]):void =
   g[e.src][^1].rev = s
   g[e.dst][^1].rev = r
 proc addBiEdge[T](g:var Graph[T],src,dst:int,weight:T=1):void =
-  g[src].add(initEdge(src,dst,weight,g[dst].len))
-  g[dst].add(initEdge(dst,src,weight,g[src].len-1))
+  g.addBiEdge(initEdge(src, dst, weight))
 
 proc addEdge[T](g:var Graph[T],e:Edge[T]):void =
   g[e.src].add(e)
 proc addEdge[T](g:var Graph[T],src,dst:int,weight:T=1):void =
-  g[src].add(initEdge(src,dst,weight,-1))
+  g.addEdge(initEdge(src, dst, weight, -1))
 
 proc `<`[T](l,r:Edge[T]):bool = l.weight < r.weight
 #}}}
