@@ -68,6 +68,7 @@ const NO = "{{ no_str }}"
 
 {% if prediction_success %}
 {{"#{{{ input part"}}
+proc main()
 block:
   {{global_input_part}}
 {{"#}}}"}}
@@ -75,5 +76,7 @@ block:
 # Failed to predict input format
 {% endif %}
 
-block main:
-  break
+main()
+
+proc main() =
+  return

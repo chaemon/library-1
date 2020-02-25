@@ -15,6 +15,6 @@ proc main() =
       let x = nextInt()
       st.update(s..t, x)
     else:
-      echo st.query(s..t)[0]
+      echo st[s..t][0]
 
 main()

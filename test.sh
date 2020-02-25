@@ -105,7 +105,8 @@ run() {
         return
     fi
 #    nim c -d:release --warnings:off -o:${bin_dir}/a.out "$file"
-    nim cpp --cc=gcc -d:release --warnings:off -o:${bin_dir}/a.out "$file"
+#    nim cpp --cc=gcc -d:release --warnings:off -o:${bin_dir}/a.out "$file"
+    nim cpp --cc=gcc -d:debug -o:${bin_dir}/a.out "$file"
 #    if ! is-verified "$file" ; then
     if ! is-verified "$bin_dir" ; then
         # compile
@@ -156,8 +157,10 @@ elif [[ $# -eq 0 ]] ; then
         # local
 #        for f in $(find . -name \*.test.cpp) ; do
         for f in $(find . -name \*_test.nim -type f) ; do
-            if [ "`echo $f | grep lazy_segment`" ]; then continue; fi
-            run $f
+            if [ "`echo $f | grep lazy_segment`" ]; then
+                run $f
+                continue
+            fi
         done
 #    fi
 else

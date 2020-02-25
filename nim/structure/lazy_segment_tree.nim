@@ -73,7 +73,7 @@ proc update[D, L](self: var LazySegmentTree[D, L], p:Slice[int], x:L) =
   self.recalc(a);
   self.recalc(b);
 
-proc query[D, L](self: var LazySegmentTree[D, L], p:Slice[int]):D =
+proc `[]`[D, L](self: var LazySegmentTree[D, L], p:Slice[int]):D =
   let (a, b) = (p.a + self.sz, p.b + self.sz)
   self.thrust(a)
   self.thrust(b)
