@@ -14,12 +14,14 @@ proc initSegmentTree[D](n:int,f:(D,D)->D,D0:D):SegmentTree[D] =
 proc preset[D](self:var SegmentTree[D], k:int, x:D) =
   self.data[k + self.sz] = x
 
-proc build[D](self:var SegmentTree[D], v:seq[D]) =
-  var v = v
-  while v.len < self.sz: v.add(self.D0)
-  for i in 0..<v.len: self.data[self.sz + i] = v[i]
+proc build[D](self:var SegmentTree[D]) =
   for k in countdown(self.sz-1,1):
     self.data[k] = self.f(self.data[2 * k + 0], self.data[2 * k + 1]);
+
+proc build[D](self:var SegmentTree[D], v:seq[D]) =
+  for i in 0..<self.sz:
+    self.data[i + self.sz] = if i < v.len: v[i] else: self.D0
+  self.build()
 # }}}
 
 proc recalc[D](self: var SegmentTree[D], k:int) =

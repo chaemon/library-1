@@ -30,7 +30,7 @@ proc build[D, L](self: var LazySegmentTree[D,L]) =
 
 proc build[D, L](self: var LazySegmentTree[D,L], v:seq[D]) =
   for i in 0..<self.sz:
-    self.data[i + self.sz] = if i < self.sz: v[i] else: self.D0
+    self.data[i + self.sz] = if i < v.len: v[i] else: self.D0
   self.build()
 
 proc reflect[D, L](self:LazySegmentTree[D, L], k:int):D =
