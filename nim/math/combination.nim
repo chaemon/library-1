@@ -1,46 +1,36 @@
 #{{{ combination
 import sequtils
 
-type Combination[T] = object
-  sz:int
-  fact_a, rfact_a, inv_a:seq[T]
+proc `/`(a, b:int):int = a div b
 
-proc resize[T](self: var Combination[T], sz:int) =
-  if sz < self.sz: return
-  var sz = max(self.sz * 2, sz)
-  self.fact_a.setlen(sz + 1)
-  self.rfact_a.setlen(sz + 1)
-  self.inv_a.setlen(sz + 1)
-  for i in self.sz + 1..sz: self.fact_a[i] = self.fact_a[i-1] * i
-  self.rfact_a[sz] = getDefault(T).init(1) / self.fact_a[sz]
-  for i in countdown(sz - 1, self.sz + 1): self.rfact_a[i] = self.rfact_a[i + 1] * (i + 1)
-  for i in self.sz + 1..sz: self.inv_a[i] = self.rfact_a[i] * self.fact_a[i - 1]
-  self.sz = sz
+proc fact(T:typedesc, k:int):T =
+  var fact_a{.global.} = @[getDefault(T).init(1)]
+  if k >= fact_a.len:
+    let sz_old = fact_a.len - 1
+    let sz = max(sz_old * 2, k)
+    fact_a.setlen(sz + 1)
+    for i in sz_old + 1..sz: fact_a[i] = fact_a[i-1] * getDefault(T).init(i)
+  return fact_a[k]
+proc rfact(T:typedesc, k:int):T =
+  var rfact_a{.global.} = @[getDefault(T).init(1)]
+  if k >= rfact_a.len:
+    let sz_old = rfact_a.len - 1
+    let sz = max(sz_old * 2, k)
+    rfact_a.setlen(sz + 1)
+    rfact_a[sz] = getDefault(T).init(1) / T.fact(sz)
+    for i in countdown(sz - 1, sz_old + 1): rfact_a[i] = rfact_a[i + 1] * getDefault(T).init(i + 1)
+  return rfact_a[k]
 
-proc initCombination[T](sz = 100):Combination[T] = 
-  let one = getDefault(T).init(1)
-  result = Combination[T](sz:0, fact_a: @[one], rfact_a: @[one], inv_a: @[one])
-  result.resize(sz)
+proc inv(T:typedesc, k:int):T =
+  return T.fact_a(k - 1) * T.rfact(k)
 
-proc fact[T](self:var Combination[T], k:int):T =
-  self.resize(k)
-  return self.fact_a[k]
-proc rfact[T](self:var Combination[T], k:int):T =
-  self.resize(k)
-  self.rfact_a[k]
-proc inv[T](self:var Combination[T], k:int):T =
-  self.resize(k)
-  self.inv_a[k]
-
-proc P[T](self:var Combination[T], n,r:int):T =
-  if r < 0 or n < r: return T()
-  return self.fact(n) * self.rfact(n - r)
-
-proc C[T](self:var Combination[T], p,q:int):T =
-  if q < 0 or p < q: return T()
-  return self.fact(p) * self.rfact(q) * self.rfact(p - q)
-
-proc H[T](self:var Combination[T], n,r:int):T =
-  if n < 0 or r < 0: return T()
-  return if r == 0: T().init(1) else: self.C(n + r - 1, r)
+proc P(T:typedesc, n,r:int):T =
+  if r < 0 or n < r: return getDefault(T).init(0)
+  return T.fact(n) * T.rfact(n - r)
+proc C(T:typedesc, p,q:int):T =
+  if q < 0 or p < q: return getDefault(T).init(0)
+  return T.fact(p) * T.rfact(q) * T.rfact(p - q)
+proc H(T: typedesc, n,r:int):T =
+  if n < 0 or r < 0: return getDefault(T).init(0)
+  return if r == 0: T(1) else: T.C(n + r - 1, r)
 #}}}
