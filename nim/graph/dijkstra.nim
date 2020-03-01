@@ -1,3 +1,4 @@
+# dijkstra {{{
 #include "../standard_library/heapqueue.nim"
 import heapqueue
 
@@ -27,3 +28,4 @@ proc path(t: int, prev: seq[int]): seq[int] =
     result.add(u)
     u = prev[u]
   result.reverse()
+# }}}

@@ -3,6 +3,7 @@
 
 include "../../template/template.nim"
 include "../template.nim"
+include "../segment_graph.nim"
 include "../../graph/template.nim"
 include "../../graph/dijkstra.nim"
 

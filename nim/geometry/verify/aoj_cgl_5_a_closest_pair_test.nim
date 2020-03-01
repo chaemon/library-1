@@ -3,6 +3,7 @@
 
 include "../../template/template.nim"
 include "../template.nim"
+include "../closest_pair.nim"
 
 block main:
   let

@@ -9,7 +9,7 @@ block main:
     c = initCircle(initPoint(nextFloat(), nextFloat()), nextFloat())
     q = nextInt()
   for i in 0..<q:
-    let p1, p2 = initPoint(nextFloat(), nextFloat())
+    let p1, p2 = nextPoint()
     let l = initLine(p1, p2)
     var q = crosspoint(c, l)
     if q[0] > q[1]: swap(q[0], q[1])

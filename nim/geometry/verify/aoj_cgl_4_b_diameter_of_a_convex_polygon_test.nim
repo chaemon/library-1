@@ -3,6 +3,7 @@
 
 include "../../template/template.nim"
 include "../template.nim"
+include "../polygon.nim"
 
 block main:
   let

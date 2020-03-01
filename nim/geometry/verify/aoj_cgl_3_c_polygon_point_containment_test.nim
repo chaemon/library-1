@@ -2,6 +2,7 @@
 
 include "../../template/template.nim"
 include "../template.nim"
+include "../polygon.nim"
 
 block main:
   let
@@ -9,7 +10,7 @@ block main:
     poly = newSeqWith(g, initPoint(nextFloat(), nextFloat()))
     q = nextInt()
   for i in 0..<q:
-    let p = initPoint(nextFloat(), nextFloat())
+    let p = nextPoint()
     let t = p in poly
     if t == IN:
       echo 2
