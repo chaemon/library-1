@@ -1,3 +1,5 @@
+type Polygon = seq[Point]
+
 # convex polygon {{{
 # http://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=CGL_3_B
 proc isConvex(p:Polygon):bool =
@@ -111,7 +113,8 @@ proc area(p:Polygon, c:Circle):Real =
     result = 0.0
     if eq(f, 0.0): return
     if max(abs(va), abs(vb)) < c.r + EPS: return f
-    if distance(initSegment(a, b), c.p) > c.r - EPS: return c.r * c.r * polar(vb * conjugate(va))[1]
+    if distance(initSegment(a, b), c.p) > c.r - EPS:
+      return c.r * c.r * phase(vb * conjugate(va))
     let u = crosspoint(c, initSegment(a, b))
     let tot = @[a, u[0], u[1], b]
     for i in 0..<tot.len:

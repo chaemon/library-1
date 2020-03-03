@@ -51,6 +51,7 @@ proc `<=`(a,b:Point):bool =
   return true
 # }}}
 
+# Line and Segment {{{
 type Line = object
   a, b:Point
 
@@ -69,18 +70,16 @@ proc `$`(p:Line):string =
 proc nextLine():Line = initLine(nextPoint(), nextPoint())
 
 proc initSegment(a, b:Point):Segment = Segment(Line(a:a, b:b))
+proc nextSegment():Segment = initSegment(nextPoint(), nextPoint())
+# }}}
 
-type
-  Circle = object
-    p:Point
-    r:Real
-  Points = seq[Point]
-  Polygon = seq[Point]
-  Segments = seq[Segment]
-  Lines = seq[Line]
-  Circles = seq[Circle]
+# Circle {{{
+type Circle = object
+  p:Point
+  r:Real
 
 proc initCircle(p:Point, r:Real):Circle = Circle(p:p, r:r)
+# }}}
 
 proc cross(a,b:Point):Real = a.re * b.im - a.im * b.re
 proc dot(a,b:Point):Real = a.re * b.re + a.im * b.im
@@ -105,14 +104,14 @@ proc orthogonal(a,b:Line):bool = eq(dot(a.a - a.b, b.a - b.b), 0.0)
 
 # projection reflection {{{
 # http://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=CGL_1_A
-proc projection(l:Line, p:Point):Point =
+proc projection(p:Point, l:Line):Point =
   let t = dot(p - l.a, l.a - l.b) / norm(l.a - l.b)
   return l.a + (l.a - l.b) * complex(t)
-proc projection(l:Segment, p:Point):Point =
+proc projection(p:Point, l:Segment):Point =
   let t = dot(p - l.a, l.a - l.b) / norm(l.a - l.b)
   return l.a + (l.a - l.b) * complex(t)
 # http://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=CGL_1_B
-proc reflection(l:Line, p:Point):Point = return p + (projection(l, p) - p) * complex(2.0)
+proc reflection(p:Point, l:Line):Point = return p + (p.projection(l) - p) * complex(2.0)
 # }}}
 
 # intersect function {{{
@@ -134,17 +133,18 @@ proc intersect(s, t: Segment):bool =
   return ccw(s.a, s.b, t.a) * ccw(s.a, s.b, t.b) <= 0 and ccw(t.a, t.b, s.a) * ccw(t.a, t.b, s.b) <= 0
 
 proc intersect(c:Circle, l:Segment):int =
-  if norm(projection(l, c.p) - c.p) - c.r * c.r > EPS: return 0
+  if norm(c.p.projection(l) - c.p) - c.r * c.r > EPS: return 0
   let
     d1 = abs(c.p - l.a)
     d2 = abs(c.p - l.b)
   if d1 < c.r + EPS and d2 < c.r + EPS: return 0
   if d1 < c.r - EPS and d2 > c.r + EPS or d1 > c.r + EPS and d2 < c.r - EPS: return 1
-  let h:Point = projection(l, c.p)
+  let h:Point = c.p.projection(l)
   if dot(l.a - h, l.b - h) < 0: return 2
   return 0
 
 # http://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=CGL_7_A
+# number of common tangent
 proc intersect(c1, c2: Circle):int =
   var (c1, c2) = (c1, c2)
   if c1.r < c2.r: swap(c1, c2)
@@ -158,11 +158,11 @@ proc intersect(c1, c2: Circle):int =
 
 # distance function {{{
 proc distance(a, b:Point):Real = abs(a - b)
-proc distance(l:Line, p:Point):Real = abs(p - projection(l, p))
+proc distance(l:Line, p:Point):Real = abs(p - p.projection(l))
 proc distance(l, m: Line):Real = (if intersect(l, m): 0.0 else: distance(l, m.a))
 
 proc distance(s:Segment, p:Point):Real =
-  let r = projection(s, p)
+  let r = p.projection(s)
   if intersect(s, r): return abs(r - p)
   return min(abs(s.a - p), abs(s.b - p))
 
@@ -189,7 +189,7 @@ proc crosspoint(l,m:Segment):Point =
 
 # http://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=CGL_7_D
 proc crosspoint(c:Circle, l:Line):(Point,Point) =
-  let pr = projection(l, c.p)
+  let pr = c.p.projection(l)
   let e = (l.b - l.a) / abs(l.b - l.a)
   if eq(distance(l, c.p), c.r): return (pr, pr)
   let base = sqrt(c.r * c.r - norm(pr - c.p))
@@ -211,38 +211,4 @@ proc crosspoint(c1, c2: Circle):(Point,Point) =
     t = arctan2(c2.p.im - c1.p.im, c2.p.re - c1.p.re)
   return (c1.p + initPoint(cos(t + a) * c1.r, sin(t + a) * c1.r),
           c1.p + initPoint(cos(t - a) * c1.r, sin(t - a) * c1.r))
-# }}}
-
-# tangent function {{{
-# http://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=CGL_7_F
-# tangent of circle c through point p
-proc tangent(c1: Circle, p2:Point):(Point, Point) =
-  return crosspoint(c1, initCircle(p2, sqrt(norm(c1.p - p2) - c1.r * c1.r)))
-
-# http://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=CGL_7_G
-# common tangent of circles c1 and c2
-proc tangent(c1, c2: Circle):Lines =
-  result = newSeq[Line]()
-  if c1.r < c2.r:
-    result = tangent(c2, c1)
-    for l in result.mitems:
-      swap(l.a, l.b)
-    return
-  let g = norm(c1.p - c2.p)
-  if eq(g, 0): return
-  let
-    u = (c2.p - c1.p) / sqrt(g)
-#    v = rotate(PI * 0.5, u)
-    xx = rotate(PI * 0.5, initPoint(1.0, 0.0))
-    v = initPoint(- u.im, u.re)
-  for s in [-1, 1]:
-    let h = (c1.r + s.float * c2.r) / sqrt(g)
-    if eq(1 - h * h, 0):
-      result.add(initLine(c1.p + u * c1.r.complex, c1.p + (u + v) * c1.r.complex))
-    elif 1 - h * h > 0:
-      let
-        uu = u * h.complex
-        vv = v * sqrt(1 - h * h).complex
-      result.add(initLine(c1.p + (uu + vv) * c1.r.complex, c2.p - (uu + vv) * c2.r.complex * s.float.complex))
-      result.add(initLine(c1.p + (uu - vv) * c1.r.complex, c2.p - (uu - vv) * c2.r.complex * s.float.complex))
 # }}}

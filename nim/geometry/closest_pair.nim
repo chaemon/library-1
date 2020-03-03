@@ -18,7 +18,7 @@ proc inplace_merge[T](v: var seq[T], left, mid, right: int, cmp:proc(a,b:T):bool
     else: v[vi] = v2[j];vi.inc;j.inc
 
 # http://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=CGL_5_A
-proc closest_pair(ps: Points):Real =
+proc closest_pair(ps: seq[Point]):Real =
 #  if ps.len <= 1: throw (0)
   if ps.len <= 1: assert(false)
   var ps = ps

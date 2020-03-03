@@ -4,6 +4,7 @@
 
 include "../../template/template.nim"
 include "../template.nim"
+include "../tangent.nim"
 
 block main:
   let

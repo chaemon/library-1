@@ -37,7 +37,7 @@ block main:
     for u in 0..<ps.len:
       for v in g[u]:
         for w in g[v]:
-          let d = polar((ps[w] - ps[v])/(ps[v] - ps[u]))[1]
+          let d = phase((ps[w] - ps[v])/(ps[v] - ps[u]))
           G.addEdge(id(u, v), id(v, w), abs(d))
     let (dist, _) = G.dijkstra(src)
     var ans = float.inf
