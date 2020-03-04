@@ -54,23 +54,25 @@ proc `[]`[D](self:SegmentTree[D],p:Slice[int]):D =
 
 proc `[]`[D](self:SegmentTree[D],k:int):D = self.data[k + self.sz]
 
-proc findSubtree[D](self:var SegmentTree[D], a:int, check:(D)->bool, M: var D, t:int):int =
+# findFirst and findLast {{{
+proc findSubtree[D](self:SegmentTree[D], a:int, check:(D)->bool, M: var D, t:int):int =
+  var a = a
   while a < self.sz:
     var nxt = if t == 1: self.f(self.data[2 * a + t], M) else: self.f(M, self.data[2 * a + t])
     if check(nxt): a = 2 * a + t
     else: M = nxt; a = 2 * a + 1 - t
   return a - self.sz
 
+# minimal x for which [a, x) is true
 proc findFirst[D](self: SegmentTree[D], a:int, check:(D)->bool):int =
   var L = self.D0
   if a <= 0:
     if check(self.f(L, self.data[1])): return self.findSubtree(1, check, L, 0)
     return -1
-  var b = self.sz
-  a += self.sz
-  b += self.sz
+  var a = a + self.sz
+  var b = self.sz + self.sz
   while a < b:
-    if (a and 1) != 0:
+    if (a and 1) > 0:
       let nxt = self.f(L, self.data[a])
       if check(nxt): return self.findSubtree(a, check, L, 0)
       L = nxt
@@ -78,19 +80,21 @@ proc findFirst[D](self: SegmentTree[D], a:int, check:(D)->bool):int =
     a = a shr 1;b = b shr 1
   return -1;
 
+# minimal x for which [x, b) is true
 proc findLast[D](self: SegmentTree[D], b:int, check:(D)->bool):int =
   var R = self.D0
   if b >= self.sz:
     if check(self.f(self.data[1], R)): return self.findSubtree(1, check, R, 1)
     return -1
-  var a = self.sz
-  b += self.sz
+  var a = 0 + self.sz
+  var b = b + self.sz
   while a < b:
-    if (b and 1) != 0:
+    if (b and 1) > 0:
       b -= 1
       let nxt = self.f(self.data[b], R)
       if check(nxt): return self.findSubtree(b, check, R, 1)
       R = nxt
     a = a shr 1;b = b shr 1
   return -1
+#}}}
 #}}}

@@ -15,4 +15,4 @@ block main:
     let
       xp, yp = nextFloat()
       p = initPoint(xp, yp)
-    echo initLine(p1, p2).projection(p).toString()
+    echo p.projection(initLine(p1, p2)).toString()

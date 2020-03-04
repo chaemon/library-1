@@ -14,4 +14,4 @@ block main:
     let
       xp, yp = nextFloat()
       p = initPoint(xp, yp)
-    echo initLine(p1, p2).reflection(p).toString()
+    echo p.reflection(initLine(p1, p2)).toString()

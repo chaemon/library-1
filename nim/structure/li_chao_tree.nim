@@ -35,7 +35,8 @@ proc subset(x, y:Slice[int]):bool = y.a <= x.a and x.b <= y.b
 proc update[T](self: var LiChaoTree[T], x:Line[T], s:Slice[int], k:int, ks:Slice[int]) =
   if disjoint(s, ks): return
   let (l, r) = (ks.a, ks.b + 1)
-  let m = (l + r + 1) shr 1
+  var m = (l + r + 1) shr 1
+  if m == r: m -= 1
   if not subset(ks, s):
     self.update(x, s, 2 * k + 1, l..<m)
     self.update(x, s, 2 * k + 2, m..<r)
