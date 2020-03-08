@@ -45,7 +45,7 @@ block main:
       for v in g[u]:
         if v != gi: continue
         ans.min= dist[id(u, v)]
-    if ans == float.inf:
+    if ans.classify == fcInf:
       echo -1
     else:
       echo ans.radianToDegree

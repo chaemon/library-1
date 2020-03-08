@@ -157,7 +157,7 @@ elif [[ $# -eq 0 ]] ; then
         # local
 #        for f in $(find . -name \*.test.cpp) ; do
         for f in $(find . -name \*_test.nim -type f) ; do
-#            if [ "`echo $f | grep lazy_segment`" ]; then
+#            if [ "`echo $f | grep intersection_of_circle_and_polygon`" ]; then
 #                continue
 #            fi
             run $f

@@ -1,4 +1,4 @@
-#{{{ segment tree
+#{{{ SegmentTree: initSegmentTree[D](n:int, f:(D,D)->D, D0:D)
 type SegmentTree[D] = object
   sz:int
   data:seq[D]
@@ -24,6 +24,7 @@ proc build[D](self:var SegmentTree[D], v:seq[D]) =
   self.build()
 # }}}
 
+# recalc, update, [], []= {{{
 proc recalc[D](self: var SegmentTree[D], k:int) =
   var k = k
   while true:
@@ -53,6 +54,7 @@ proc `[]`[D](self:SegmentTree[D],p:Slice[int]):D =
   return self.f(L, R)
 
 proc `[]`[D](self:SegmentTree[D],k:int):D = self.data[k + self.sz]
+# }}}
 
 # findFirst and findLast {{{
 proc findSubtree[D](self:SegmentTree[D], a:int, check:(D)->bool, M: var D, t:int):int =
@@ -63,7 +65,7 @@ proc findSubtree[D](self:SegmentTree[D], a:int, check:(D)->bool, M: var D, t:int
     else: M = nxt; a = 2 * a + 1 - t
   return a - self.sz
 
-# minimal x for which [a, x) is true
+# minimal x for which [a, x) is true (FFFFFFTTTTTT)
 proc findFirst[D](self: SegmentTree[D], a:int, check:(D)->bool):int =
   var L = self.D0
   if a <= 0:
@@ -80,7 +82,7 @@ proc findFirst[D](self: SegmentTree[D], a:int, check:(D)->bool):int =
     a = a shr 1;b = b shr 1
   return -1;
 
-# minimal x for which [x, b) is true
+# minimal x for which [x, b) is true  (TTTTTTFFFFFFF)
 proc findLast[D](self: SegmentTree[D], b:int, check:(D)->bool):int =
   var R = self.D0
   if b >= self.sz:

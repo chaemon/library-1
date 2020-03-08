@@ -14,17 +14,18 @@ proc tangent(c1, c2: Circle):seq[Line] =
       swap(l.a, l.b)
     return
   let g = norm(c1.p - c2.p)
-  if eq(g, 0): return
+  if g == 0.Real: return
   let
     u = (c2.p - c1.p) / sqrt(g)
 #    v = rotate(PI * 0.5, u)
-    xx = rotate(PI * 0.5, initPoint(1.0, 0.0))
+    xx = rotate(PI * 0.5.Real, initPoint(1.Real, 0.Real))
     v = initPoint(- u.im, u.re)
   for s in [-1, 1]:
     let h = (c1.r + s.float * c2.r) / sqrt(g)
-    if eq(1 - h * h, 0):
+    let d = 1.Real - h * h
+    if d == 0.Real:
       result.add(initLine(c1.p + u * c1.r.complex, c1.p + (u + v) * c1.r.complex))
-    elif 1 - h * h > 0:
+    elif d > 0.Real:
       let
         uu = u * h.complex
         vv = v * sqrt(1 - h * h).complex

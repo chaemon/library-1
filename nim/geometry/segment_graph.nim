@@ -3,7 +3,7 @@
 # deduplication of line segments
 proc merge_segments(segs: var seq[Segment]) =
   proc merge_if_able(s1: var Segment, s2: Segment):bool =
-    if abs(cross(s1.b - s1.a, s2.b - s2.a)) > EPS: return false
+    if abs(cross(s1.b - s1.a, s2.b - s2.a)) > 0.Real: return false
     if ccw(s1.a, s2.a, s1.b) == 1 or ccw(s1.a, s2.a, s1.b) == -1: return false
     if ccw(s1.a, s1.b, s2.a) == -2 or ccw(s2.a, s2.b, s1.a) == -2: return false
     s1 = initSegment(min(s1.a, s2.a), max(s1.b, s2.b))
@@ -39,7 +39,7 @@ proc segment_arrangement(segs: seq[Segment]):(seq[Point], seq[seq[int]]) =
     var h, i = 0
     while i < ps.len:
       var j = i
-      while j < ps.len and abs(ps[i] - ps[j]) < EPS: j.inc
+      while j < ps.len and ps[i] == ps[j]: j.inc
       swap(ps[h], ps[i])
       i = j
       h.inc
