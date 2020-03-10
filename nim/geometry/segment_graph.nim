@@ -3,14 +3,14 @@
 # deduplication of line segments
 proc merge_segments(segs: var seq[Segment]) =
   proc merge_if_able(s1: var Segment, s2: Segment):bool =
-    if abs(cross(s1.b - s1.a, s2.b - s2.a)) > 0.Real: return false
+    if abs(cross(s1.b - s1.a, s2.b - s2.a)).gt 0.Real: return false
     if ccw(s1.a, s2.a, s1.b) == 1 or ccw(s1.a, s2.a, s1.b) == -1: return false
     if ccw(s1.a, s1.b, s2.a) == -2 or ccw(s2.a, s2.b, s1.a) == -2: return false
     s1 = initSegment(min(s1.a, s2.a), max(s1.b, s2.b))
     return true
 
   for i in 0..<segs.len:
-    if segs[i].b < segs[i].a: swap(segs[i].a, segs[i].b)
+    if segs[i].b.lt segs[i].a: swap(segs[i].a, segs[i].b)
   for i in 0..<segs.len:
     var j = i + 1
     while j < segs.len:

@@ -25,7 +25,7 @@ proc closest_pair(ps: seq[Point]):Real =
   ps.sort(cmp[Point])
 
   proc compare_y(a, b:Point):bool =
-    return a.im < b.im
+    return a.im.lt b.im
 
   var beet = newSeq[Point](ps.len)
   let INF = 1e+100
@@ -40,10 +40,10 @@ proc closest_pair(ps: seq[Point]):Real =
     ps.inplace_merge(left, mid, right, compare_y)
     var p = 0;
     for i in left..<right:
-      if abs(ps[i].re - x) >= result: continue
+      if abs(ps[i].re - x).ge result: continue
       for j in 0..<p:
         let luz = ps[i] - beet[p - j - 1]
-        if luz.im >= result: break
+        if luz.im.ge result: break
         result = min(result, abs(luz))
       beet[p] = ps[i];
       p += 1

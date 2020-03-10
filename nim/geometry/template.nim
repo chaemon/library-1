@@ -1,7 +1,6 @@
-#include "../standard_library/complex.nim"
-import complex, math
+import math
+import complex
 import sets, sequtils
-import sugar
 
 type
   Real = float
@@ -41,27 +40,31 @@ proc getAngle(a,b,c:Point):Real =
 # float comp {{{
 const EPS = 1e-9
 
-proc `==`(a,b:float):bool = system.`<`(abs(a - b), EPS)
-proc `!=`(a,b:float):bool = system.`>`(abs(a - b), EPS)
-proc `<`(a,b:float):bool = system.`<`(a + EPS, b)
-proc `>`(a,b:float):bool = system.`>`(a, b + EPS)
-proc `<=`(a,b:float):bool = system.`<`(a, b + EPS)
-proc `>=`(a,b:float):bool = system.`>`(a + EPS, b)
+proc eq(a,b:float):bool = system.`<`(abs(a - b), EPS)
+proc ne(a,b:float):bool = system.`>`(abs(a - b), EPS)
+proc lt(a,b:float):bool = system.`<`(a + EPS, b)
+proc gt(a,b:float):bool = system.`>`(a, b + EPS)
+proc le(a,b:float):bool = system.`<`(a, b + EPS)
+proc ge(a,b:float):bool = system.`>`(a + EPS, b)
 # }}}
 
 # comparison functions {{{
 #proc eq(a,b:Real):bool = return abs(b - a) < EPS
-proc `==`(a,b:Point):bool =
-  return a.re == b.re and a.im == b.im
+proc eq(a,b:Point):bool =
+  return eq(a.re, b.re) and eq(a.im, b.im)
 #  return system.`<`(abs(b - a), EPS)
-proc `<`(a,b:Point):bool =
-  if a.re != b.re: return a.re < b.re
-  elif a.im != b.im: return a.im < b.im
+
+proc lt(a,b:Point):bool =
+  if ne(a.re, b.re): return lt(a.re, b.re)
+  elif ne(a.im, b.im): return lt(a.im, b.im)
   return false
-proc `<=`(a,b:Point):bool =
-  if a.re != b.re: return a.re < b.re
-  elif a.im != b.im: return a.im < b.im
+proc `<`(a,b:Point):bool = return a.lt b
+
+proc le(a,b:Point):bool =
+  if ne(a.re, b.re): return lt(a.re, b.re)
+  elif ne(a.im, b.im): return lt(a.im, b.im)
   return true
+proc `<=`(a,b:Point):bool = return a.le b
 # }}}
 
 # Line and Segment {{{
@@ -73,8 +76,8 @@ type Segment {.borrow: `.`.} = distinct Line
 proc initLine(a,b:Point):Line = Line(a:a, b:b)
 proc initLine(A, B, C:Real):Line = # Ax + By = C
   var a, b: Point
-  if A == 0.Real: a = initPoint(0.Real, C / B); b = initPoint(1.Real, C / B)
-  elif B == 0.Real: b = initPoint(C / A, 0.Real); b = initPoint(C / A, 1.Real)
+  if A.eq 0.Real: a = initPoint(0.Real, C / B); b = initPoint(1.Real, C / B)
+  elif B.eq 0.Real: b = initPoint(C / A, 0.Real); b = initPoint(C / A, 1.Real)
   else: a = initPoint(0.Real, C / B); b = initPoint(C / A, 0.Real)
   return initLine(a, b)
 
@@ -104,16 +107,16 @@ proc ccw(a, b, c: Point):int =
   var
     b = b - a
     c = c - a
-  if cross(b, c) > 0.Real: return +1  # "COUNTER_CLOCKWISE"
-  if cross(b, c) < -0.Real: return -1 # "CLOCKWISE"
-  if dot(b, c) < 0: return +2      # "ONLINE_BACK" c-a-b
-  if norm(b) < norm(c): return -2  # "ONLINE_FRONT" a-b-c
+  if cross(b, c).gt(0.Real): return +1  # "COUNTER_CLOCKWISE"
+  if cross(b, c).lt(-0.Real): return -1 # "CLOCKWISE"
+  if dot(b, c).lt(0): return +2      # "ONLINE_BACK" c-a-b
+  if norm(b).lt(norm(c)): return -2  # "ONLINE_FRONT" a-b-c
   return 0                         # "ON_SEGMENT" a-c-b
 
 # http://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=CGL_2_A
-proc parallel(a,b:Line):bool = cross(a.b - a.a, b.b - b.a) == 0.Real
+proc parallel(a,b:Line):bool = cross(a.b - a.a, b.b - b.a).eq(0.Real)
 # http://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=CGL_2_A
-proc orthogonal(a,b:Line):bool = dot(a.a - a.b, b.a - b.b) == 0.Real
+proc orthogonal(a,b:Line):bool = dot(a.a - a.b, b.a - b.b).eq(0.Real)
 
 # projection reflection {{{
 # http://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=CGL_1_A
@@ -129,12 +132,12 @@ proc reflection(p:Point, l:Line):Point = return p + (p.projection(l) - p) * comp
 
 # intersect function {{{
 proc intersect(l:Line, p:Point):bool = abs(ccw(l.a, l.b, p)) != 1
-proc intersect(l,m: Line):bool = abs(cross(l.b - l.a, m.b - m.a)) > 0.Real or abs(cross(l.b - l.a, m.b - l.a)) < 0.Real
+proc intersect(l,m: Line):bool = abs(cross(l.b - l.a, m.b - m.a)).gt(0.Real) or abs(cross(l.b - l.a, m.b - l.a)).lt(0.Real)
 
 proc intersect(s:Segment, p:Point):bool =
   ccw(s.a, s.b, p) == 0
 proc intersect(l:Line, s:Segment):bool =
-  cross(l.b - l.a, s.a - l.a) * cross(l.b - l.a, s.b - l.a) < 0.Real
+  (cross(l.b - l.a, s.a - l.a) * cross(l.b - l.a, s.b - l.a)).lt(0.Real)
 
 proc distance(l:Line, p:Point):Real
 proc intersect(c:Circle, l:Line):bool = distance(l, c.p) <= c.r
@@ -146,26 +149,26 @@ proc intersect(s, t: Segment):bool =
   return ccw(s.a, s.b, t.a) * ccw(s.a, s.b, t.b) <= 0 and ccw(t.a, t.b, s.a) * ccw(t.a, t.b, s.b) <= 0
 
 proc intersect(c:Circle, l:Segment):int =
-  if norm(c.p.projection(l) - c.p) - c.r * c.r > 0.Real: return 0
+  if (norm(c.p.projection(l) - c.p) - c.r * c.r).gt 0.Real: return 0
   let
     d1 = abs(c.p - l.a)
     d2 = abs(c.p - l.b)
-  if d1 <= c.r and d2 <= c.r: return 0
-  if d1 < c.r and d2 > c.r or d1 > c.r and d2 < c.r: return 1
+  if d1.le(c.r) and d2.le(c.r): return 0
+  if d1.lt(c.r) and d2.gt(c.r) or d1.gt(c.r) and d2.lt(c.r): return 1
   let h:Point = c.p.projection(l)
-  if dot(l.a - h, l.b - h) < 0: return 2
+  if dot(l.a - h, l.b - h).lt(0.Real): return 2
   return 0
 
 # http://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=CGL_7_A
 # number of common tangent
 proc intersect(c1, c2: Circle):int =
   var (c1, c2) = (c1, c2)
-  if c1.r < c2.r: swap(c1, c2)
+  if c1.r.lt c2.r: swap(c1, c2)
   let d = abs(c1.p - c2.p)
-  if c1.r + c2.r < d: return 4
-  if c1.r + c2.r == d: return 3
-  if c1.r - c2.r < d: return 2
-  if c1.r - c2.r == d: return 1
+  if(c1.r + c2.r).lt d: return 4
+  if(c1.r + c2.r).eq d: return 3
+  if(c1.r - c2.r).lt d: return 2
+  if(c1.r - c2.r).eq d: return 1
   return 0
 # }}}
 
@@ -193,7 +196,7 @@ proc crosspoint(l,m:Line):Point =
   let
     A = cross(l.b - l.a, m.b - m.a)
     B = cross(l.b - l.a, l.b - m.a)
-  if abs(A) == 0.Real and abs(B) == 0.Real: return m.a
+  if (abs(A).eq 0.Real) and (abs(B).eq 0.Real): return m.a
   return m.a + (m.b - m.a) * complex(B) / A
 
 # http://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=CGL_2_C
@@ -204,7 +207,7 @@ proc crosspoint(l,m:Segment):Point =
 proc crosspoint(c:Circle, l:Line):(Point,Point) =
   let pr = c.p.projection(l)
   let e = (l.b - l.a) / abs(l.b - l.a)
-  if distance(l, c.p) == c.r: return (pr, pr)
+  if distance(l, c.p).eq c.r: return (pr, pr)
   let base = sqrt(c.r * c.r - norm(pr - c.p))
   return (pr - e * complex(base), pr + e * complex(base))
 
@@ -225,3 +228,4 @@ proc crosspoint(c1, c2: Circle):(Point,Point) =
   return (c1.p + initPoint(cos(t + a) * c1.r, sin(t + a) * c1.r),
           c1.p + initPoint(cos(t - a) * c1.r, sin(t - a) * c1.r))
 # }}}
+

@@ -8,13 +8,13 @@ proc tangent(c1: Circle, p2:Point):(Point, Point) =
 # common tangent of circles c1 and c2
 proc tangent(c1, c2: Circle):seq[Line] =
   result = newSeq[Line]()
-  if c1.r < c2.r:
+  if c1.r.lt c2.r:
     result = tangent(c2, c1)
     for l in result.mitems:
       swap(l.a, l.b)
     return
   let g = norm(c1.p - c2.p)
-  if g == 0.Real: return
+  if g.eq 0.Real: return
   let
     u = (c2.p - c1.p) / sqrt(g)
 #    v = rotate(PI * 0.5, u)
@@ -23,9 +23,9 @@ proc tangent(c1, c2: Circle):seq[Line] =
   for s in [-1, 1]:
     let h = (c1.r + s.float * c2.r) / sqrt(g)
     let d = 1.Real - h * h
-    if d == 0.Real:
+    if d.eq 0.Real:
       result.add(initLine(c1.p + u * c1.r.complex, c1.p + (u + v) * c1.r.complex))
-    elif d > 0.Real:
+    elif d.gt 0.Real:
       let
         uu = u * h.complex
         vv = v * sqrt(1 - h * h).complex

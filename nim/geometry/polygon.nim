@@ -16,8 +16,8 @@ import algorithm
 proc convexHull(p:Polygon, strict = false): Polygon =
   let n = p.len
   var eps_cmp =
-    if strict: (a:Real) => a <= 0.Real
-    else: (a:Real) => a < 0.Real
+    if strict: (a:Real) => a.le 0.Real
+    else: (a:Real) => a.lt 0.Real
 #  let eps = if strict: EPS else: -EPS
   var
     k = 0
@@ -59,19 +59,19 @@ proc convex_diameter(p: Polygon):Real =
     it = 0
     jt = 0
   for i in 1..<N:
-    if p[i].im > p[it].im: it = i
-    if p[i].im < p[jt].im: jt = i
+    if p[i].im.gt p[it].im: it = i
+    if p[i].im.lt p[jt].im: jt = i
   var maxdis = norm(p[it] - p[jt])
 
   var
     i, maxi = it
     j, maxj = jt
   while true:
-    if cross(p[(i + 1) mod N] - p[i], p[(j + 1) mod N] - p[j]) >= 0:
+    if cross(p[(i + 1) mod N] - p[i], p[(j + 1) mod N] - p[j]).ge 0.Real:
       j = (j + 1) mod N
     else:
       i = (i + 1) mod N
-    if norm(p[i] - p[j]) > maxdis:
+    if norm(p[i] - p[j]).gt maxdis:
       maxdis = norm(p[i] - p[j])
       maxi = i
       maxj = j
@@ -93,9 +93,9 @@ proc contains(Q: Polygon, p:Point):State =
     var
       a = Q[i] - p
       b = Q[(i + 1) mod Q.len] - p
-    if a.im > b.im: swap(a, b)
-    if a.im <= 0 and 0 < b.im and cross(a, b) < 0: inside = not inside
-    if cross(a, b) == 0 and dot(a, b) <= 0: return ON
+    if a.im.gt b.im: swap(a, b)
+    if (a.im.le 0.Real) and (0.Real.lt b.im) and (cross(a, b).lt 0.Real): inside = not inside
+    if cross(a, b).eq(0.Real) and dot(a, b).le(0.Real): return ON
   return if inside: IN else: OUT
 # }}}
 
@@ -116,10 +116,10 @@ proc area(p:Polygon, c:Circle):Real =
       vb = c.p - b
       f = cross(va, vb)
     result = 0.Real
-    if f == 0.Real:
+    if f.eq 0.Real:
       return
-    if max(abs(va), abs(vb)) <= c.r: return f
-    if c.r <= distance(initSegment(a, b), c.p):
+    if max(abs(va), abs(vb)).le c.r: return f
+    if c.r.le distance(initSegment(a, b), c.p):
       return c.r * c.r * phase(vb * conjugate(va))
     let u = crosspoint(c, initSegment(a, b))
     let tot = @[a, u[0], u[1], b]
