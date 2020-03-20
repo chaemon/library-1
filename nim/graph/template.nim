@@ -1,4 +1,4 @@
-#{{{ Graph
+# Graph {{{
 import sequtils
 
 type
@@ -30,6 +30,20 @@ proc addBiEdge[T](g:var Graph[T],e:Edge[T]):void =
   g[e.dst][^1].rev = r
 proc addBiEdge[T](g:var Graph[T],src,dst:int,weight:T=1):void =
   g.addBiEdge(initEdge(src, dst, weight))
+
+proc initUndirectedGraph[T](n:int, a,b,c:seq[T]):Graph[T] =
+  var result = initGraph[T](n)
+  for i in 0..<a.len: result.addBiEdge(a[i], b[i], c[i])
+proc initUndirectedGraph[T](n:int, a,b:seq[T]):Graph[T] =
+  result = initGraph[T](n)
+  for i in 0..<a.len: result.addBiEdge(a[i], b[i], T(1))
+proc initGraph[T](n:int, a,b:seq[int],c:seq[T]):Graph[T] =
+  var result = initGraph[T](n)
+  for i in 0..<a.len: result.addEdge(a[i], b[i], c[i])
+proc initGraph[T](n:int, a,b:seq[int]):Graph[T] =
+  result = initGraph[T](n)
+  for i in 0..<a.len: result.addEdge(a[i], b[i], T(1))
+
 
 proc addEdge[T](g:var Graph[T],e:Edge[T]):void =
   g[e.src].add(e)

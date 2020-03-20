@@ -1,3 +1,4 @@
+# treeDiameter(g:Graph[T]) {{{
 proc treeDiameter[T](g:Graph[T]):int =
   proc dfs(idx, par:int):(T,int) =
     result[1] = idx
@@ -10,3 +11,4 @@ proc treeDiameter[T](g:Graph[T]):int =
     p = dfs(0, -1)
     q = dfs(p[1], -1)
   return q[0]
+# }}}
