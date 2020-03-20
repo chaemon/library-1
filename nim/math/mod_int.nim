@@ -1,3 +1,5 @@
+
+
 when not declared(MOD):
   const MOD = 998244353
 
@@ -6,7 +8,7 @@ proc getDefault(T:typedesc): T = (var temp:T;temp)
 proc getDefault[T](x:T): T = (var temp:T;temp)
 
 type ModInt[Mod: static[int]] = object
-  v:int
+  v:int32
 proc initModInt[T](a:T, Mod: static[int]):ModInt[Mod] =
   when T is ModInt[Mod]:
     return a
@@ -14,7 +16,7 @@ proc initModInt[T](a:T, Mod: static[int]):ModInt[Mod] =
     var a = a
     a = a mod Mod
     if a < 0: a += Mod
-    result.v = a
+    result.v = a.int32
 proc initModInt[T](a:T):ModInt[Mod] = initModInt(a, MOD)
 proc init[T](self:ModInt[Mod], a:T):ModInt[Mod] = initModInt(a, Mod)
 proc Identity(self:ModInt[Mod]):ModInt[Mod] = return initModInt(1, Mod)
@@ -22,7 +24,7 @@ proc Identity(self:ModInt[Mod]):ModInt[Mod] = return initModInt(1, Mod)
 proc `==`[T](a:ModInt[Mod], b:T):bool = a.v == a.init(b).v
 proc `!=`[T](a:ModInt[Mod], b:T):bool = a.v != a.init(b).v
 proc `-`(self:ModInt[Mod]):ModInt[Mod] =
-  if self.v == 0: return self
+  if self.v == 0.int32: return self
   else: return ModInt[Mod](v:MOD - self.v)
 proc `$`(a:ModInt[Mod]):string = return $(a.v)
 
@@ -33,8 +35,7 @@ proc `-=`[T](self:var ModInt[Mod],a:T):void =
   self.v -= initModInt(a, Mod).v
   if self.v < 0: self.v += MOD
 proc `*=`[T](self:var ModInt[Mod],a:T):void =
-  self.v *= initModInt(a, Mod).v
-  self.v = self.v mod MOD
+  self.v = ((self.v.int * initModInt(a, Mod).v.int) mod MOD).int32
 proc `^=`(self:var ModInt[Mod], n:int) =
   var (x,n,a) = (self,n,self.Identity)
   while n > 0:

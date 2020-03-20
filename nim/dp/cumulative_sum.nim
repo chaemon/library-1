@@ -2,29 +2,27 @@
 import sequtils
 
 type CumulativeSum[T] = object
-  built:bool
+  pos:int
   data: seq[T]
 
-proc initCumulativeSum[T](sz:int = 100):CumulativeSum[T] = CumulativeSum[T](data: newSeqWith(sz + 1, T(0)), built:false)
-proc initCumulativeSum[T](data:seq[T]):CumulativeSum[T] =
-  result = CumulativeSum[T](data: data, built:false)
-  result.build()
-proc add[T](self: var CumulativeSum[T], k:int, x:T) =
+proc initCumulativeSum[T]():CumulativeSum[T] = CumulativeSum[T](data: newSeqWith(1, T().init(0)), pos:0)
+proc `[]=`[T](self: var CumulativeSum[T], k:int, x:T) =
+  if k < self.pos: doAssert(false)
   if self.data.len < k + 2:
     self.data.setlen(k + 2)
-  self.data[k + 1] += x
+  for i in self.pos+1..<k:
+    self.data[i + 1] = self.data[i]
+  self.data[k + 1] = self.data[k] + x
+  self.pos = k
 
-proc build[T](self: var CumulativeSum[T]) =
-  self.built = true
-  for i in 1..<self.data.len:
-    self.data[i] += self.data[i - 1];
+proc initCumulativeSum[T](data:seq[T]):CumulativeSum[T] =
+  result = initCumulativeSum[T]()
+  for i,d in data: result[i] = d
 
 proc sum[T](self: CumulativeSum[T], k:int):T =
-  assert(self.built)
-  if k < 0: return T(0)
+  if k < 0: return T().init(0)
   return self.data[min(k, self.data.len - 1)]
 proc `[]`[T](self: CumulativeSum[T], s:Slice[int]):T =
-  assert(self.built)
-  if s.a > s.b: return T(0)
+  if s.a > s.b: return T().init(0)
   return self.sum(s.b + 1) - self.sum(s.a)
 #}}}
