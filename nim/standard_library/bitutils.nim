@@ -16,12 +16,28 @@ proc writeBits[B:SomeInteger](b:B,n:int) =
   for i in countdown(n-1,0):stdout.write(b[i])
   echo ""
 proc setBits[B:SomeInteger](n:int):B = return (B(1) shl B(n)) - B(1)
-proc builtin_ctz(n:int):int =
+proc countTrailingZeroBits(n:int):int =
   for i in 0..<(8 * sizeof(n)):
     if n[i] == 1: return i
   assert(false)
-proc builtin_popcount(n:int):int =
+proc popcount(n:int):int =
   result = 0
   for i in 0..<(8 * sizeof(n)):
     if n[i] == 1: result += 1
+iterator subsets[B:SomeInteger](b:B):B =
+  var v = newSeq[int]()
+  for i in 0..<(8 * sizeof(B)):
+    if b[i] == 1: v.add(i)
+  var s = B(0)
+  while true:
+    var found = false
+    for i in v:
+      if s[i] == 0:
+        found = true
+        s[i] = 1
+        yield s
+        break
+      else:
+        s[i] = 0
+    if not found: break
 #}}}

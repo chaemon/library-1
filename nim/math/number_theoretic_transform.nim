@@ -5,8 +5,7 @@ when not declared(Mod):
   const Mod = 1012924417
 
 include "../standard_library/bitutils.nim"
-#proc builtin_popcount(n: int): int{.importc: "__builtin_popcount", nodecl.}
-#proc builtin_ctz(n: int): int{.importc: "__builtin_ctz", nodecl.}
+
 proc llround(n: float): int{.importc: "llround", nodecl.}
 
 type NumberTheoreticTransform = object
@@ -60,7 +59,7 @@ proc ensureBase(self: var NumberTheoreticTransform;nbase:int) =
 proc ntt(self: var NumberTheoreticTransform;a:var seq[int]) =
   let n = a.len
   assert((n and (n - 1)) == 0);
-  let zeros = builtin_ctz(n)
+  let zeros = countTrailingZeroBits(n)
   self.ensureBase(zeros)
   let shift = self.base - zeros;
   for i in 0..<n:

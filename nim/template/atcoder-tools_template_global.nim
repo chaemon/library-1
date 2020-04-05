@@ -72,14 +72,14 @@ var print:proc(x: varargs[string, toStr])
 print = proc(x: varargs[string, toStr]) =
   discard print0(@x, sep = " ")
 
-proc ndSeqImpl[T](lens: seq[int]; init: T; currentDimension, lensLen: static[int]): auto =
+proc newSeqWithImpl[T](lens: seq[int]; init: T; currentDimension, lensLen: static[int]): auto =
   when currentDimension == lensLen:
     newSeqWith(lens[currentDimension - 1], init)
   else:
-    newSeqWith(lens[currentDimension - 1], ndSeqImpl(lens, init, currentDimension + 1, lensLen))
+    newSeqWith(lens[currentDimension - 1], newSeqWithImpl(lens, init, currentDimension + 1, lensLen))
 
-template ndSeq*[T](lens: varargs[int]; init: T): untyped =
-  ndSeqImpl(@lens, init, 1, lens.len)
+template Seq*[T](lens: varargs[int]; init: T): untyped =
+  newSeqWithImpl(@lens, init, 1, lens.len)
 {{"#}}}"}}
 
 {% if mod %}

@@ -3,10 +3,6 @@ import sequtils, algorithm
 when not declared(MOD):
   const MOD = 1_000_000_007
 
-# NumberTheoricTransform using Modint {{{
-#proc builtin_popcount(n: int): int{.importc: "__builtin_popcount", nodecl.}
-#proc builtin_ctz(n: int): int{.importc: "__builtin_ctz", nodecl.}
-
 include "../standard_library/bitutils.nim"
 proc llround(n: float): int{.importc: "llround", nodecl.}
 
@@ -46,7 +42,7 @@ proc ensure_base(self: var NumberTheoreticTransform;nbase:int) =
 proc ntt(self: var NumberTheoreticTransform;a:var seq[ModInt[Mod]]) =
   let n = a.len
   assert((n and (n - 1)) == 0)
-  let zeros = builtin_ctz(n)
+  let zeros = countTrailingZeroBits(n)
   self.ensureBase(zeros)
   let shift = self.base - zeros
   for i in 0..<n:

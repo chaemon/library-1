@@ -9,7 +9,7 @@ proc toBin(b:uint64, n: int): string =
     if (b and (1'u64 shl uint64(i))) != 0'u64: result &= "1"
     else: result &= "0"
 
-type StaticBitSet[N:static[int]] = object
+type StaticBitSet[N:static[int]] = ref object
   data: array[(N + BitWidth - 1) div BitWidth, uint64]
 
 proc initStaticBitSet(N: static[int]): StaticBitSet[N] =
