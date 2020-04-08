@@ -6,9 +6,10 @@ proc bits[B:SomeInteger](v:varargs[int]): B =
   for x in v: result = (result or (B(1) shl B(x)))
 proc `[]`[B:SomeInteger](b:B,n:int):int = (b shr n) mod 2
 proc `[]`[B:SomeInteger](b:B,s:Slice[int]):int = (b shr s.a) mod (1 shl (s.b - s.a + 1))
-proc testBit[B:SomeInteger](b:B,n:int):bool = (if b[n] == 1:true else: false)
-proc setBit[B:SomeInteger](b:var B,n:int) = b = (b or (B(1) shl B(n)))
-proc clearBit[B:SomeInteger](b:var B,n:int) = b = (b and (not (B(1) shl B(n))))
+#proc testBit[B:SomeInteger](b:B,n:int):bool = (if b[n] == 1:true else: false)
+#proc setBit[B:SomeInteger](b:var B,n:int) = b = (b or (B(1) shl B(n)))
+#proc clearBit[B:SomeInteger](b:var B,n:int) = b = (b and (not (B(1) shl B(n))))
+
 proc `[]=`[B:SomeInteger](b:var B,n:int,t:int) =
   if t == 0: b.clearBit(n)
   elif t == 1: b.setBit(n)

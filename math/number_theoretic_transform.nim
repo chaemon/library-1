@@ -4,7 +4,7 @@ import algorithm
 when not declared(Mod):
   const Mod = 1012924417
 
-include "../standard_library/bitutils.nim"
+#include "../standard_library/bitutils.nim"
 
 proc llround(n: float): int{.importc: "llround", nodecl.}
 

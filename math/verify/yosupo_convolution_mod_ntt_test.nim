@@ -2,6 +2,7 @@
 
 const Mod = 998244353
 include "template/template.nim"
+include "standard_library/bitutils.nim"
 include "math/number_theoretic_transform.nim"
 
 block main:
