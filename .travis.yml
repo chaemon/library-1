@@ -13,6 +13,7 @@ before_install:
     - sudo apt update && sudo apt install -y curl xz-utils g++ git
     - pip3 install -U setuptools
     - pip3 install online-judge-tools
+    - pip3 install online-judge-verify-helper
     - curl https://nim-lang.org/choosenim/init.sh -sSf | bash -s -- -y
     - export PATH=/home/travis/.nimble/bin:$PATH
 #    - nimble install neo -y
@@ -25,4 +26,5 @@ before_install:
 #    - cd ..
 script:
     - nim --version
-    - ./test.sh
+    - 
+#    - ./test.sh
