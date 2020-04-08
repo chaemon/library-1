@@ -26,5 +26,5 @@ before_install:
 #    - cd ..
 script:
     - nim --version
-    - 
+    - oj-verify run
 #    - ./test.sh
