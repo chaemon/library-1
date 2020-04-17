@@ -9,7 +9,7 @@ proc initPolyBuf[T](xs:FormalPowerSeries[T]):PolyBuf[T] = PolyBuf[T](xs:xs, buf:
 proc query[T](self: var PolyBuf[T], l,r:int):FormalPowerSeries[T] =
   if (l,r) in self.buf: return self.buf[(l,r)]
   if l + 1 == r:
-    self.buf[(l, r)] = initFormalPowerSeries[T](@[-self.xs.data[l], T().init(1)])
+    self.buf[(l, r)] = initFormalPowerSeries[T](@[-self.xs.data[l], T(1)])
   else:
     self.buf[(l, r)] = self.query(l, (l + r) shr 1) * self.query((l + r) shr 1, r)
   return self.buf[(l,r)]

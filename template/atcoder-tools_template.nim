@@ -1,6 +1,6 @@
 {{"#{{{ header"}}
 {.hints:off warnings:off optimization:speed.}
-import algorithm, sequtils, tables, macros, math, sets, strutils
+import algorithm, sequtils, tables, macros, math, sets, strutils, future
 when defined(MYDEBUG):
   import header
 
@@ -23,18 +23,12 @@ proc nextInt[F](f:F): int = parseInt(f.nextString)
 proc nextFloat[F](f:F): float = parseFloat(f.nextString)
 proc nextString():string = stdin.nextString()
 
-type SomeSignedInt = int|int8|int16|int32|int64|BiggestInt
-type SomeUnsignedInt = uint|uint8|uint16|uint32|uint64
-type SomeInteger = SomeSignedInt|SomeUnsignedInt
-type SomeFloat = float|float32|float64|BiggestFloat
 template `max=`*(x,y:typed):void = x = max(x,y)
 template `min=`*(x,y:typed):void = x = min(x,y)
 template inf(T): untyped = 
   when T is SomeFloat: T(Inf)
   elif T is SomeInteger: ((T(1) shl T(sizeof(T)*8-2)) - (T(1) shl T(sizeof(T)*4-1)))
   else: assert(false)
-
-proc sort[T](v: var seq[T]) = v.sort(cmp[T])
 
 proc discardableId[T](x: T): T {.discardable.} =
   return x
@@ -50,11 +44,6 @@ macro `:=`(x, y: untyped): untyped =
     return quote do:
       `x` = `y`
       discardableId(`x`)
-macro dump*(x: typed): untyped =
-  let s = x.toStrLit
-  let r = quote do:
-    debugEcho `s`, " = ", `x`
-  return r
 
 proc toStr[T](v:T):string =
   proc `$`[T](v:seq[T]):string =

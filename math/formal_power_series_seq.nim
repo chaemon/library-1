@@ -1,14 +1,14 @@
 proc bernoulli[T](N:int):FormalPowerSeries[T] =
   result = initFormalPowerSeries[T](N+1)
-  result.data[0] = T().init(1)
-  for i in 1..N: result.data[i] = result.data[i-1] / T().init(i+1)
+  result.data[0] = T(1)
+  for i in 1..N: result.data[i] = result.data[i-1] / T(i+1)
   result = result.inv()
-  var tmp = T().init(1)
-  for i in 1..N: tmp *= T().init(i);result.data[i] *= tmp
+  var tmp = T(1)
+  for i in 1..N: tmp *= T(i);result.data[i] *= tmp
 
 proc partition[T](N:int):FormalPowerSeries[T] =
   result = initFormalPowerSeries[T](N+1)
-  result.data[0] = T().init(1)
+  result.data[0] = T(1)
   for k in 1..N:
     if k * (3 * k + 1) div 2 <= N: result.data[k * (3 * k + 1) div 2] += ( if k mod 2 == 1: -1 else: 1)
     if k * (3 * k - 1) div 2 <= N: result.data[k * (3 * k - 1) div 2] += ( if k mod 2 == 1: -1 else: 1)
@@ -17,14 +17,14 @@ proc partition[T](N:int):FormalPowerSeries[T] =
 proc bell[T](N:int):FormalPowerSeries[T] =
   result = initFormalPowerSeries[T](N+1)
   var poly = initFormalPowerSeries[T](N+1)
-  poly.data[1] = T().init(1)
+  poly.data[1] = T(1)
   poly = poly.exp()
-  poly.data[0] -= T().init(1)
+  poly.data[0] -= T(1)
   poly = poly.exp()
-  var mul = T().init(1)
+  var mul = T(1)
   for i in 0..N:
     result.data[i] = poly.data[i] * mul
-    mul *= T().init(i+1)
+    mul *= T(i+1)
 
 #template< typename T >
 #FormalPowerSeries< T > stirling_first(int N) {

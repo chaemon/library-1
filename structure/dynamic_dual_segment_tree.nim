@@ -1,4 +1,4 @@
-import future
+import sugar
 
 # DynamicDualSegmentTree {{{
 type Node[D] = object

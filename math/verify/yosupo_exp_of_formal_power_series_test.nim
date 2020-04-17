@@ -15,7 +15,7 @@ proc main():void =
     proc(a:var FormalPowerSeries[Mint]) = ntt.ntt(a.data),
     proc(a:var FormalPowerSeries[Mint]) = ntt.intt(a.data))
   for i in 0..<N:
-    p.data[i] = Mint().init(nextInt())
+    p.data[i] = Mint(nextInt())
   let q = p.exp()
   echo q.data.map(`$`).join(" ")
 

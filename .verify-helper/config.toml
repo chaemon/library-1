@@ -1,7 +1,3 @@
 [languages.nim]
-verification_file_suffix = "_test.nim"
-compile = "nim cpp --cc=gcc -p:. -d:release -o:{tempdir}/a.out {path}"
-execute = "{tempdir}/a.out"
-bundle = "false"
-list_attributes = "sed 's/^# verify-helper: // ; t ; d' {path}"
-list_dependencies = "sed 's/^include \"\\(.*\\)\"$/\\1/ ; t ; d' {path}"
+compile_to = "c"
+NIMFLAGS = "--cc=gcc"

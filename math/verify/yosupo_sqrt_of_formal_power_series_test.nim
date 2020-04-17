@@ -17,9 +17,9 @@ block main:
     proc(a:var FormalPowerSeries[Mint]) = ntt.ntt(a.data),
     proc(a:var FormalPowerSeries[Mint]) = ntt.intt(a.data))
   p.setMult(proc(a, b:FormalPowerSeries[Mint]):FormalPowerSeries[Mint] = initFormalPowerSeries(ntt.multiply(a.data, b.data)))
-  p.setSqrt(proc(a:Mint):Mint = Mint().init(modSqrt(int(a.v), Mod)))
+  p.setSqrt(proc(a:Mint):Mint = Mint((modSqrt(int(a.v), Mod))))
   for i in 0..<N:
-    p.data[i] = Mint().init(nextInt())
+    p.data[i] = Mint(nextInt())
   var q = p.sqrt()
   if q.data.len == 0:
     echo -1

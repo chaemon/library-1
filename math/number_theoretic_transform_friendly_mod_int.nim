@@ -1,10 +1,6 @@
 import sequtils, algorithm
 
-when not declared(MOD):
-  const MOD = 1_000_000_007
-
 include "../standard_library/bitutils.nim"
-proc llround(n: float): int{.importc: "llround", nodecl.}
 
 type NumberTheoreticTransform = object
   rev: seq[int]

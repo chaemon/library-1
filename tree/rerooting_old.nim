@@ -1,6 +1,6 @@
 #ReRooting: initReRooting[Weight, Data](n:int, f_up(Data,Weight)->Data, f_merge:(Data,Data)->Data, ident:Data)
 # {{{
-import sequtils, future
+import sequtils
 type
   Node[Weight] = object
     to, rev: int

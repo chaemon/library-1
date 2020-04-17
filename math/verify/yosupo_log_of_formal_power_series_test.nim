@@ -16,7 +16,7 @@ proc main():void =
     proc(a:var FormalPowerSeries[Mint]) = ntt.intt(a.data))
   p.setMult(proc(a, b:FormalPowerSeries[Mint]):FormalPowerSeries[Mint] = initFormalPowerSeries(ntt.multiply(a.data, b.data)))
   for i in 0..<N:
-    p.data[i] = Mint().init(nextInt())
+    p.data[i] = Mint(nextInt())
   echo p.log()
 
 main()
