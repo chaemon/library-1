@@ -23,18 +23,3 @@ template inf(T): untyped =
   when T is SomeFloat: T(Inf)
   elif T is SomeInteger: ((T(1) shl T(sizeof(T)*8-2)) - (T(1) shl T(sizeof(T)*4-1)))
   else: assert(false)
-
-proc discardableId[T](x: T): T {.discardable.} =
-  return x
-macro `:=`(x, y: untyped): untyped =
-  if (x.kind == nnkIdent):
-    return quote do:
-      when declaredInScope(`x`):
-        `x` = `y`
-      else:
-        var `x` = `y`
-      discardableId(`x`)
-  else:
-    return quote do:
-      `x` = `y`
-      discardableId(`x`)

@@ -3,14 +3,15 @@
 include "template/template.nim"
 include "graph/template.nim"
 
-include "graph/bipartite_matching.nim"
+include "graph/hopcroft_karp.nim"
+
 
 proc main() =
   let X, Y, E = nextInt()
-  var bm = initBipartiteMatching(X + Y)
+  var bm = initHopcroftKarp(X, Y)
   for i in 0..<E:
     let a, b = nextInt()
-    bm.add_edge(a, X + b);
-  echo bm.bipartiteMatching()
+    bm.addEdge(a, b)
+  echo bm.bipartiteMatching().len
 
 main()

@@ -1,3 +1,3 @@
-[languages.nim]
-compile_to = "c"
-NIMFLAGS = "--cc=gcc"
+[[languages.nim.environments]]
+compile_to = "cpp"
+NIMFLAGS = ["--cc=gcc", "-d:release", "--opt:speed"]
