@@ -18,6 +18,7 @@ before_install:
     - pip3 install online-judge-tools
     - pip3 install online-judge-verify-helper
     - curl https://nim-lang.org/choosenim/init.sh -sSf | bash -s -- -y
+    - choosenim 1.0.6
     - export PATH=/home/travis/.nimble/bin:$PATH
 #    - nimble install neo -y
 #    - apt install libopenblas-base -y
