@@ -1,6 +1,6 @@
 {{"#{{{ header"}}
 {.hints:off warnings:off optimization:speed.}
-import algorithm, sequtils, tables, macros, math, sets, strutils, future
+import algorithm, sequtils, tables, macros, math, sets, strutils, sugar
 when defined(MYDEBUG):
   import header
 
@@ -62,14 +62,32 @@ var print:proc(x: varargs[string, toStr])
 print = proc(x: varargs[string, toStr]) =
   discard print0(@x, sep = " ")
 
-proc newSeqWithImpl[T](lens: seq[int]; init: T; currentDimension, lensLen: static[int]): auto =
-  when currentDimension == lensLen:
-    newSeqWith(lens[currentDimension - 1], init)
-  else:
-    newSeqWith(lens[currentDimension - 1], newSeqWithImpl(lens, init, currentDimension + 1, lensLen))
+template SeqImpl(lens: seq[int]; init; d, l: static[int]): auto =
+  when d == l:
+    when init is typedesc: newSeq[init](lens[d - 1])
+    else: newSeqWith(lens[d - 1], init)
+  else: newSeqWith(lens[d - 1], SeqImpl(lens, init, d + 1, l))
 
-template Seq*[T](lens: varargs[int]; init: T): untyped =
-  newSeqWithImpl(@lens, init, 1, lens.len)
+template Seq(lens: varargs[int]; init): auto = SeqImpl(@lens, init, 1, lens.len)
+
+template ArrayImpl(lens: varargs[int]; init: typedesc; d, l: static[int]): typedesc =
+  when d == l: array[lens[d - 1], init]
+  else: array[lens[d - 1], ArrayImpl(lens, init, d + 1, l)]
+
+template ArrayFill(a, val): void =
+  when a is array:
+    for v in a.mitems: ArrayFill(v, val)
+  else:
+    a = val
+  discard
+
+template Array(lens: varargs[int]; init): auto =
+  when init is typedesc:
+    ArrayImpl(@lens, init, 1, lens.len).default
+  else:
+    var a:ArrayImpl(@lens, typeof(init), 1, lens.len)
+    ArrayFill(a, init)
+    a
 {{"#}}}"}}
 
 {% if mod %}

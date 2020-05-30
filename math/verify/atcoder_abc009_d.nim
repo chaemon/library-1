@@ -1,6 +1,6 @@
 #{{{ header
 {.hints:off checks:off.}
-import algorithm, sequtils, tables, macros, math, sets, strutils, future
+import algorithm, sequtils, tables, macros, math, sets, strutils, sugar
 when defined(MYDEBUG):
   import header
 

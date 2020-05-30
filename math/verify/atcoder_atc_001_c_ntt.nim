@@ -1,13 +1,7 @@
 {.hints:off checks:off}
-import algorithm, sequtils, tables, macros, math, sets, strutils, streams
+import algorithm, sequtils, tables, macros, math, sets, strutils, streams, sugar
 when defined(MYDEBUG):
   import header
-
-when (not (NimMajor <= 0)) or NimMinor >= 19:
-  import sugar
-else:
-  import future
-  proc sort[T](a:var seq[T]) = a.sort(cmp[T])
 
 proc scanf(formatstr: cstring){.header: "<stdio.h>", varargs.}
 proc getchar(): char {.header: "<stdio.h>", varargs.}

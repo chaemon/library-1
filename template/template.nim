@@ -1,9 +1,8 @@
 {.hints:off checks:off}
-import algorithm, sequtils, tables, macros, math, sets, strutils, streams, strformat
+# header {{{
+import algorithm, sequtils, tables, macros, math, sets, strutils, streams, strformat, sugar
 when defined(MYDEBUG):
   import header
-
-import sugar
 
 proc scanf(formatstr: cstring){.header: "<stdio.h>", varargs.}
 proc getchar(): char {.header: "<stdio.h>", varargs.}
@@ -23,3 +22,5 @@ template inf(T): untyped =
   when T is SomeFloat: T(Inf)
   elif T is SomeInteger: ((T(1) shl T(sizeof(T)*8-2)) - (T(1) shl T(sizeof(T)*4-1)))
   else: assert(false)
+
+# }}}
