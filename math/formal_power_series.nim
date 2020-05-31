@@ -120,7 +120,8 @@ proc dot[T](self:FormalPowerSeries[T], r: FormalPowerSeries[T]):FormalPowerSerie
 proc `shr`[T](self: FormalPowerSeries[T], sz:int):FormalPowerSeries[T] =
   if self.data.len <= sz: return initFormalPowerSeries[T](0)
   var ret = self
-  ret.data.delete(0, sz - 1)
+  if sz >= 1:
+    ret.data.delete(0, sz - 1)
   return ret
 
 proc `shl`[T](self: FormalPowerSeries[T], sz:int):FormalPowerSeries[T] =
@@ -295,7 +296,8 @@ proc pow[T](self: FormalPowerSeries[T], k:int, deg = -1):FormalPowerSeries[T] =
       var ret = (((self * rev) shr i).log() * T(k)).exp() * (self.data[i]^k)
       if i * k > deg: return initFormalPowerSeries[T](deg)
       ret = (ret shl (i * k)).pre(deg)
-      if ret.data.len < deg: ret.data.setlen(deg)
+      if ret.data.len < deg:
+        ret.data.setlen(deg)
       return ret
   return self
 
