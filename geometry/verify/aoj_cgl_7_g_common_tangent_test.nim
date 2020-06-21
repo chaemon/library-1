@@ -11,7 +11,7 @@ block main:
     q = tangent(c1, c2)
   var ans = newSeq[Point]()
   for l in q:
-    if distance(l.a, c1.p).eq c1.r:
+    if distance(l.a, c1.p) =~ c1.r:
       ans.add l.a
     else:
       ans.add l.b

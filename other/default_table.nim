@@ -1,15 +1,7 @@
-#{{{ default-table
-proc getDefault(T:typedesc): T =
-  when T is string: ""
-  elif T is seq: @[]
-  else:
-    (var temp:T;temp)
-
-proc getDefault[T](x:T): T = getDefault(T)
-
+# default-table {{{
 import tables
 
 proc `[]`[A, B](self: var Table[A, B], key: A): var B =
-  discard self.hasKeyOrPut(key, getDefault(B))
+  discard self.hasKeyOrPut(key, B.default)
   tables.`[]`(self, key)
 #}}}

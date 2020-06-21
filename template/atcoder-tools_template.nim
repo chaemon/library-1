@@ -1,6 +1,6 @@
-{{"#{{{ header"}}
+{{"# header {{{"}}
 {.hints:off warnings:off optimization:speed.}
-import algorithm, sequtils, tables, macros, math, sets, strutils, sugar
+import algorithm, sequtils, tables, macros, math, sets, strutils, strformat, sugar
 when defined(MYDEBUG):
   import header
 
@@ -62,32 +62,28 @@ var print:proc(x: varargs[string, toStr])
 print = proc(x: varargs[string, toStr]) =
   discard print0(@x, sep = " ")
 
-template SeqImpl(lens: seq[int]; init; d, l: static[int]): auto =
-  when d == l:
-    when init is typedesc: newSeq[init](lens[d - 1])
-    else: newSeqWith(lens[d - 1], init)
-  else: newSeqWith(lens[d - 1], SeqImpl(lens, init, d + 1, l))
+template makeSeq(x:int; init):auto =
+  when init is typedesc: newSeq[init](x)
+  else: newSeqWith(x, init)
 
-template Seq(lens: varargs[int]; init): auto = SeqImpl(@lens, init, 1, lens.len)
+macro Seq(lens: varargs[int]; init):untyped =
+  var a = fmt"{init.repr}"
+  for x in lens: a = fmt"makeSeq({x.repr}, {a})"
+  parseStmt(a)
 
-template ArrayImpl(lens: varargs[int]; init: typedesc; d, l: static[int]): typedesc =
-  when d == l: array[lens[d - 1], init]
-  else: array[lens[d - 1], ArrayImpl(lens, init, d + 1, l)]
-
-template ArrayFill(a, val): void =
-  when a is array:
-    for v in a.mitems: ArrayFill(v, val)
-  else:
-    a = val
-  discard
-
-template Array(lens: varargs[int]; init): auto =
+template makeArray(x; init):auto =
   when init is typedesc:
-    ArrayImpl(@lens, init, 1, lens.len).default
+    var v:array[x, init]
   else:
-    var a:ArrayImpl(@lens, typeof(init), 1, lens.len)
-    ArrayFill(a, init)
-    a
+    var v:array[x, init.type]
+    for a in v.mitems: a = init
+  v
+
+macro Array(lens: varargs[typed], init):untyped =
+  var a = fmt"{init.repr}"
+  for x in lens:
+    a = fmt"makeArray({x.repr}, {a})"
+  parseStmt(a)
 {{"#}}}"}}
 
 {% if mod %}
@@ -106,7 +102,7 @@ const NO = "{{ no_str }}"
 proc solve({{formal_arguments}}) =
   return
 
-{{"#{{{ input part"}}
+{{"# input part {{{"}}
 block:
 {% if prediction_success %}
   {{input_part}}

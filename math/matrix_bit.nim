@@ -1,12 +1,9 @@
-proc getDefault(V:typedesc): V = (var temp:V;temp)
-proc getDefault[V](x:V): V = (var temp:V;temp)
-
 import sequtils
 
 type Matrix[V] = seq[V]
 
 proc initMatrix[V](self: Matrix[V]):Matrix[V] = return self
-proc initMatrix[V](n:int, m: int):Matrix[V] = Matrix[V](newSeqWith(n, getDefault(V).init(m)))
+proc initMatrix[V](n:int, m: int):Matrix[V] = Matrix[V](newSeqWith(n, V.default.init(m)))
 proc initMatrix[V](n:int):Matrix[V] = initMatrix[V](n, n)
 
 #proc initVector[V](n:int):Vector[V] = Vector[V](newSeqWith(n, getDefault(V)))
@@ -66,4 +63,3 @@ proc `$`[V](self: Matrix[V]):string =
     result &= "["
     result &= $(self[i])
     result &= "]\n"
-

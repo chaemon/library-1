@@ -1,9 +1,6 @@
 var MOD:int
 
 #{{{ ModInt
-proc getDefault(T:typedesc): T = (var temp:T;temp)
-proc getDefault[T](x:T): T = (var temp:T;temp)
-
 type ModInt = object
   v:int32
 proc initModInt[T](a:T):ModInt =

@@ -1,27 +1,24 @@
 # Matrix {{{
-proc getDefault(T:typedesc): T = (var temp:T;temp)
-proc getDefault[T](x:T): T = (var temp:T;temp)
-
 import sequtils
 
 type Matrix[T] = seq[seq[T]]
 type Vector[T] = seq[T]
 
 proc initMatrix[T](self: Matrix[T]):Matrix[T] = return self
-proc initMatrix[T](n:int, m: int):Matrix[T] = Matrix[T](newSeqWith(n, newSeqWith(m, getDefault(T))))
-proc initMatrix[T](n:int):Matrix[T] = Matrix[T](newSeqWith(n, newSeqWith(n, getDefault(T))))
+proc initMatrix[T](n:int, m: int):Matrix[T] = Matrix[T](newSeqWith(n, newSeqWith(m, T.default)))
+proc initMatrix[T](n:int):Matrix[T] = Matrix[T](newSeqWith(n, newSeqWith(n, T.default)))
 
-proc initVector[T](n:int):Vector[T] = Vector[T](newSeqWith(n, getDefault(T)))
+proc initVector[T](n:int):Vector[T] = Vector[T](newSeqWith(n, T.default))
 
 proc height[T](self: Matrix[T]):int = self.len
 proc width[T](self: Matrix[T]):int = self[0].len
 
 proc Identity[T](n:int):Matrix[T] =
   result = initMatrix[T](n)
-  for i in 0..<n: result[i][i] = getDefault(T).init(1)
+  for i in 0..<n: result[i][i] = T(1)
 proc Identity[T](self: Matrix[T]):Matrix[T] =
   result = initMatrix[T](self.n)
-  for i in 0..<self.n: result[i][i] = getDefault(T).init(1)
+  for i in 0..<self.n: result[i][i] = T(1)
 
 proc `+=`[T](self: var Matrix[T], B: Matrix[T]) =
   let (n, m) = (self.height, self.width)
@@ -74,14 +71,14 @@ proc `$`[T](self: Matrix[T]):string =
 proc determinant[T](self: Matrix[T]):T =
   var B = initMatrix(self)
   assert(self.width() == self.height());
-  result = getDefault(T).init(1)
+  result = T(1)
   for i in 0..<self.width():
     var idx = -1
     for j in i..<self.width():
-      if B[j][i] != getDefault(T).init(0): idx = j
-    if idx == -1: return getDefault(T).init(0)
+      if B[j][i] != T(0): idx = j
+    if idx == -1: return T(0)
     if i != idx:
-      result *= getDefault(T).init(-1)
+      result *= T(-1)
       swap(B[i], B[idx])
     result *= B[i][i];
     let vv = B[i][i]

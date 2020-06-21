@@ -1,6 +1,6 @@
 #{{{ header
 {.hints:off warnings:off optimization:speed.}
-import algorithm, sequtils, tables, macros, math, sets, strutils, future
+import algorithm, sequtils, tables, macros, math, sets, strutils, strformat, sugar
 when defined(MYDEBUG):
   import header
 
@@ -15,7 +15,7 @@ proc nextString[F](f:F): string =
   while true:
 #    let c = getchar()
     let c = f.readChar
-    if int(c) > int(' '):
+    if c.int > ' '.int:
       get = true
       result.add(c)
     elif get: return
@@ -59,14 +59,32 @@ proc print0(x: varargs[string, toStr]; sep:string):string{.discardable.} =
   stdout.write result
 
 var print:proc(x: varargs[string, toStr])
-print = proc(x: varargs[string, toStr]) = discard print0(@x, sep = " ")
+print = proc(x: varargs[string, toStr]) =
+  discard print0(@x, sep = " ")
 
-proc newSeqWithImpl[T](lens: seq[int]; init: T; currentDimension, lensLen: static[int]): auto =
-  when currentDimension == lensLen:
-    newSeqWith(lens[currentDimension - 1], init)
+template makeSeq(x:int; init):auto =
+  when init is typedesc: newSeq[init](x)
+  else: newSeqWith(x, init)
+
+macro Seq(lens: varargs[int]; init):untyped =
+  var a = fmt"{init.repr}"
+  for x in lens: a = fmt"makeSeq({x.repr}, {a})"
+  parseStmt(a)
+
+template makeArray(x; init):auto =
+  when init is typedesc:
+    var v:array[x, init]
   else:
-    newSeqWith(lens[currentDimension - 1], newSeqWithImpl(lens, init, currentDimension + 1, lensLen))
+    var v:array[x, init.type]
+    for a in v.mitems: a = init
+  v
 
-template Seq*[T](lens: varargs[int]; init: T): untyped =
-  newSeqWithImpl(@lens, init, 1, lens.len)
+macro Array(lens: varargs[typed], init):untyped =
+  var a = fmt"{init.repr}"
+  for x in lens:
+    a = fmt"makeArray({x.repr}, {a})"
+  parseStmt(a)
 # }}}
+
+
+

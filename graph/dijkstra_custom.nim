@@ -1,29 +1,64 @@
-type S = object
-  x, y, u: int
-  d: int
- 
-proc `<`(a,b:S):auto = a.d < b.d
+# custom dijkustra template {{{
 
-var
-  dist = newSeqWith(H, W, U, int.inf)
-  vis = newSeqWith(H, W, U, false)
-  Q = initHeapQueue[S]()
-dist[0][0][0] = 0
-Q.push(S(x:0, y:0, d:0))
-while Q.len > 0:
-  var e = Q.pop()
-  let (x, y, u, d) = (e.x, e.y, e.u, e.d)
-  if vis[x][y][u]: continue
-  vis[x][y][u] = true
-  if x == H - 1 and y == W - 1:
-    print d
-    break
-  for p in dir4:
-    let (x2, y2) = (x + p.x, y + p.y)
-    if x2 notin 0..<H or y2 notin 0..<W: continue
-    let d2 = d + (u * 2 + 1) * A[x2][y2]
-    let u2 = u + 1
-    if u2 >= U: continue
-    if dist[x2][y2][u2] > d2:
-      dist[x2][y2][u2] = d2
-      Q.push(S(x:x2, y:y2, u:u2, d:d2))
+let dir:array[4, tuple[x,y:int]] = [(0,1),(1,0),(0,-1),(-1,0)]
+
+#import deques
+import heapqueue
+
+proc dijkstra_custom():auto =
+  type P = tuple[x, y, dir:int]
+  type S = tuple[p:P, d:int]
+
+  proc `<`(l,r:S):bool = l.d < r.d
+
+  var
+    dist = Seq(H, W, 4, int.inf)
+    vis = Seq(H, W, 4, false)
+    Q = initHeapQueue[S]()
+
+  proc `[]`[T](a:seq[seq[seq[T]]], p:P):T {.inline.} = a[p.x][p.y][p.dir]
+  proc `[]=`[T](a:var seq[seq[seq[T]]], p:P, val:T):void {.inline.} =
+    a[p.x][p.y][p.dir] = val
+
+  proc set_push(p:P, d:int) =
+    if vis[p] or dist[p] <= d: return
+    dist[p] = d
+    Q.push((p, d))
+
+  # initial
+  for i in 0..<4:
+    let p:P = (x1,y1,i)
+    set_push(p, 0)
+
+  # iteration
+
+  while Q.len > 0:
+    let (p, d) = Q.pop()
+    if vis[p]: continue
+    vis[p] = true
+    # definition
+    let (x, y, di) = p
+    # next
+    block:
+      let
+        x2 = x + dir[di].x
+        y2 = y + dir[di].y
+      if x2 in 0..<H and y2 in 0..<W and c[x2][y2] != '@':
+        var d2 = d
+        d2.inc
+        let p2:P = (x2, y2, di)
+        set_push(p2, d2)
+    for di2 in 0..<4:
+      if di2 == di: continue
+      let d2 = ((d + K - 1) div K) * K
+      set_push((x,y,di2),d2)
+  # answer
+  ans := int.inf
+  
+  for p in 0..<4:
+    d := dist[(x2,y2,p)]
+    if d == int.inf: continue
+    ans.min=(d + K - 1) div K
+
+  return ans
+# }}}

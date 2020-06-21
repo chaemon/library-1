@@ -7,7 +7,7 @@ proc initModInt[T](a:T, Mod:static[int]):ModInt[Mod] =
   when T is ModInt:
     return a
   else:
-    var a = a
+    var a = a.int
     a = a mod Mod
     if a < 0: a += Mod
     return ModInt[Mod](v:a.int32)

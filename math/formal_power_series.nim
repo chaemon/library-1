@@ -57,7 +57,7 @@ proc shrink[T](self: var FormalPowerSeries[T]) =
   while self.data.len > 0 and self.data[^1] == 0:
     discard self.data.pop()
 
-#{{{ operators
+#{{{ operators +=, -=, *=, mod=, -, /=
 proc `+=`[T](self: var FormalPowerSeries[T], r:FormalPowerSeries[T]) =
   if r.data.len > self.data.len: self.data.setlen(r.data.len)
   for i in 0..<r.data.len: self.data[i] += r.data[i]
@@ -168,7 +168,7 @@ proc invFast[T](self: FormalPowerSeries[T]):FormalPowerSeries[T] =
     for j in 0..<d: f.data[j] = res.data[j]
     res = f
     d = d shl 1
-  return res.pre(n);
+  return res.pre(n)
 
 # F(0) must not be 0
 proc inv[T](self: FormalPowerSeries[T], deg = -1):FormalPowerSeries[T] =
@@ -332,6 +332,7 @@ proc powMod[T](self: FormalPowerSeries[T], n:int, M:FormalPowerSeries[T]):Formal
     n = n shr 1
   return ret
 
+# operators +, -, *, div, mod {{{
 proc `+`[T](self:FormalPowerSeries[T];r:FormalPowerSeries[T]):FormalPowerSeries[T] =  result = self;result += r
 proc `+`[T](self:FormalPowerSeries[T];v:T):FormalPowerSeries[T] =  result = self;result += v
 proc `-`[T](self:FormalPowerSeries[T];r:FormalPowerSeries[T]):FormalPowerSeries[T] =  result = self;result -= r
@@ -340,4 +341,4 @@ proc `*`[T](self:FormalPowerSeries[T];r:FormalPowerSeries[T]):FormalPowerSeries[
 proc `*`[T](self:FormalPowerSeries[T];v:T):FormalPowerSeries[T] =  result = self;result *= v
 proc `div`[T](self:FormalPowerSeries[T];r:FormalPowerSeries[T]):FormalPowerSeries[T] =  result = self;result.`div=` (r)
 proc `mod`[T](self:FormalPowerSeries[T];r:FormalPowerSeries[T]):FormalPowerSeries[T] =  result = self;result.`mod=` (r)
-
+# }}}
