@@ -10,14 +10,12 @@ include "math/number_theoretic_transform_friendly_mod_int.nim"
 include "math/formal_power_series.nim"
 
 block main:
-  var ntt = initNumberTheoreticTransform()
+  var ntt = initNumberTheoreticTransform[Mint]()
   let N = nextInt()
   var p = initFormalPowerSeries[Mint](N)
-  p.setFFT(
-    proc(a:var FormalPowerSeries[Mint]) = ntt.ntt(a.data),
-    proc(a:var FormalPowerSeries[Mint]) = ntt.intt(a.data))
-  p.setMult(proc(a, b:FormalPowerSeries[Mint]):FormalPowerSeries[Mint] = initFormalPowerSeries(ntt.multiply(a.data, b.data)))
-  p.setSqrt(proc(a:Mint):Mint = Mint((modSqrt(int(a.v), Mod))))
+  p.setFFT(ntt)
+  p.setMult(ntt)
+  p.setSqrt(proc(a:Mint):Mint = Mint(modSqrt(int(a.v), Mod)))
   for i in 0..<N:
     p.data[i] = Mint(nextInt())
   var q = p.sqrt()

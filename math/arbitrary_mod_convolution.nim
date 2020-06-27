@@ -2,7 +2,9 @@
 type ArbitraryModConvolution = object
   discard
 
-proc multiply[T](self:ArbitraryModConvolution, a,b:seq[T], need = -1):seq[T] =
+proc llround(n: float): int{.importc: "llround", nodecl.}
+
+proc multiply[ModInt](self:ArbitraryModConvolution, a,b:seq[ModInt], need = -1):seq[ModInt] =
   var need = need
   if need == -1: need = a.len + b.len - 1
   var nbase = 0
@@ -45,12 +47,12 @@ proc multiply[T](self:ArbitraryModConvolution, a,b:seq[T], need = -1):seq[T] =
     fb[j] = a1 * b2 + a2 * b1
   fft.fft(fa, sz)
   fft.fft(fb, sz)
-  result = newSeq[T](need)
+  result = newSeq[ModInt](need)
   for i in 0..<need:
     var
       aa = llround(fa[i].x)
       bb = llround(fb[i].x)
       cc = llround(fa[i].y)
-    aa = T().init(aa).v; bb = T().init(bb).v; cc = T().init(cc).v
-    result[i] = T().init(aa + (bb shl 15) + (cc shl 30))
+    aa = ModInt(aa).v; bb = ModInt(bb).v; cc = ModInt(cc).v
+    result[i] = ModInt(aa + (bb shl 15) + (cc shl 30))
 #}}}

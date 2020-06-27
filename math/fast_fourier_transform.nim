@@ -4,7 +4,7 @@
 include "../standard_library/bitutils.nim"
 proc llround(n: float): int{.importc: "llround", nodecl.}
 
-import math, sequtils
+import math, sequtils, bitops
 
 type Real = float
 

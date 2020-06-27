@@ -59,6 +59,6 @@ proc `^`[Mod: static[int]](a:ModInt[Mod],b:int):ModInt[Mod] = result = a; result
 ##}}}
 
 type Mint = ModInt[Mod]
-proc initMint[T](a:T):ModInt[Mod] = initModInt(a, Mod)
-converter toMint[T](a:T):ModInt[Mod] = initModInt(a, Mod)
+proc initMint[T](a:T):Mint = initModInt(a, Mod)
+converter toMint[T](a:T):Mint = initModInt(a, Mod)
 proc `$`(a:Mint):string = $(a.v)

@@ -2,26 +2,27 @@ import sequtils, algorithm
 
 include "../standard_library/bitutils.nim"
 
-type NumberTheoreticTransform = object
+type NumberTheoreticTransform[ModInt] = object
   rev: seq[int]
-  rts: seq[ModInt[Mod]]
+  rts: seq[ModInt]
   base, max_base:int
-  root: ModInt[Mod]
+  root: ModInt
 
-proc initNumberTheoreticTransform():NumberTheoreticTransform =
-  result = NumberTheoreticTransform(base:1, rev: @[0, 1], rts: @[initMint(0), initMint(1)])
+proc initNumberTheoreticTransform[ModInt]():NumberTheoreticTransform[ModInt] =
+  let Mod = ModInt.Mod
+  result = NumberTheoreticTransform[ModInt](base:1, rev: @[0, 1], rts: @[ModInt(0), ModInt(1)])
   assert(Mod >= 3 and Mod mod 2 == 1)
   var tmp = Mod - 1
   var max_base = 0
   while tmp mod 2 == 0: tmp = tmp shr 1; max_base+=1
-  var root = initMint(2)
+  var root = ModInt(2)
   while root^((Mod - 1) shr 1) == 1: root += 1
   assert(root^(Mod - 1) == 1)
   root = root^((Mod - 1) shr max_base)
   result.max_base = max_base
   result.root = root
 
-proc ensure_base(self: var NumberTheoreticTransform;nbase:int) =
+proc ensureBase[ModInt](self: var NumberTheoreticTransform[ModInt];nbase:int) =
   if nbase <= self.base: return
   self.rev.setLen(1 shl nbase)
   self.rts.setLen(1 shl nbase)
@@ -35,7 +36,7 @@ proc ensure_base(self: var NumberTheoreticTransform;nbase:int) =
       self.rts[(i shl 1) + 1] = self.rts[i] * z
     self.base += 1
 
-proc ntt(self: var NumberTheoreticTransform;a:var seq[ModInt[Mod]]) =
+proc fft[ModInt](self: var NumberTheoreticTransform[ModInt];a:var seq[ModInt]) =
   let n = a.len
   assert((n and (n - 1)) == 0)
   let zeros = countTrailingZeroBits(n)
@@ -55,14 +56,14 @@ proc ntt(self: var NumberTheoreticTransform;a:var seq[ModInt[Mod]]) =
       i += 2 * k
     k = k shl 1
 
-proc intt(self: var NumberTheoreticTransform;a:var seq[ModInt[Mod]]) =
+proc ifft[ModInt](self: var NumberTheoreticTransform[ModInt];a:var seq[ModInt]) =
   let n = a.len
-  self.ntt(a)
+  self.fft(a)
   a.reverse(1, a.len - 1)
-  let inv_sz = initMint(1) / n
+  let inv_sz = ModInt(1) / n
   for i in 0..<n: a[i] *= inv_sz
 
-proc multiply(self: var NumberTheoreticTransform;a,b: seq[ModInt[Mod]]):seq[ModInt[Mod]] =
+proc multiply[ModInt](self: var NumberTheoreticTransform[ModInt];a,b: seq[ModInt]):seq[ModInt] =
   var (a,b) = (a,b)
   let need = a.len + b.len - 1
   var nbase = 1
@@ -71,12 +72,12 @@ proc multiply(self: var NumberTheoreticTransform;a,b: seq[ModInt[Mod]]):seq[ModI
   let sz = 1 shl nbase
   a.setLen(sz)
   b.setLen(sz)
-  self.ntt(a)
-  self.ntt(b)
-  let inv_sz = initMint(1) / sz
+  self.fft(a)
+  self.fft(b)
+  let inv_sz = ModInt(1) / sz
   for i in 0..<sz: a[i] *= b[i] * inv_sz
   a.reverse(1, a.len - 1)
-  self.ntt(a)
+  self.fft(a)
   a.setLen(need)
   return a
 #}}}

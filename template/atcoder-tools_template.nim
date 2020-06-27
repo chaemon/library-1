@@ -30,20 +30,27 @@ template inf(T): untyped =
   elif T is SomeInteger: ((T(1) shl T(sizeof(T)*8-2)) - (T(1) shl T(sizeof(T)*4-1)))
   else: assert(false)
 
+
 proc discardableId[T](x: T): T {.discardable.} =
   return x
+
 macro `:=`(x, y: untyped): untyped =
-  if (x.kind == nnkIdent):
-    return quote do:
-      when declaredInScope(`x`):
-        `x` = `y`
-      else:
-        var `x` = `y`
-      discardableId(`x`)
+  var strBody = ""
+  if x.kind == nnkPar:
+    for i,xi in x:
+      strBody &= fmt"""
+{xi.repr} := {y[i].repr}
+"""
   else:
-    return quote do:
-      `x` = `y`
-      discardableId(`x`)
+    strBody &= fmt"""
+when declaredInScope({x.repr}):
+  {x.repr} = {y.repr}
+else:
+  var {x.repr} = {y.repr}
+"""
+  strBody &= fmt"discardableId({x.repr})"
+  parseStmt(strBody)
+
 
 proc toStr[T](v:T):string =
   proc `$`[T](v:seq[T]):string =

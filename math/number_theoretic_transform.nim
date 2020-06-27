@@ -1,12 +1,10 @@
 #{{{ NumberTheoricTransform
-import algorithm
+import algorithm, bitops
 
 when not declared(Mod):
   const Mod = 1012924417
 
 #include "../standard_library/bitutils.nim"
-
-proc llround(n: float): int{.importc: "llround", nodecl.}
 
 type NumberTheoreticTransform = object
   rev, rts: seq[int]
@@ -56,7 +54,7 @@ proc ensureBase(self: var NumberTheoreticTransform;nbase:int) =
       self.rts[(i shl 1) + 1] = self.mul(self.rts[i], z)
     self.base.inc
 
-proc ntt(self: var NumberTheoreticTransform;a:var seq[int]) =
+proc fft(self: var NumberTheoreticTransform;a:var seq[int]) =
   let n = a.len
   assert((n and (n - 1)) == 0);
   let zeros = countTrailingZeroBits(n)
@@ -85,12 +83,12 @@ proc multiply(self: var NumberTheoreticTransform;a,b:seq[int]):seq[int] =
   let sz = 1 shl nbase
   a.setLen(sz)
   b.setLen(sz)
-  self.ntt(a)
-  self.ntt(b)
+  self.fft(a)
+  self.fft(b)
   let inv_sz = self.inverse(sz)
   for i in 0..<sz: a[i] = self.mul(a[i], self.mul(b[i], inv_sz))
   a.reverse(1, a.len - 1)
-  self.ntt(a)
+  self.fft(a)
   a.setLen(need)
   return a
 

@@ -9,14 +9,12 @@ include "math/formal_power_series.nim"
 include "math/multipoint_evaluation.nim"
 
 block main:
-  var ntt = initNumberTheoreticTransform()
+  var ntt = initNumberTheoreticTransform[Mint]()
   let N, M = nextInt()
   var c = initFormalPowerSeries[Mint](N)
   var p = initFormalPowerSeries[Mint](M)
-  p.setFFT(
-    proc(a:var FormalPowerSeries[Mint]) = ntt.ntt(a.data),
-    proc(a:var FormalPowerSeries[Mint]) = ntt.intt(a.data))
-  p.setMult(proc(a, b:FormalPowerSeries[Mint]):FormalPowerSeries[Mint] = initFormalPowerSeries(ntt.multiply(a.data, b.data)))
+  p.setFFT(ntt)
+  p.setMult(ntt)
   for i in 0..<N:
     c.data[i] = Mint(nextInt())
   for i in 0..<M:
