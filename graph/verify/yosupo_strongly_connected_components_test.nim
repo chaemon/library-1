@@ -12,7 +12,7 @@ proc main() =
   for i in 0..<M:
     let a, b = nextInt()
     g.addEdge(a, b)
-  let (a, t) = g.StronglyConnectedComponents()
+  let (a, t) = g.stronglyConnectedComponents()
   let K = t.len
   var comp = newSeq[seq[int]](K)
   for i,a in a:

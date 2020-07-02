@@ -1,8 +1,7 @@
-#{{{ suffix Array
+# suffix Array {{{
 type SuffixArray = object
   s:string
   SA:seq[int]
-
 
 proc lt_substr(self: SuffixArray, t:string, si = 0, ti = 0):bool =
   let

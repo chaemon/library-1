@@ -1,4 +1,4 @@
-proc StronglyConnectedComponents(g:Graph[int]):(seq[int], Graph[int]) =
+proc stronglyConnectedComponents(g:Graph[int]):(seq[int], Graph[int]) =
   var
     comp = newSeqWith(g.len, -1)
     used = newSeq[bool](g.len)

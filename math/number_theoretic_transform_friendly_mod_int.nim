@@ -1,4 +1,8 @@
+# number_theoretic_transform_friendly_mod_int {{{
 import sequtils, algorithm
+
+# depend
+# import "math/mod_int.nim"
 
 include "../standard_library/bitutils.nim"
 
@@ -8,15 +12,19 @@ type NumberTheoreticTransform[ModInt] = object
   base, max_base:int
   root: ModInt
 
-proc initNumberTheoreticTransform[ModInt]():NumberTheoreticTransform[ModInt] =
-  let Mod = ModInt.Mod
+proc initNumberTheoreticTransform[ModInt](root0 = -1):NumberTheoreticTransform[ModInt] =
+  let Mod = ModInt.getMod()
   result = NumberTheoreticTransform[ModInt](base:1, rev: @[0, 1], rts: @[ModInt(0), ModInt(1)])
   assert(Mod >= 3 and Mod mod 2 == 1)
   var tmp = Mod - 1
   var max_base = 0
   while tmp mod 2 == 0: tmp = tmp shr 1; max_base+=1
-  var root = ModInt(2)
-  while root^((Mod - 1) shr 1) == 1: root += 1
+  var root:ModInt
+  if root0 == -1:
+    root = ModInt(2)
+    while root^((Mod - 1) shr 1) == 1: root += 1
+  else:
+    root = ModInt(root0)
   assert(root^(Mod - 1) == 1)
   root = root^((Mod - 1) shr max_base)
   result.max_base = max_base
@@ -43,8 +51,9 @@ proc fft[ModInt](self: var NumberTheoreticTransform[ModInt];a:var seq[ModInt]) =
   self.ensureBase(zeros)
   let shift = self.base - zeros
   for i in 0..<n:
-    if i < (self.rev[i] shr shift):
-      swap(a[i], a[self.rev[i] shr shift])
+    let j = self.rev[i] shr shift
+    if i < j:
+      swap(a[i], a[j])
   var k = 1
   while k < n:
     var i = 0
@@ -60,7 +69,7 @@ proc ifft[ModInt](self: var NumberTheoreticTransform[ModInt];a:var seq[ModInt]) 
   let n = a.len
   self.fft(a)
   a.reverse(1, a.len - 1)
-  let inv_sz = ModInt(1) / n
+  let inv_sz = ModInt(1) / ModInt(n)
   for i in 0..<n: a[i] *= inv_sz
 
 proc multiply[ModInt](self: var NumberTheoreticTransform[ModInt];a,b: seq[ModInt]):seq[ModInt] =
@@ -70,6 +79,8 @@ proc multiply[ModInt](self: var NumberTheoreticTransform[ModInt];a,b: seq[ModInt
   while (1 shl nbase) < need: nbase += 1
   self.ensureBase(nbase)
   let sz = 1 shl nbase
+  while a.len < sz: a.add(ModInt(0))
+  while b.len < sz: b.add(ModInt(0))
   a.setLen(sz)
   b.setLen(sz)
   self.fft(a)
@@ -78,6 +89,7 @@ proc multiply[ModInt](self: var NumberTheoreticTransform[ModInt];a,b: seq[ModInt
   for i in 0..<sz: a[i] *= b[i] * inv_sz
   a.reverse(1, a.len - 1)
   self.fft(a)
+  while a.len < need: a.add(ModInt(0))
   a.setLen(need)
   return a
 #}}}

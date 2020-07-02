@@ -1,7 +1,6 @@
 #{{{ FastFourierTransform
-#proc builtin_popcount(n: int): int{.importc: "__builtin_popcount", nodecl.}
-#proc builtin_ctz(n: int): int{.importc: "__builtin_ctz", nodecl.}
-include "../standard_library/bitutils.nim"
+include "standard_library/bitutils.nim"
+
 proc llround(n: float): int{.importc: "llround", nodecl.}
 
 import math, sequtils, bitops
@@ -42,7 +41,7 @@ proc ensureBase(self:var FastFourierTransform; nbase:int) =
 
 proc fft(self:var FastFourierTransform; a:var seq[C], n:int) =
   assert((n and (n - 1)) == 0)
-  let zeros = builtin_ctz(n)
+  let zeros = countTrailingZeroBits(n)
   self.ensureBase(zeros)
   let shift = self.base - zeros
   for i in 0..<n:

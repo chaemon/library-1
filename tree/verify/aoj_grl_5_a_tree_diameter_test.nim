@@ -11,6 +11,6 @@ proc main() =
   for i in 1..<N:
     let x, y, z = nextInt()
     g.addBiEdge(x,y,z)
-  echo g.treeDiameter()
+  echo g.treeDiameter()[0]
 
 main()

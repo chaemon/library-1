@@ -288,7 +288,7 @@ proc onlineConvolutionExp[T](self: FormalPowerSeries[T], conv_coeff:FormalPowerS
       for i in 0..<r - l: pre.data[i] *= conv_ntt_coeff[d].data[i]
       ifft(pre)
       for i in 0..<r - m: conv_ret.data[m + i] += pre.data[m + i - l]
-      rec(m, r, d + 1);
+      rec(m, r, d + 1)
   rec(0, n, 0)
   return conv_arg
 

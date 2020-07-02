@@ -1,3 +1,4 @@
+# multipointEvaluation[T](cs, xs: FormalPowerSeries[T]) {{{
 import tables
 
 type PolyBuf[T] = object
@@ -31,3 +32,4 @@ proc multipointEvaluation[T](cs, xs:FormalPowerSeries[T], buf: var PolyBuf[T]):F
 proc multipointEvaluation[T](cs, xs: FormalPowerSeries[T]):FormalPowerSeries[T] =
   var buff = initPolyBuf[T](xs)
   return multipoint_evaluation(cs, xs, buff)
+# }}}

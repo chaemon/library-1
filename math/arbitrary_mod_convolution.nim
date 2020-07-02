@@ -1,8 +1,11 @@
 #{{{ ArbitraryModConvolution
-type ArbitraryModConvolution = object
+type ArbitraryModConvolution[ModInt] = object
   discard
 
-proc llround(n: float): int{.importc: "llround", nodecl.}
+proc initArbitraryModConvolution[ModInt]():ArbitraryModConvolution[ModInt] =
+  ArbitraryModConvolution[ModInt]()
+
+#proc llround(n: float): int{.importc: "llround", nodecl.}
 
 proc multiply[ModInt](self:ArbitraryModConvolution, a,b:seq[ModInt], need = -1):seq[ModInt] =
   var need = need
@@ -22,7 +25,7 @@ proc multiply[ModInt](self:ArbitraryModConvolution, a,b:seq[ModInt], need = -1):
     for i in 0..<b.len:
       fb[i] = initC(b[i].v and ((1 shl 15) - 1), b[i].v shr 15)
     fft.fft(fb, sz)
-  let ratio = 0.25 / float(sz)
+  let ratio = 0.25 / sz.float
   let
     r2 = initC(0, -1)
     r3 = initC(ratio, 0)

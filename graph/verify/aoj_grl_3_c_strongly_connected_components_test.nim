@@ -11,7 +11,7 @@ proc main() =
   for i in 0..<E:
     let a,b = nextInt()
     g.addEdge(a,b)
-  let (scc, buf) = StronglyConnectedComponents(g)
+  let (scc, buf) = stronglyConnectedComponents(g)
   let Q = nextInt()
   for i in 0..<Q:
     let a,b = nextInt()

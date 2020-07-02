@@ -73,7 +73,7 @@ template makeSeq(x:int; init):auto =
 
 macro Seq(lens: varargs[int]; init):untyped =
   var a = fmt"{init.repr}"
-  for x in lens: a = fmt"makeSeq({x.repr}, {a})"
+  for i in countdown(lens.len - 1, 0): a = fmt"makeSeq({lens[i].repr}, {a})"
   parseStmt(a)
 
 template makeArray(x; init):auto =
@@ -86,8 +86,8 @@ template makeArray(x; init):auto =
 
 macro Array(lens: varargs[typed], init):untyped =
   var a = fmt"{init.repr}"
-  for x in lens:
-    a = fmt"makeArray({x.repr}, {a})"
+  for i in countdown(lens.len - 1, 0):
+    a = fmt"makeArray({lens[i].repr}, {a})"
   parseStmt(a)
 # }}}
 
