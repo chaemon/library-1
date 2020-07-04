@@ -21,12 +21,12 @@ proc excircle(a,b,c:Point):array[3, Circle] =
            initCircle(pb, initLine(c, a).distance(pb)), 
            initCircle(pc, initLine(a, b).distance(pc))]
 
-proc circumcircle(a,b,c:Point):Point =
+proc circumcircle(a,b,c:Point):Circle =
   let
     x = 1.0/(b - a).conjugate
     y = 1.0/(c - a).conjugate
-  return (y - x)/(x.conjugate * y - x * y.conjugate) + a
-
+    p = (y - x)/(x.conjugate * y - x * y.conjugate) + a
+  return initCircle(p, abs(p-a))
 proc orthocenter(a,b,c:Point):Point =
   return crossPoint(
            initLine(a, a.projection(initLine(b, c))), 

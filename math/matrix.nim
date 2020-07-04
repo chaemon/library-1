@@ -4,21 +4,37 @@ import sequtils
 type Matrix[T] = seq[seq[T]]
 type Vector[T] = seq[T]
 
-proc initMatrix[T](self: Matrix[T]):Matrix[T] = return self
-proc initMatrix[T](n:int, m: int):Matrix[T] = Matrix[T](newSeqWith(n, newSeqWith(m, T.default)))
-proc initMatrix[T](n:int):Matrix[T] = Matrix[T](newSeqWith(n, newSeqWith(n, T.default)))
-
-proc initVector[T](n:int):Vector[T] = Vector[T](newSeqWith(n, T.default))
-
 proc height[T](self: Matrix[T]):int = self.len
 proc width[T](self: Matrix[T]):int = self[0].len
+
+proc initMatrix[T](self: Matrix[T]):Matrix[T] = return self
+proc initMatrix[T](n, m:int):Matrix[T] = Matrix[T](newSeqWith(n, newSeqWith(m, T.default)))
+proc initMatrix[T](n:int):Matrix[T] = Matrix[T](newSeqWith(n, newSeqWith(n, T.default)))
+
+proc initMatrix[T](a:seq[seq[int]]):Matrix[T] =
+  result = initMatrix[T](a.len, a[0].len)
+  for i in 0..<result.height:
+    for j in 0..<result.width:
+      result[i][j] = T(a[i][j])
+
+proc initVector[T](n:int):Vector[T] = Vector[T](newSeqWith(n, T.default))
+proc initVector[T](a:seq[int]):Vector[T] =
+  result = initVector[T](a.len)
+  for i in 0..<result.len: result[i] = T(a[i])
 
 proc Identity[T](n:int):Matrix[T] =
   result = initMatrix[T](n)
   for i in 0..<n: result[i][i] = T(1)
-proc Identity[T](self: Matrix[T]):Matrix[T] =
-  result = initMatrix[T](self.n)
-  for i in 0..<self.n: result[i][i] = T(1)
+proc Identity[T](self: Matrix[T]):Matrix[T] = Identity[T](self.height)
+
+import sugar
+
+proc getIsZeroImpl[T](self:Matrix[T], update = false, f:(T)->bool = nil):(T)->bool {.discardable.} =
+  var isZero{.global.}:(a:T)->bool  = (a:T) => a == T(0)
+  if update:isZero = f
+  return isZero
+proc getIsZero[T](self:Matrix[T]):(T)->bool = self.getIsZeroImpl()
+proc setIsZero[T](self:Matrix[T], isZero:proc(a:T):bool) = self.getIsZeroImpl(true, isZero)
 
 proc `+=`[T](self: var Matrix[T], B: Matrix[T]) =
   let (n, m) = (self.height, self.width)
@@ -69,23 +85,24 @@ proc `$`[T](self: Matrix[T]):string =
       result &= (if j + 1 == m: "]\n" else: ",")
 
 proc determinant[T](self: Matrix[T]):T =
-  var B = initMatrix(self)
-  assert(self.width() == self.height());
+  var B = self
+  assert(self.width() == self.height())
   result = T(1)
   for i in 0..<self.width():
     var idx = -1
     for j in i..<self.width():
-      if B[j][i] != T(0): idx = j
+      if not (self.getIsZero())(B[j][i]):
+        idx = j;break
     if idx == -1: return T(0)
     if i != idx:
       result *= T(-1)
       swap(B[i], B[idx])
-    result *= B[i][i];
+    result *= B[i][i]
     let vv = B[i][i]
     for j in 0..<self.width():
       B[i][j] /= vv
     for j in i+1..<self.width():
       let a = B[j][i]
       for k in 0..<self.width():
-        B[j][k] -= B[i][k] * a;
+        B[j][k] -= B[i][k] * a
 # }}}

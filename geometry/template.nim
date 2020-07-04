@@ -6,9 +6,6 @@ type
   Real = float
   Point = Complex[float]
 
-#let EPS:Real = 1e-8
-#  PI = arccos(-1)
-
 proc initPoint(re:float, im:float):Point = Point(re:re, im:im)
 proc nextPoint():Point = return initPoint(nextFloat(), nextFloat())
 
