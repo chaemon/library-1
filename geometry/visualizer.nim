@@ -3,6 +3,8 @@ include "./polygon.nim"
 
 import nigui
 
+const D = 900
+
 type CanvasData = object
   p: seq[(Point, string, Color)]
   l: seq[(Line, string, Color)]
@@ -10,7 +12,50 @@ type CanvasData = object
   c: seq[(Circle, string, Color)]
   poly: seq[(Polygon, string, Color)]
   width, height: int
-  xmin, xmax, ymin, ymax: float
+  xmin, ymin: float
+  d: float
+
+
+proc convert(self:CanvasData, p:Point):Point =
+  return initPoint((p.re - self.xmin)/self.d * D, (p.im - self.ymin)/self.d * D)
+proc convert(self:CanvasData, c:Circle):Circle =
+  return initCircle(self.convert c.p, c.r/self.d*D)
+proc convert(self:CanvasData, l:Line):Line =
+  return initLine(self.convert l.a, self.convert l.b)
+proc convert(self:CanvasData, l:Segment):Segment =
+  return initSegment(self.convert l.a, self.convert l.b)
+proc convert(self:CanvasData, p:Polygon):Polygon =
+  for p in p: result.add(self.convert p)
+
+proc setCanvasSize(self: var CanvasData) =
+  var
+    xmin = float.inf
+    xmax = -float.inf
+    ymin = float.inf
+    ymax = -float.inf
+  proc update(p:Point) =
+    xmin.min=p.re
+    xmax.max=p.re
+    ymin.min=p.im
+    ymax.max=p.im
+  for p in self.p:
+    update(p[0])
+  for p in self.s:
+    update(p[0].a)
+    update(p[0].b)
+  for p in self.c:
+    let
+      c = p[0].p
+      r = p[0].r
+    update(initPoint(c.re+r,c.im+r))
+    update(initPoint(c.re-r,c.im-r))
+  xmin -= 10.0;ymin -= 10.0
+  xmax += 10.0;ymax += 10.0
+  let d = max(xmax - xmin, ymax - ymin)
+  self.xmin = xmin
+  self.ymin = ymin
+  self.d = d
+  
 
 type Canvas = object
   Win: Window
@@ -24,9 +69,9 @@ proc init(self: var Canvas) =
   self.Ctl.widthMode=WidthMode_Fill
   self.Ctl.heightMode=HeightMode_Fill
   self.Win.add(self.Ctl)
-  self.Win.width = 900
-  self.Win.height = 900
-  var s = self.addr
+  self.Win.width = D
+  self.Win.height = D
+  var s = self.canvas_data.addr
 
   self.Ctl.onClick = proc(c:ClickEvent)=
     echo "Canvas"
@@ -36,28 +81,34 @@ proc init(self: var Canvas) =
   
     Cv.areaColor=rgb(255,240,180)
     Cv.fill()
+    s[].setCanvasSize()
 
-    for (p, label, col) in s[].canvas_data.p:
+    for (p, label, col) in s[].p:
+      let p = s[].convert p
       Cv.areaColor = col
       Cv.drawEllipseArea(p.re.int - 3, p.im.int - 3, 6, 6)
       Cv.textColor = col
       Cv.drawText(label, p.re.int + 10, p.im.int - 20)
-    for (l, label, col) in s[].canvas_data.l:
+    for (l, label, col) in s[].l:
+      let l = s[].convert l
       Cv.lineColor = col
       Cv.drawLine(l.a.re.int, l.a.im.int, l.b.re.int, l.b.im.int)
       Cv.textColor = col
       Cv.drawText(label, l.a.re.int + 10, l.a.im.int - 20)
-    for (s, label, col) in s[].canvas_data.l:
+    for (l, label, col) in s[].l:
+      let l = s[].convert l
       Cv.lineColor = col
-      Cv.drawLine(s.a.re.int, s.a.im.int, s.b.re.int, s.b.im.int)
+      Cv.drawLine(l.a.re.int, l.a.im.int, l.b.re.int, l.b.im.int)
       Cv.textColor = col
-      Cv.drawText(label, s.a.re.int + 10, s.a.im.int - 20)
-    for (c, label, col) in s[].canvas_data.c:
+      Cv.drawText(label, l.a.re.int + 10, l.a.im.int - 20)
+    for (c, label, col) in s[].c:
+      let c = s[].convert c
       Cv.lineColor = col
       Cv.drawArcOutline(c.p.re.int, c.p.im.int, c.r, 0.0, PI * 2.0)
       Cv.textColor = col
       Cv.drawText(label, (c.p.re + c.r/2.0).int, (c.p.im - c.r/2.0).int)
-    for (poly, label, col) in s[].canvas_data.poly:
+    for (poly, label, col) in s[].poly:
+      let poly = s[].convert poly
       Cv.lineColor = col
       for i in 0..<poly.len:
         let

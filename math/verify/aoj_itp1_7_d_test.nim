@@ -17,9 +17,6 @@ proc main() =
       b[i][j] = nextInt()
   var c = a * b
   for i in 0..<n:
-    for j in 0..<l:
-      stdout.write c[i][j]
-      if j + 1 < l: stdout.write " "
-    echo ""
+    echo c[i].mapIt($it).join(" ")
 
 main()
