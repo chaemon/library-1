@@ -3,15 +3,36 @@ include "standard_library/bitutils.nim"
 
 proc llround(n: float): int{.importc: "llround", nodecl.}
 
+# LongDouble {{{
+type LongDouble {.importcpp: "long double", nodecl .} = object
+  discard
+
+proc initLongDouble(a:SomeNumber):LongDouble {.importcpp: "(long double)(#)", nodecl.}
+converter toLongDouble(a:SomeNumber):LongDouble = initLongDouble(a)
+
+proc `+`(a, b:LongDouble):LongDouble {.importcpp: "(#) + (@)", nodecl.}
+proc `-`(a, b:LongDouble):LongDouble {.importcpp: "(#) - (@)", nodecl.}
+proc `*`(a, b:LongDouble):LongDouble {.importcpp: "(#) * (@)", nodecl.}
+proc `/`(a, b:LongDouble):LongDouble {.importcpp: "(#) / (@)", nodecl.}
+proc `-`(a:LongDouble):LongDouble {.importcpp: "-(#)", nodecl.}
+proc `sqrt`(a:LongDouble):LongDouble {.header: "<cmath>", importcpp: "sqrtl(#)", nodecl.}
+proc `exp`(a:LongDouble):LongDouble {.header: "<cmath>", importcpp: "expl(#)", nodecl.}
+proc `sin`(a:LongDouble):LongDouble {.header: "<cmath>", importcpp: "sinl(#)", nodecl.}
+proc `cos`(a:LongDouble):LongDouble {.header: "<cmath>", importcpp: "cosl(#)", nodecl.}
+proc `llround`(a:LongDouble):int {.header: "<cmath>", importcpp: "llround(#)", nodecl.}
+# }}}
+
+
 import math, sequtils, bitops
 
 type Real = float
+#type Real = LongDouble
 
 type C = object
   x, y:Real
 
-proc initC():C = C(x:0.0, y:0.0)
-proc initC[S,T](x:S, y:T):C = C(x:x.float, y:y.float)
+proc initC():C = C(x:0.Real, y:0.Real)
+proc initC[S,T](x:S, y:T):C = C(x:x.Real, y:y.Real)
 
 proc `+`(a,b:C):C = initC(a.x + b.x, a.y + b.y)
 proc `-`(a,b:C):C = initC(a.x - b.x, a.y - b.y)
@@ -27,15 +48,24 @@ proc initFastFourierTransform():FastFourierTransform =
   return FastFourierTransform(base:1, rts: @[initC(0,0),initC(1,0)], rev: @[0, 1])
 
 proc ensureBase(self:var FastFourierTransform; nbase:int) =
+  block test:
+    var v = newSeq[C]()
+    v.add(initC())
   if nbase <= self.base: return
+  let L = 1 shl nbase
   self.rev.setlen(1 shl nbase)
   self.rts.setlen(1 shl nbase)
+#  while self.rts.len < L:
+#    dump(self.rts.len)
+#    dump(initC(0, 0))
+#    self.rts.add(initC(0, 0))
+#    echo self.rts
   for i in 0..<(1 shl nbase): self.rev[i] = (self.rev[i shr 1] shr 1) + ((i and 1) shl (nbase - 1))
   while self.base < nbase:
-    let angle = PI * 2.0 / float(1 shl (self.base + 1))
+    let angle = Real(PI) * Real(2) / Real(1 shl (self.base + 1))
     for i in (1 shl (self.base - 1))..<(1 shl self.base):
       self.rts[i shl 1] = self.rts[i]
-      let angle_i = angle * float(2 * i + 1 - (1 shl self.base))
+      let angle_i = angle * Real(2 * i + 1 - (1 shl self.base))
       self.rts[(i shl 1) + 1] = initC(cos(angle_i), sin(angle_i))
     self.base.inc
 
@@ -71,9 +101,11 @@ proc multiply(self:var FastFourierTransform; a,b:seq[int]):seq[int] =
     fa[i] = initC(x, y)
   self.fft(fa, sz)
   let
-    r = initC(0, -0.25 / float(sz shr 1))
+#    r = initC(0, -0.25 / float(sz shr 1))
+    r = initC(0, -Real(1) / (Real(sz shr 1) * Real(4)))
     s = initC(0, 1)
-    t = initC(0.5, 0)
+#    t = initC(0.5, 0)
+    t = initC(Real(1)/Real(2), 0)
   for i in 0..(sz shr 1):
     let j = (sz - i) and (sz - 1)
     let z = (fa[j] * fa[j] - (fa[i] * fa[i]).conj()) * r

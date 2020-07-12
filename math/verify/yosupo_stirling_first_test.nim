@@ -16,7 +16,7 @@ block main:
   p.setMult(ntt)
   var s = stirlingFirst[Mint](N)
   var i = 0
-  for d in s.data.mitems:
+  for d in s.mitems:
     if (N - i) mod 2 == 1:
       d *= -1
     i.inc

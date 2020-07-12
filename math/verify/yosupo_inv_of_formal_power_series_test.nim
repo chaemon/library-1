@@ -13,8 +13,8 @@ proc main():void =
   var p = initFormalPowerSeries[Mint](N)
   p.setFFT(ntt)
   for i in 0..<N:
-    p.data[i] = Mint(nextInt())
+    p[i] = Mint(nextInt())
   let q = p.inv()
-  echo q.data.map(`$`).join(" ")
+  echo q.map(`$`).join(" ")
 
 main()

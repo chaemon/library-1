@@ -10,7 +10,7 @@ include "math/arbitrary_mod_convolution_ntt.nim"
 block main:
   let N, M = nextInt()
   var
-    a = newSeqWith(N, nextInt())
-    b = newSeqWith(M, nextInt())
+    a = newSeqWith(N, Mint(nextInt()))
+    b = newSeqWith(M, Mint(nextInt()))
   let s = initNumberTheoreticTransformArbitraryMod[Mint]()
   echo s.multiply(a, b).mapIt($it).join(" ")

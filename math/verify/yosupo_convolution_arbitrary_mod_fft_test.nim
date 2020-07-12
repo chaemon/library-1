@@ -4,13 +4,14 @@ const Mod = 1000000007
 include "template/template.nim"
 include "math/mod_int.nim"
 include "math/fast_fourier_transform.nim"
-include "math/arbitrary_mod_convolution.nim"
+#include "math/arbitrary_mod_convolution.nim"
+include "math/arbitrary_mod_convolution_long.nim"
 
 block main:
   let N, M = nextInt()
   var
     a = newSeqWith(N, Mint(nextInt()))
     b = newSeqWith(M, Mint(nextInt()))
-  var amc = initArbitraryModConvolution[Mint]()
+  var amc = initArbitraryModConvolutionLong[Mint]()
   let c = amc.multiply(a, b)
   echo c[0..<N+M-1].mapIt($it).join(" ")

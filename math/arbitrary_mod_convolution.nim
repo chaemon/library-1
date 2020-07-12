@@ -25,7 +25,7 @@ proc multiply[ModInt](self:ArbitraryModConvolution, a,b:seq[ModInt], need = -1):
     for i in 0..<b.len:
       fb[i] = initC(b[i].v and ((1 shl 15) - 1), b[i].v shr 15)
     fft.fft(fb, sz)
-  let ratio = 0.25 / sz.float
+  let ratio = 1.Real / (sz.Real * 4.Real)
   let
     r2 = initC(0, -1)
     r3 = initC(ratio, 0)

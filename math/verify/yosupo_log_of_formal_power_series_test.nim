@@ -13,8 +13,7 @@ proc main():void =
   var p = initFormalPowerSeries[Mint](N)
   p.setFFT(ntt)
   p.setMult(ntt)
-  for i in 0..<N:
-    p.data[i] = Mint(nextInt())
+  for i in 0..<N: p[i] = Mint(nextInt())
   echo p.log()
 
 main()

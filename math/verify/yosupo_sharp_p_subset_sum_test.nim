@@ -18,10 +18,10 @@ proc main():void =
     for j in 1..T:
       let jA = j * A
       if jA > T: break
-      p.data[jA] += Mint(ct[A]) / j * sgn
+      p[jA] += Mint(ct[A]) / j * sgn
       sgn = -sgn
   p.setFFT(ntt)
   let q = p.exp()
-  echo q.data[1..T].map(`$`).join(" ")
+  echo q[1..T].map(`$`).join(" ")
 
 main()

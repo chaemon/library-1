@@ -1,4 +1,4 @@
-# garner {{[
+# garner {{{
 proc garner[int](v:seq[tuple[a,p:int]], Mod:int):int =
   let sz = v.len
   var

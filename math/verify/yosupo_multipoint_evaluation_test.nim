@@ -15,9 +15,7 @@ block main:
   var p = initFormalPowerSeries[Mint](M)
   p.setFFT(ntt)
   p.setMult(ntt)
-  for i in 0..<N:
-    c.data[i] = Mint(nextInt())
-  for i in 0..<M:
-    p.data[i] = Mint(nextInt())
+  for i in 0..<N: c[i] = Mint(nextInt())
+  for i in 0..<M: p[i] = Mint(nextInt())
   var q = multipointEvaluation(c, p)
   echo q

@@ -1,10 +1,13 @@
 # ArbitraryModConvolutionLong {{{
-type ArbitraryModConvolutionLong = object
+type ArbitraryModConvolutionLong[ModInt] = object
   discard
 
-proc llround(n:float): int{.importc: "llround", nodecl.}
+#proc llround(n:float): int{.importc: "llround", nodecl.}
 
-proc multiply[ModInt](self: ArbitraryModConvolutionLong, a, b:seq[ModInt], need = -1):seq[ModInt] =
+proc initArbitraryModConvolutionLong[ModInt]():auto = ArbitraryModConvolutionLong[ModInt]()
+
+proc multiply[ModInt](self: ArbitraryModConvolutionLong[ModInt], a, b:seq[ModInt], need = -1):seq[ModInt] =
+  var need = need
   if need == -1: need = a.len + b.len - 1
   var nbase = 0
   while (1 shl nbase) < need: nbase.inc
@@ -30,22 +33,22 @@ proc multiply[ModInt](self: ArbitraryModConvolutionLong, a, b:seq[ModInt], need 
   for i in 0..(sz shr 1):
     let
       j = (sz - i) and (sz - 1)
-      a1 = initC(fa[i] + fa[j].conj())
-      a2 = initC(fa[i] - fa[j].conj()) * r2
-      b1 = initC(fb[i] + fb[j].conj()) * r3
-      b2 = initC(fb[i] - fb[j].conj()) * r4
+      a1 = fa[i] + fa[j].conj()
+      a2 = (fa[i] - fa[j].conj()) * r2
+      b1 = (fb[i] + fb[j].conj()) * r3
+      b2 = (fb[i] - fb[j].conj()) * r4
     if i != j:
       let
-        c1 = initC(fa[j] + fa[i].conj())
-        c2 = initC(fa[j] - fa[i].conj()) * r2
-        d1 = initC(fb[j] + fb[i].conj()) * r3
-        d2 = initC(fb[j] - fb[i].conj()) * r4
+        c1 = fa[j] + fa[i].conj()
+        c2 = (fa[j] - fa[i].conj()) * r2
+        d1 = (fb[j] + fb[i].conj()) * r3
+        d2 = (fb[j] - fb[i].conj()) * r4
       fa[i] = c1 * d1 + c2 * d2 * r5
       fb[i] = c1 * d2 + c2 * d1
     fa[j] = a1 * b1 + a2 * b2 * r5
     fb[j] = a1 * b2 + a2 * b1
-  fft(fa, sz)
-  fft(fb, sz)
+  fft.fft(fa, sz)
+  fft.fft(fb, sz)
   result = newSeq[ModInt](need)
   let
     mul1 = ModInt(2)^19

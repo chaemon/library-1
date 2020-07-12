@@ -1,3 +1,4 @@
+# ArbitraryModConvolution by NumberTheoricTransform{{{
 type NumberTheoreticTransformArbitraryMod[ModInt] = object
   discard
 
@@ -5,7 +6,7 @@ type NumberTheoreticTransformArbitraryMod[ModInt] = object
 proc initNumberTheoreticTransformArbitraryMod[ModInt]():NumberTheoreticTransformArbitraryMod[ModInt] =
   NumberTheoreticTransformArbitraryMod[ModInt]()
 
-proc multiply[ModInt](self:NumberTheoreticTransformArbitraryMod[ModInt], a,b:seq[int]):seq[int] =
+proc multiply[ModInt](self:NumberTheoreticTransformArbitraryMod[ModInt], a,b:seq[ModInt]):seq[ModInt] =
 #  remainder, primitive_root
 #  (924844033, 5)
 #  (998244353, 3)
@@ -20,9 +21,9 @@ proc multiply[ModInt](self:NumberTheoreticTransformArbitraryMod[ModInt], a,b:seq
   for (p, r) in ps:
     DMint.setMod(p)
     var ntt = initNumberTheoreticTransform[DMint](r)
-    let c = ntt.multiply(a.mapIt(DMint(it)), b.mapIt(DMint(it)))
+    let c = ntt.multiply(a.mapIt(DMint(it.v)), b.mapIt(DMint(it.v)))
     v.add(c.mapIt(it.v.int))
-  result = newSeq[int]()
+  result = newSeq[ModInt]()
 
   for i in 0..<a.len + b.len - 1:
     var
@@ -30,3 +31,4 @@ proc multiply[ModInt](self:NumberTheoreticTransformArbitraryMod[ModInt], a,b:seq
     for j,(p, r) in ps:
       x.add((v[j][i], p))
     result.add(garner(x, ModInt.getMod()))
+# }}}

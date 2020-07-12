@@ -12,11 +12,13 @@ template initMatrix[T](n, m:int):Matrix[T] = newSeqWith(n, newSeqWith(m, T.defau
 template initMatrix[T](self: Matrix[T], n, m:int):Matrix[T] = newSeqWith(n, newSeqWith(m, T.default))
 template initMatrix[T](n:int):Matrix[T] = newSeqWith(n, newSeqWith(n, T.default))
 
-type RingElem = concept x
+type RingElem = concept x, type T
   x + x
   x - x
   x * x
-type FieldElem = concept x
+  T(1)
+  T(0)
+type FieldElem = concept x, type T
   x is RingElem
   x / x
 

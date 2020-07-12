@@ -17,17 +17,17 @@ block main:
   p.setMult(ntt)
   p.setSqrt(proc(a:Mint):Mint = Mint(modSqrt(int(a.v), Mod)))
   for i in 0..<N:
-    p.data[i] = Mint(nextInt())
+    p[i] = Mint(nextInt())
   var q = p.sqrt()
-  if q.data.len == 0:
+  if q.len == 0:
     echo -1
   else:
     var
       ans = q
       ans0 = -q
-    for i in 0..<ans.data.len:
-      if ans.data[i].v > ans0.data[i].v:
+    for i in 0..<ans.len:
+      if ans[i].v > ans0[i].v:
         swap(ans, ans0);break
-      elif ans.data[i].v < ans0.data[i].v:
+      elif ans[i].v < ans0[i].v:
         break
     echo ans
