@@ -48,9 +48,6 @@ proc initFastFourierTransform():FastFourierTransform =
   return FastFourierTransform(base:1, rts: @[initC(0,0),initC(1,0)], rev: @[0, 1])
 
 proc ensureBase(self:var FastFourierTransform; nbase:int) =
-  block test:
-    var v = newSeq[C]()
-    v.add(initC())
   if nbase <= self.base: return
   let L = 1 shl nbase
   self.rev.setlen(1 shl nbase)

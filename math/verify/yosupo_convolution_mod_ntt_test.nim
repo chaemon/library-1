@@ -3,7 +3,7 @@
 const Mod = 998244353
 include "template/template.nim"
 include "standard_library/bitutils.nim"
-include "math/number_theoretic_transform.nim"
+include "math/number_theoretic_transform_raw.nim"
 
 block main:
   let N, M = nextInt()

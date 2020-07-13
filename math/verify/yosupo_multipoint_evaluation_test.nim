@@ -4,7 +4,7 @@ const Mod = 998244353
 
 include "template/template.nim"
 include "math/mod_int.nim"
-include "math/number_theoretic_transform_friendly_mod_int.nim"
+include "math/number_theoretic_transform.nim"
 include "math/formal_power_series.nim"
 include "math/multipoint_evaluation.nim"
 
@@ -13,8 +13,6 @@ block main:
   let N, M = nextInt()
   var c = initFormalPowerSeries[Mint](N)
   var p = initFormalPowerSeries[Mint](M)
-  p.setFFT(ntt)
-  p.setMult(ntt)
   for i in 0..<N: c[i] = Mint(nextInt())
   for i in 0..<M: p[i] = Mint(nextInt())
   var q = multipointEvaluation(c, p)
