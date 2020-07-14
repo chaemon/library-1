@@ -14,16 +14,13 @@ type FormalPowerSeries[T:FieldElem] = seq[T]
 
 proc initFormalPowerSeries[T:FieldElem](n:int):auto = FormalPowerSeries[T](newSeq[T](n))
 
-template initFormalPowerSeries[T, S](data: openArray[S]):auto =
-  when S is T: data
-  else: data.mapIt(T(it))
+template initFormalPowerSeries[T](data: openArray[typed]):FormalPowerSeries[T] = data.mapIt(T(it))
 proc `$`[T](self:FormalPowerSeries[T]):string = return self.mapIt($it).join(" ")
 
 macro revise(a, b) =
   parseStmt(fmt"""let {a.repr} = if {a.repr} == -1: {b.repr} else: {a.repr}""")
 
-
-#{{{ set mult, fft, sqrt
+#{{{ sqrt
 type
   SQRT[T] = proc(t:T):T
 
@@ -40,8 +37,7 @@ proc getSqrt[T](self:FormalPowerSeries[T]):SQRT[T]{.discardable.} = return self.
 #}}}
 
 proc shrink[T](self: var FormalPowerSeries[T]) =
-  while self.len > 0 and self[^1] == 0:
-    discard self.pop()
+  while self.len > 0 and self[^1] == 0: discard self.pop()
 
 #{{{ operators +=, -=, *=, mod=, -, /=
 proc `+=`(self: var FormalPowerSeries, r:FormalPowerSeries) =
@@ -56,15 +52,12 @@ proc `-=`[T](self: var FormalPowerSeries[T], r:FormalPowerSeries[T]) =
   if r.len > self.len: self.setlen(r.len)
   for i in 0..<r.len: self[i] -= r[i]
   self.shrink()
-
 proc `-=`[T](self: var FormalPowerSeries[T], r:T) =
   if self.len == 0: self.setlen(1)
   self[0] -= r
   self.shrink()
 
-proc `*=`[T](self: var FormalPowerSeries[T], v:T) =
-  for t in self.mitems: t *= v
-
+proc `*=`[T](self: var FormalPowerSeries[T], v:T) = self.applyIt(it * v)
 proc `*=`[T](self: var FormalPowerSeries[T],  r: FormalPowerSeries[T]) =
   if self.len == 0 or r.len == 0:
     self.setlen(0)
@@ -83,10 +76,9 @@ proc `mod=`[T](self: var FormalPowerSeries[T], r:FormalPowerSeries[T]) = self -=
 
 proc `-`[T](self: FormalPowerSeries[T]):FormalPowerSeries[T] =
   var ret = self
-  for i in 0..<self.len: ret[i] = -self[i]
+  ret.applyIt(-it)
   return ret
-proc `/=`[T](self: var FormalPowerSeries[T], v:T) =
-  for t in self.mitems: t /= v
+proc `/=`[T](self: var FormalPowerSeries[T], v:T) = self.applyIt(it /= v)
 #}}}
 
 proc rev[T](self: FormalPowerSeries[T], deg = -1):auto =
@@ -278,17 +270,18 @@ proc exp[T](self: FormalPowerSeries[T], deg = -1):auto =
     return ret.pre(deg)
 
 proc pow[T](self: FormalPowerSeries[T], k:int, deg = -1):auto =
+  var self = self
   let n = self.len
   deg.revise(n)
+  self.setLen(deg)
   for i in 0..<n:
     if self[i] != T(0):
       let rev = T(1) / self[i]
-      var ret = (((self * rev) shr i).log() * T(k)).exp() * (self[i]^k)
+      result = (((self * rev) shr i).log() * T(k)).exp() * (self[i]^k)
       if i * k > deg: return initFormalPowerSeries[T](deg)
-      ret = (ret shl (i * k)).pre(deg)
-      if ret.len < deg:
-        ret.setlen(deg)
-      return ret
+      result = (result shl (i * k)).pre(deg)
+      if result.len < deg: result.setlen(deg)
+      return
   return self
 
 proc eval[T](self: FormalPowerSeries[T], x:T):T =

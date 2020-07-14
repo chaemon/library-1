@@ -3,7 +3,7 @@
 const Mod = 1000000007
 include "template/template.nim"
 include "math/mod_int.nim"
-include "math/number_theoretic_transform_friendly_mod_int.nim"
+include "math/number_theoretic_transform.nim"
 include "math/garner.nim"
 include "math/arbitrary_mod_convolution_ntt.nim"
 
