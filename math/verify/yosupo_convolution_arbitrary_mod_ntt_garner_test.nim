@@ -12,5 +12,5 @@ block main:
   var
     a = newSeqWith(N, Mint(nextInt()))
     b = newSeqWith(M, Mint(nextInt()))
-  let s = initNumberTheoreticTransformArbitraryMod[Mint]()
+  var s = ArbitraryModConvolutionNTT[Mint].init()
   echo s.multiply(a, b).mapIt($it).join(" ")

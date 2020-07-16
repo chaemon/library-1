@@ -7,8 +7,8 @@ using namespace std;
 const Mod = 1000000007
 include "template/template.nim"
 include "math/mod_int.nim"
-include "math/fast_fourier_transform_long_double.nim"
-include "math/arbitrary_mod_convolution.nim"
+include "math/fast_fourier_transform.nim"
+include "math/arbitrary_mod_convolution_fft.nim"
 
 block main:
   let N, M = nextInt()

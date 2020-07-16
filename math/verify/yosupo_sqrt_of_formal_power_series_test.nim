@@ -12,19 +12,11 @@ include "math/formal_power_series.nim"
 block main:
   let N = nextInt()
   var p = initFormalPowerSeries[Mint](N)
-  p.setSqrt(proc(a:Mint):Mint = Mint(modSqrt(int(a.v), Mod)))
+  p.setSqrt(modSqrt[Mint])
   for i in 0..<N:
     p[i] = Mint(nextInt())
-  var q = p.sqrt()
-  if q.len == 0:
+  var r = p.sqrt()
+  if not r.isSome:
     echo -1
   else:
-    var
-      ans = q
-      ans0 = -q
-    for i in 0..<ans.len:
-      if ans[i].v > ans0[i].v:
-        swap(ans, ans0);break
-      elif ans[i].v < ans0[i].v:
-        break
-    echo ans
+    echo r.get

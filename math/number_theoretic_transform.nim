@@ -1,4 +1,4 @@
-# number_theoretic_transform_friendly_mod_int {{{
+# number_theoretic_transform {{{
 import sequtils, algorithm, bitops
 
 type NumberTheoreticTransform[ModInt] = object
@@ -6,8 +6,6 @@ type NumberTheoreticTransform[ModInt] = object
   rts: seq[ModInt]
   base, max_base:int
   root: ModInt
-
-type FFTTYpe = seq[ModInt[Mod]]
 
 proc initNumberTheoreticTransform[ModInt](root0 = -1):NumberTheoreticTransform[ModInt] =
   let Mod = ModInt.getMod()
@@ -74,6 +72,9 @@ proc ifft[ModInt](self: var NumberTheoreticTransform[ModInt];a:seq[ModInt]):auto
   let inv_sz = ModInt(1) / ModInt(n)
   for i in 0..<n: a[i] *= inv_sz
   return a
+proc dot[ModInt](self: NumberTheoreticTransform[ModInt], a,b: seq[ModInt]):seq[ModInt] =
+  result = newSeq[ModInt](a.len)
+  for i in 0..<a.len: result[i] = a[i] * b[i]
 
 proc multiply[ModInt](self: var NumberTheoreticTransform[ModInt];a,b: seq[ModInt]):seq[ModInt] =
   var (a,b) = (a,b)
@@ -86,15 +87,8 @@ proc multiply[ModInt](self: var NumberTheoreticTransform[ModInt];a,b: seq[ModInt
   while b.len < sz: b.add(ModInt(0))
   a.setLen(sz)
   b.setLen(sz)
-  a = self.fft(a)
-  b = self.fft(b)
-  let inv_sz = ModInt(1) / sz
-  for i in 0..<sz: a[i] *= b[i] * inv_sz
-  a.reverse(1, a.len - 1)
-  a = self.fft(a)
+  a = self.ifft(self.dot(self.fft(a), self.fft(b)))
   while a.len < need: a.add(ModInt(0))
   a.setLen(need)
   return a
 #}}}
-
-type BaseFFT[T] = NumberTheoreticTransform[T]
