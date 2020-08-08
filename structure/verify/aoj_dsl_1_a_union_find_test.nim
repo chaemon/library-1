@@ -9,7 +9,7 @@ proc main() =
   var uf = initUnionFind(N)
   for i in 0..<Q:
     let t, x, y = nextInt()
-    if t == 0: uf.unionSet(x, y)
-    else: echo if uf.root(x) == uf.root(y): 1 else: 0
+    if t == 0: uf.union(x, y)
+    else: echo if uf.find(x) == uf.find(y): 1 else: 0
 
 main()

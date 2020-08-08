@@ -18,40 +18,40 @@ import math, sequtils, bitops
 #type Real = float
 type Real = clongdouble
 
-type C = tuple[x, y:Real]
+type Complex = tuple[x, y:Real]
 
-proc initC[S,T](x:S, y:T):C = (Real(x), Real(y))
+proc initComplex[S,T](x:S, y:T):Complex = (Real(x), Real(y))
 
-proc `+`(a,b:C):C = initC(a.x + b.x, a.y + b.y)
-proc `-`(a,b:C):C = initC(a.x - b.x, a.y - b.y)
-proc `*`(a,b:C):C = initC(a.x * b.x - a.y * b.y, a.x * b.y + a.y * b.x)
-proc conj(a:C):C = initC(a.x, -a.y)
+proc `+`(a,b:Complex):Complex = initComplex(a.x + b.x, a.y + b.y)
+proc `-`(a,b:Complex):Complex = initComplex(a.x - b.x, a.y - b.y)
+proc `*`(a,b:Complex):Complex = initComplex(a.x * b.x - a.y * b.y, a.x * b.y + a.y * b.x)
+proc conj(a:Complex):Complex = initComplex(a.x, -a.y)
 
-type SeqC = object
+type SeqComplex = object
   real, imag: seq[Real]
 
-proc initSeqC(n:int):SeqC = SeqC(real: newSeqWith(n, Real(0)), imag: newSeqWith(n, Real(0)))
+proc initSeqComplex(n:int):SeqComplex = SeqComplex(real: newSeqWith(n, Real(0)), imag: newSeqWith(n, Real(0)))
 
-proc setLen(self: var SeqC, n:int) =
+proc setLen(self: var SeqComplex, n:int) =
   self.real.setLen(n)
   self.imag.setLen(n)
-proc swap(self: var SeqC, i, j:int) =
+proc swap(self: var SeqComplex, i, j:int) =
   swap(self.real[i], self.real[j])
   swap(self.imag[i], self.imag[j])
 
 type FastFourierTransform = object of RootObj
   base:int
-  rts: SeqC
+  rts: SeqComplex
   rev:seq[int]
 
-proc getC(self: SeqC, i:int):C = (self.real[i], self.imag[i])
-proc `[]`(self: SeqC, i:int):C = self.getC(i)
-proc `[]=`(self: var SeqC, i:int, x:C) =
+proc getC(self: SeqComplex, i:int):Complex = (self.real[i], self.imag[i])
+proc `[]`(self: SeqComplex, i:int):Complex = self.getC(i)
+proc `[]=`(self: var SeqComplex, i:int, x:Complex) =
   self.real[i] = x.x
   self.imag[i] = x.y
 
 proc initFastFourierTransform():FastFourierTransform = 
-  return FastFourierTransform(base:1, rts: SeqC(real: @[Real(0), Real(1)], imag: @[Real(0), Real(0)]), rev: @[0, 1])
+  return FastFourierTransform(base:1, rts: SeqComplex(real: @[Real(0), Real(1)], imag: @[Real(0), Real(0)]), rev: @[0, 1])
 #proc init(self:typedesc[FastFourierTransform]):auto = initFastFourierTransform()
 
 proc ensureBase(self:var FastFourierTransform; nbase:int) =
@@ -65,10 +65,10 @@ proc ensureBase(self:var FastFourierTransform; nbase:int) =
     for i in (1 shl (self.base - 1))..<(1 shl self.base):
       self.rts[i shl 1] = self.rts[i]
       let angle_i = angle * Real(2 * i + 1 - (1 shl self.base))
-      self.rts[(i shl 1) + 1] = initC(cos(angle_i), sin(angle_i))
+      self.rts[(i shl 1) + 1] = initComplex(cos(angle_i), sin(angle_i))
     self.base.inc
 
-proc fft(self:var FastFourierTransform; a:var SeqC, n:int) =
+proc fft(self:var FastFourierTransform; a:var SeqComplex, n:int) =
   assert((n and (n - 1)) == 0)
   let zeros = countTrailingZeroBits(n)
   self.ensureBase(zeros)
@@ -87,7 +87,7 @@ proc fft(self:var FastFourierTransform; a:var SeqC, n:int) =
       i += 2 * k
     k = k shl 1
 
-proc ifft(self: var FastFourierTransform; a: var SeqC, n:int) =
+proc ifft(self: var FastFourierTransform; a: var SeqComplex, n:int) =
   for i in 0..<n: a[i] = a[i].conj()
   let rN = clongdouble(1) / clongdouble(n)
   self.fft(a, n)
@@ -101,16 +101,16 @@ proc multiply(self:var FastFourierTransform; a,b:seq[int]):seq[int] =
   while (1 shl nbase) < need: nbase.inc
   self.ensureBase(nbase)
   let sz = 1 shl nbase
-  var fa = initSeqC(sz)
+  var fa = initSeqComplex(sz)
   for i in 0..<sz:
     let x = if i < a.len: a[i] else: 0
     let y = if i < b.len: b[i] else: 0
-    fa[i] = initC(x, y)
+    fa[i] = initComplex(x, y)
   self.fft(fa, sz)
   let
-    r = initC(0, - Real(1) / (Real((sz shr 1) * 4)))
-    s = initC(0, 1)
-    t = initC(Real(1)/Real(2), 0)
+    r = initComplex(0, - Real(1) / (Real((sz shr 1) * 4)))
+    s = initComplex(0, 1)
+    t = initComplex(Real(1)/Real(2), 0)
   for i in 0..(sz shr 1):
     let j = (sz - i) and (sz - 1)
     let z = (fa[j] * fa[j] - (fa[i] * fa[i]).conj()) * r

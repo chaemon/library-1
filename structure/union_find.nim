@@ -14,25 +14,22 @@ proc compress(uf:var UnionFind,x:int,r:var int):void =
   uf.compress(uf.data[x],r)
   uf.data[x] = r;
 
-proc root(uf:var UnionFind, x:int):int =
+proc find(uf:var UnionFind, x:int):int =
   var r:int
   uf.compress(x,r)
   return r;
 
 proc size(uf:var UnionFind, x:int):int =
-  return -uf.data[uf.root(x)]
+  return -uf.data[uf.find(x)]
 
-proc unionSet(uf:var UnionFind, x,y:int):bool{.discardable.} =
+proc union(uf:var UnionFind, x,y:int):bool{.discardable.} =
   var
-    rx = uf.root(x)
-    ry = uf.root(y)
+    rx = uf.find(x)
+    ry = uf.find(y)
   if rx == ry: return false
   if uf.data[ry] < uf.data[rx]:
     swap(rx, ry)
   uf.data[rx] += uf.data[ry]
   uf.data[ry] = rx
   return true
-
-proc findSet(uf:var UnionFind, x,y:int):bool =
-  return uf.root(x) != uf.root(y)
 #}}}

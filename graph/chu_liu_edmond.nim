@@ -31,16 +31,16 @@ proc build[T](self: var MinimumSpanningTreeArborescence[T], start:int):T =
       ret += p[0]
       heap.add(heaps[u], -p[0])
       heap.pop(heaps[u])
-      let v = uf.root(p[1])
+      let v = uf.find(p[1])
       if used[v] == s:
         var w:int
         var nextheap = heap.makeheap()
         while true:
           w = path.pop()
           nextheap = heap.merge(nextheap, heaps[w]);
-          if not uf.unionSet(v, w): break
-        heaps[uf.root(v)] = nextheap
-        used[uf.root(v)] = -1
-      u = uf.root(v);
+          if not uf.union(v, w): break
+        heaps[uf.find(v)] = nextheap
+        used[uf.find(v)] = -1
+      u = uf.find(v);
   return ret;
 

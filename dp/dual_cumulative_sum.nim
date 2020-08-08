@@ -13,7 +13,7 @@ proc initDualCumulativeSum[T](a:seq[T]):DualCumulativeSum[T] =
     data[i + 1] -= a[i]
   return DualCumulativeSum[T](data: data, pos: -1)
 proc add[T](self: var DualCumulativeSum[T], s:Slice[int], x:T) =
-  assert(self.pos < s.a)
+  doAssert(self.pos < s.a)
   if s.a > s.b: return
   if self.data.len <= s.b + 1:
     self.data.setlen(s.b + 1 + 1)

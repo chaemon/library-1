@@ -1,5 +1,5 @@
 {{"# header {{{"}}
-{.hints:off warnings:off optimization:speed experimental:"codeReordering".}
+{.hints:off warnings:off optimization:speed.}
 import algorithm, sequtils, tables, macros, math, sets, strutils, strformat, sugar
 when defined(MYDEBUG):
   import header
@@ -75,13 +75,13 @@ template makeSeq(x:int; init):auto =
 macro Seq(lens: varargs[int]; init):untyped =
   var a = fmt"{init.repr}"
   for i in countdown(lens.len - 1, 0): a = fmt"makeSeq({lens[i].repr}, {a})"
-  parseStmt(a)
+  parseStmt(fmt"""
+block:
+  {a}""")
 
-template makeArray(x; init):auto =
-  when init is typedesc:
-    var v:array[x, init]
-  else:
-    var v:array[x, init.type]
+template makeArray(x:int; init):auto =
+  var v:array[x, init.type]
+  when init isnot typedesc:
     for a in v.mitems: a = init
   v
 
@@ -89,7 +89,9 @@ macro Array(lens: varargs[typed], init):untyped =
   var a = fmt"{init.repr}"
   for i in countdown(lens.len - 1, 0):
     a = fmt"makeArray({lens[i].repr}, {a})"
-  parseStmt(a)
+  parseStmt(fmt"""
+block:
+  {a}""")
 {{"#}}}"}}
 
 {% if mod %}

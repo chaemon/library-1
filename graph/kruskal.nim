@@ -6,10 +6,10 @@ proc kruskal[T](g:Graph[T]):(T, seq[Edge[T]]) =
   es.sort()
   var
     ret = newSeq[Edge[T]]()
-    tree = initUnionFind(g.len)
+    uf = initUnionFind(g.len)
     total = T(0)
   for e in es:
-    if tree.unionSet(e.src, e.dst):
+    if uf.union(e.src, e.dst):
       total += e.weight
       ret.add(e)
   return (total, ret)
